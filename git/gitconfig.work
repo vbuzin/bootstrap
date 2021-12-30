@@ -1,0 +1,8 @@
+[user]
+    name = Slava Buzin
+    email = ???
+[commit]
+    gpgsign = true
+[core]
+    excludesfile = ~/.gitignore
+    editor = vi

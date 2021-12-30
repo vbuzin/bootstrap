@@ -1,0 +1,10 @@
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/cask-fonts"
+
+brew "coreutils"
+brew "gpg"
+brew "htop"
+brew "p7zip"
+brew "ripgrep"
+brew "tmux"

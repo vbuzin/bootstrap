@@ -1,0 +1,10 @@
+[submodule "zsh/zprezto"]
+    path = zsh/zprezto
+    url = git@github.com:sorin-ionescu/prezto.git
+    ignore = dirty
+[submodule "vim/vim/pack/git-plugins/start/nord"]
+    path = vim/vim/pack/git-plugins/start/nord
+    url = https://github.com/arcticicestudio/nord-vim.git
+[submodule "vim/vim/pack/git-plugins/start/vim-gitgutter"]
+	path = vim/vim/pack/git-plugins/start/vim-gitgutter
+	url = https://github.com/airblade/vim-gitgutter.git

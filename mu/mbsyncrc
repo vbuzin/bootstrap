@@ -1,0 +1,109 @@
+# -*- mode: conf -*-
+
+Create    Slave
+Expunge   Both
+SyncState *
+
+# Gmail - v8v.buzin@gmail.com #################################################
+# -----------------------------------------------------------------------------
+IMAPAccount v8v.buzin@gmail.com
+Host imap.gmail.com
+User v8v.buzin@gmail.com
+PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.authinfo.gpg | awk '/imap\.gmail/ { print $8 }'"
+AuthMechs PLAIN
+SSLType IMAPS
+SSLVersions TLSv1.2
+CertificateFile /etc/ssl/cert.pem
+
+# Remote storage
+IMAPStore v8v.buzin@gmail.com-remote
+Account v8v.buzin@gmail.com
+
+# Local storage
+MaildirStore v8v.buzin@gmail.com-local
+Path ~/Mail/v8v.buzin@gmail.com/
+Inbox ~/Mail/v8v.buzin@gmail.com/Inbox/
+
+Channel v8v.buzin@gmail.com-inbox
+Master :v8v.buzin@gmail.com-remote:"Inbox"
+Slave :v8v.buzin@gmail.com-local:"Inbox"
+
+Channel v8v.buzin@gmail.com-archive
+Master :v8v.buzin@gmail.com-remote:"[Gmail]/All Mail"
+Slave :v8v.buzin@gmail.com-local:"Archive"
+
+Channel v8v.buzin@gmail.com-drafts
+Master :v8v.buzin@gmail.com-remote:"[Gmail]/Drafts"
+Slave :v8v.buzin@gmail.com-local:"Drafts"
+
+Channel v8v.buzin@gmail.com-sent
+Master :v8v.buzin@gmail.com-remote:"[Gmail]/Sent Mail"
+Slave :v8v.buzin@gmail.com-local:"Sent"
+
+Channel v8v.buzin@gmail.com-trash
+Master :v8v.buzin@gmail.com-remote:"[Gmail]/Bin"
+Slave :v8v.buzin@gmail.com-local:"Trash"
+
+Channel v8v.buzin@gmail.com-spam
+Master :v8v.buzin@gmail.com-remote:"[Gmail]/Spam"
+Slave :v8v.buzin@gmail.com-local:"Spam"
+
+Group v8v.buzin@gmail.com
+Channel v8v.buzin@gmail.com-inbox
+Channel v8v.buzin@gmail.com-archive
+Channel v8v.buzin@gmail.com-drafts
+Channel v8v.buzin@gmail.com-sent
+Channel v8v.buzin@gmail.com-trash
+Channel v8v.buzin@gmail.com-spam
+
+# iCloud - v.buzin@icloud.com #################################################
+# -----------------------------------------------------------------------------
+IMAPAccount v.buzin@icloud.com
+Host imap.mail.me.com
+User v.buzin
+PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.authinfo.gpg | awk '/imap\.mail\.me/ { print $8 }'"
+AuthMechs LOGIN
+SSLType IMAPS
+SSLVersions TLSv1.2
+CertificateFile /etc/ssl/cert.pem
+
+# Remote storage
+IMAPStore v.buzin@icloud.com-remote
+Account v.buzin@icloud.com
+
+# Local storage
+MaildirStore v.buzin@icloud.com-local
+Path ~/Mail/v.buzin@icloud.com/
+Inbox ~/Mail/v.buzin@icloud.com/Inbox/
+
+Channel v.buzin@icloud.com-inbox
+Master :v.buzin@icloud.com-remote:"Inbox"
+Slave :v.buzin@icloud.com-local:"Inbox"
+
+Channel v.buzin@icloud.com-archive
+Master :v.buzin@icloud.com-remote:"Archive"
+Slave :v.buzin@icloud.com-local:"Archive"
+
+Channel v.buzin@icloud.com-drafts
+Master :v.buzin@icloud.com-remote:"Drafts"
+Slave :v.buzin@icloud.com-local:"Drafts"
+
+Channel v.buzin@icloud.com-sent
+Master :v.buzin@icloud.com-remote:"Sent Messages"
+Slave :v.buzin@icloud.com-local:"Sent"
+
+Channel v.buzin@icloud.com-trash
+Master :v.buzin@icloud.com-remote:"Deleted Messages"
+Slave :v.buzin@icloud.com-local:"Trash"
+
+Channel v.buzin@icloud.com-spam
+Master :v.buzin@icloud.com-remote:"Junk"
+Slave :v.buzin@icloud.com-local:"Spam"
+
+Group v.buzin@icloud.com
+Channel v.buzin@icloud.com-inbox
+Channel v.buzin@icloud.com-archive
+Channel v.buzin@icloud.com-drafts
+Channel v.buzin@icloud.com-sent
+Channel v.buzin@icloud.com-trash
+Channel v.buzin@icloud.com-spam
