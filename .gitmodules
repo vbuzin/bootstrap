@@ -6,5 +6,8 @@
     path = vim/vim/pack/git-plugins/start/nord
     url = https://github.com/arcticicestudio/nord-vim.git
 [submodule "vim/vim/pack/git-plugins/start/vim-gitgutter"]
-	path = vim/vim/pack/git-plugins/start/vim-gitgutter
-	url = https://github.com/airblade/vim-gitgutter.git
+    path = vim/vim/pack/git-plugins/start/vim-gitgutter
+    url = https://github.com/airblade/vim-gitgutter.git
+[submodule "vim/vim/pack/git-plugins/start/dash"]
+    path = vim/vim/pack/git-plugins/start/dash
+    url = https://github.com/rizzatti/dash.vim.git

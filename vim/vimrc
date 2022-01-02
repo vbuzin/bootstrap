@@ -31,7 +31,6 @@ endif
 set autoindent
 set expandtab
 set backspace=indent,eol,start
-set backupext=.bak
 set complete-=i
 set display=truncate
 set hidden " allow switching buffers without writing to disk
@@ -60,6 +59,17 @@ set autoread
 au FocusGained,BufEnter * :silent! !
 
 " -- Backup and swap ---------------------------------------------------------
+" directories
+set undodir=~/.vimtmp/undodir
+if !isdirectory(&undodir)
+    silent! execute "!mkdir -p " . &undodir
+endif
+
+set directory=~/.vimtmp/swap
+if !isdirectory(&directory)
+    silent! execute "!mkdir -p " . &directory
+endif
+
 if has("vms")
   set nobackup
 else
@@ -70,15 +80,9 @@ else
 
   set backupext=.bak
   
-  " directories
   set backupdir=~/.vimtmp/backup
   if !isdirectory(&backupdir)
       silent! execute "!mkdir -p " . &backupdir
-  endif
-  
-  set directory=~/.vimtmp/swap
-  if !isdirectory(&directory)
-      silent! execute "!mkdir -p " . &directory
   endif
 endif
 

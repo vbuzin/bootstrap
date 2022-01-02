@@ -10,7 +10,7 @@ fi
 # Editors
 #
 
-export EDITOR='emacsclient -n -a=vi'
+export EDITOR='code'
 export VISUAL=$EDITOR
 
 #

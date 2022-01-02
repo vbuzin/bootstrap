@@ -50,7 +50,6 @@ $(TMUX_TARGET_DIR):
 # ==============================================================================
 ALACRITTY_SOURCE_DIR := $(abspath ./alacritty)
 ALACRITTY_TARGET_DIR := $(abspath $(HOME)/.config/alacritty/)
-ALACRITTY_APP_DIR    := /Applications/Alacritty.app
 
 _alacritty: | $(ALACRITTY_TARGET_DIR)
 	@echo $(call message,"Installing utils and apps via Homebrew")
@@ -58,8 +57,6 @@ _alacritty: | $(ALACRITTY_TARGET_DIR)
 
 	@echo $(call message,"Setting up configuration files for alacritty")
 	ln -sf $(ALACRITTY_SOURCE_DIR)/alacritty.yml  $(ALACRITTY_TARGET_DIR)
-	ln -sf $(ALACRITTY_SOURCE_DIR)/alacritty.icns $(ALACRITTY_APP_DIR)/Contents/Resources/
-	touch $(ALACRITTY_APP_DIR)
 
 $(ALACRITTY_TARGET_DIR):
 	@echo "Creating directory $(ALACRITTY_TARGET_DIR)"
@@ -108,7 +105,7 @@ HOSTNAME       := $(shell hostname)
 
 _git:
 	@echo $(call message,"Configuring git")
-ifeq ($(HOSTNAME),v8vmaca)
+ifeq ($(HOSTNAME),vbmaca.local)
 	ln -sf $(GIT_SOURCE_DIR)/gitconfig.pers $(GIT_TARGET_DIR)/.gitconfig
 endif
 	ln -sf $(GIT_SOURCE_DIR)/gitignore $(GIT_TARGET_DIR)/.gitignore
