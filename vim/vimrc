@@ -60,10 +60,17 @@ au FocusGained,BufEnter * :silent! !
 
 " -- Backup and swap ---------------------------------------------------------
 " directories
-set undodir=~/.vimtmp/undodir
-if !isdirectory(&undodir)
-    silent! execute "!mkdir -p " . &undodir
-endif
+
+" Store undofile in to fixed location
+if has('persistent_undo')
+  set undofile
+  
+  if !isdirectory(&undodir)
+      silent! execute "!mkdir -p " . &undodir
+  endif
+
+  set undodir=~/.vimtmp/undodir
+endif 
 
 set directory=~/.vimtmp/swap
 if !isdirectory(&directory)
@@ -74,10 +81,6 @@ if has("vms")
   set nobackup
 else
   set backup
-  if has('persistent_undo')
-    set undofile
-  endif
-
   set backupext=.bak
   
   set backupdir=~/.vimtmp/backup

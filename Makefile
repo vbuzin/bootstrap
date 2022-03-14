@@ -28,7 +28,7 @@ _apps: _brew | $(GPG_TARGET_DIR) $(HTOP_TARGET_DIR) $(TMUX_TARGET_DIR)
 	ln -sf $(GPG_SOURCE_DIR)/gpg-agent.conf $(GPG_TARGET_DIR)
 
 	@echo $(call message,"Setting up configuration files for htop")
-	ln -sf $(HTOP_SOURCE_DIR)/htoprc $(HTOP_TARGET_DIR)
+	cp -f $(HTOP_SOURCE_DIR)/htoprc $(HTOP_TARGET_DIR)
 
 	@echo $(call message,"Setting up configuration files for tmux")
 	ln -sf $(TMUX_SOURCE_DIR)/tmux.conf $(TMUX_TARGET_DIR)
@@ -197,7 +197,6 @@ endif
 	ln -sf $(ZSH_SOURCE_DIR)/zprofile  $(ZSH_TARGET_DIR)/.zprofile
 	ln -sf $(ZSH_SOURCE_DIR)/zshrc     $(ZSH_TARGET_DIR)/.zshrc
 	ln -sf $(ZSH_SOURCE_DIR)/zpreztorc $(ZSH_TARGET_DIR)/.zpreztorc
-	ln -sf $(ZSH_SOURCE_DIR)/p10k.zsh  $(ZSH_TARGET_DIR)/.p10k.zsh
 
 # vim
 # ==============================================================================
