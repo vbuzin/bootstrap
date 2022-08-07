@@ -39,7 +39,6 @@ fpath+=(/opt/homebrew/share/zsh/site-functions)
 path=(
     /usr/local/{bin,sbin}
     $HOME/.local/bin
-    $HOME/.cargo/bin
     $HOME/bin
     $path
 )

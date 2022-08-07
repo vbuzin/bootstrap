@@ -85,7 +85,7 @@ zstyle ':prezto:module:gnu-utility' prefix 'g'
 #
 
 # Set the query found color.
-# zstyle ':prezto:module:history-substring-search:color' found ''
+zstyle ':prezto:module:history-substring-search:color' found 'bg=239'
 
 # Set the query not found color.
 # zstyle ':prezto:module:history-substring-search:color' not-found ''
@@ -186,7 +186,7 @@ zstyle ':prezto:module:tmux:auto-start' local 'no'
 # zstyle ':prezto:module:tmux:auto-start' remote 'yes'
 
 # Integrate with iTerm2.
-# zstyle ':prezto:module:tmux:iterm' integrate 'yes'
+zstyle ':prezto:module:tmux:iterm' integrate 'yes'
 
 # Set the default session name:
 zstyle ':prezto:module:tmux:session' name 'default'
