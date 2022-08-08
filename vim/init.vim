@@ -1,13 +1,6 @@
 " -- General -----------------------------------------------------------------
-" Use Vim settings, rather than Vi settings (much better!).
-" This must be first, because it changes other options as a side effect.
 if &compatible
   set nocompatible
-endif
-
-" Determine the file type name and possibly its contents.
-if has('filetype')
-  filetype indent plugin on
 endif
 
 " Enable syntax highlighting
@@ -15,18 +8,11 @@ if has('syntax')
   syntax on
 endif
 
-" Position the cursor, visually select and scroll with the mouse.
-if has('mouse')
-  if &term =~ 'xterm'
-    set mouse=a
-  else
-    set mouse=nvi
-  endif
+" Determine the file type name and possibly its contents.
+if has('filetype')
+  filetype indent plugin on
 endif
 
-if has('syntax') && has('eval')
-  packadd! matchit
-endif
 
 set autoindent
 set expandtab
@@ -43,7 +29,6 @@ set wildmenu
 " Esc kicks-off faster
 set ttimeout
 set ttimeoutlen=100
-
 set timeoutlen=500
 
 if has("autocmd")
@@ -59,7 +44,6 @@ set autoread
 au FocusGained,BufEnter * :silent! !
 
 " -- Backup and swap ---------------------------------------------------------
-" directories
 
 " Store undofile in to fixed location
 if has('persistent_undo')
@@ -69,10 +53,10 @@ if has('persistent_undo')
       silent! execute "!mkdir -p " . &undodir
   endif
 
-  set undodir=~/.vimtmp/undodir
+  set undodir=~/.nvimtmp/undodir
 endif 
 
-set directory=~/.vimtmp/swap
+set directory=~/.nvimtmp/swap
 if !isdirectory(&directory)
     silent! execute "!mkdir -p " . &directory
 endif
@@ -89,19 +73,24 @@ else
   endif
 endif
 
+" -- Plugins -----------------------------------------------------------------
+call plug#begin()
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+Plug 'tpope/vim-fugitive', { 'branch': 'master' }
+call plug#end()
+
 " -- Theming -----------------------------------------------------------------
+set guicursor=
+
 if (has("termguicolors"))
-  set termguicolors
+    set termguicolors
 endif
 
 colorscheme tokyonight
 set background=dark
 
-let g:lightline = { 'colorscheme': 'tokyonight', }
-set noshowmode " status is in the statusline
 
 set laststatus=2
-
 set number relativenumber " turn line numbering on at startup
 
 " Highligh current line number
@@ -123,4 +112,5 @@ set nowrapscan
 set smartcase
 
 " -- Keys --------------------------------------------------------------------
-map Q gq " do formatting with Q
+
+

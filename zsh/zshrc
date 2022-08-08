@@ -16,6 +16,10 @@ fi
 
 ### aliases
 
+alias la="exa -Fahl"
+alias vim="nvim"
+alias vi="vim"
+
 ### aliases
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
