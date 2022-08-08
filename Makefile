@@ -204,9 +204,6 @@ VIM_SOURCE_DIR := $(abspath ./vim)
 VIM_TARGET_DIR := $(HOME)
 
 _vim:
-	@echo $(call message,"Installing plugins")
-	git submodule update --init --remote --recursive --force vim/vim
-
 	@echo $(call message,"Setting up configuation for Vim")
 	ln -sf $(VIM_SOURCE_DIR)/vimrc $(VIM_TARGET_DIR)/.vimrc
 	ln -sf $(VIM_SOURCE_DIR)/vim   $(VIM_TARGET_DIR)/.vim

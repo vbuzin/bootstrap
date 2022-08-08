@@ -10,11 +10,6 @@ if has('filetype')
   filetype indent plugin on
 endif
 
-" Enable syntax highlighting
-if has('syntax')
-  syntax on
-endif
-
 " Position the cursor, visually select and scroll with the mouse.
 if has('mouse')
   if &term =~ 'xterm'
@@ -89,33 +84,11 @@ else
   endif
 endif
 
-" -- Theming -----------------------------------------------------------------
-if (has("termguicolors"))
-  set termguicolors
-endif
-
-colorscheme tokyonight
-set background=dark
-
-let g:lightline = { 'colorscheme': 'tokyonight', }
-set noshowmode " status is in the statusline
-
-set laststatus=2
+" -- Line numbers ------------------------------------------------------------
 
 set number relativenumber " turn line numbering on at startup
 
-" Highligh current line number
-set cursorline
-set cursorlineopt=number
-highlight CursorLineNR cterm=bold
-
 " -- Searching ---------------------------------------------------------------
-set hlsearch
-
-" Use <C-L> to clear the highlighting of :set hlsearch.
-if maparg('<C-L>', 'n') ==# ''
-  nnoremap <silent> <C-L> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
-endif
 
 set ignorecase
 set incsearch
