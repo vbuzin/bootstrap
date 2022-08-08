@@ -16,10 +16,6 @@ fi
 
 ### aliases
 
-alias la="exa -Fahl"
-alias vim="nvim"
-alias vi="vim"
-
 ### aliases
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
@@ -44,4 +40,3 @@ irg() {
       --preview 'bat --color=always {1} --highlight-line {2}' \
       --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' 
 }
-
