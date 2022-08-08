@@ -1,3 +1,4 @@
 .DS_Store
 .yas-compiled-snippets.el
 Brewfile.lock.json
+.vscode
