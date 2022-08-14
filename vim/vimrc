@@ -88,7 +88,7 @@ endif
 
 set number relativenumber " turn line numbering on at startup
 
-highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE 
+highlight LineNr term=bold cterm=NONE ctermfg=white ctermbg=NONE 
 
 " -- Searching ---------------------------------------------------------------
 
