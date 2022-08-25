@@ -135,5 +135,5 @@ schemes:
       cyan:    '0x4cd1e0'
       white:   '0xe6e6e6'
 
-colors: *tokyo-night-storm
+colors: *one-dark
 
