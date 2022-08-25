@@ -51,9 +51,6 @@ key_bindings:
   - { key: Y,        mods: Control,                  action: Paste                     }
 
 schemes:
-  # Tokyo Night theme, based on both:
-  #   https://github.com/ghifarit53/tokyonight-vim
-  #   https://github.com/enkia/tokyo-night-vscode-theme
   tokyo-night: &tokyo-night
     # Default colors
     primary:
@@ -110,5 +107,33 @@ schemes:
       cyan:    '0x0db9d7'
       white:   '0xacb0d0'
 
-colors: *tokyo-night-storm
+  one-dark: &one-dark
+    # Default colors
+    primary:
+      background: '0x282c34'
+      foreground: '0xabb2bf'
+
+    # Normal colors
+    normal:
+      black:   '0x3f4451'
+      red:     '0xe05561'
+      green:   '0x8cc265'
+      yellow:  '0xd18f52'
+      blue:    '0x4aa5f0'
+      magenta: '0xc162de'
+      cyan:    '0x42b3c2'
+      white:   '0xd7dae0'
+
+    # Bright colors
+    bright:
+      black:   '0x4f5666'
+      red:     '0xff616e'
+      green:   '0xa5e075'
+      yellow:  '0xf0a45d'
+      blue:    '0x4dc4ff'
+      magenta: '0xde73ff'
+      cyan:    '0x4cd1e0'
+      white:   '0xe6e6e6'
+
+colors: *one-dark
 
