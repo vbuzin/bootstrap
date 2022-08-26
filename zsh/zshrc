@@ -24,33 +24,16 @@ alias exa='exa -la'
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # bat
-export BAT_THEME="OneHalfDark"
+export BAT_THEME="tokyonight"
 
 # fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# Base16 OneDark
-local color00='#282c34'
-local color01='#353b45'
-local color02='#3e4451'
-local color03='#545862'
-local color04='#565c64'
-local color05='#abb2bf'
-local color06='#b6bdca'
-local color07='#c8ccd4'
-local color08='#e06c75'
-local color09='#d19a66'
-local color0A='#e5c07b'
-local color0B='#98c379'
-local color0C='#56b6c2'
-local color0D='#61afef'
-local color0E='#c678dd'
-local color0F='#be5046'
-
-export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS"\
-" --color=bg+:$color01,bg:$color00,spinner:$color0C,hl:$color0D"\
-" --color=fg:$color04,header:$color0D,info:$color0A,pointer:$color0C"\
-" --color=marker:$color0C,fg+:$color06,prompt:$color0A,hl+:$color0D"
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS' 
+  --color=fg:#c5cdd9,bg:#2b2f43,hl:#6cb6eb 
+  --color=fg+:#c5cdd9,bg+:#2b2f43,hl+:#5dbbc1 
+  --color=info:#88909f,prompt:#ec7279,pointer:#d38aea 
+  --color=marker:#a0c980,spinner:#ec7279,header:#5dbbc1'
 
 irg() {
   RG_PREFIX="rg --hidden --column --line-number --no-heading --color=always --smart-case "
