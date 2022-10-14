@@ -1,0 +1,4 @@
+--dotfiles
+--ignore=.DS_Store
+--override=.*
+--target=${HOME}

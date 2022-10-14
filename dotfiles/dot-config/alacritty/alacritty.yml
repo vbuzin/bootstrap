@@ -26,7 +26,6 @@ font:
   bold:
     style: Semibold
   size: 14.0
-  use_thin_strokes: true
 
 cursor:
   style:

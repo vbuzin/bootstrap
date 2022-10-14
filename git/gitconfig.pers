@@ -1,9 +1,0 @@
-[user]
-    name = Slava Buzin
-    email = v8v.buzin@gmail.com
-[core]
-    excludesfile = ~/.gitignore
-[pull]
-    rebase = true
-[init]
-    defaultBranch = main
