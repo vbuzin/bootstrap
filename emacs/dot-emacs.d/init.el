@@ -1,5 +1,8 @@
 ;;; Env and some defaults
 ;; =============================================================================
+(if (find-font (font-spec :name "Cascadia Code"))
+    (push '(font . "Cascadia Code-14") default-frame-alist))
+
 (setenv "LANG"   "en_US.UTF-8")
 (setenv "LC_ALL" "en_US.UTF-8")
 

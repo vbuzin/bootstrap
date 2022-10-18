@@ -2,3 +2,7 @@
 .yas-compiled-snippets.el
 Brewfile.lock.json
 .vscode
+!/emacs/dot-emacs.d/*.el
+!/emacs/dot-emacs.d/snippets
+/emacs/dot-emacs.d/init-custom.el
+/emacs/**/*
