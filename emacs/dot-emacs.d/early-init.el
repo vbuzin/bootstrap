@@ -39,7 +39,6 @@
 
 ;; https://github.com/hlissner/doom-emacs/blob/develop/early-init.el
 (setq frame-inhibit-implied-resize t)
-(push '(font . "SF Mono-14") default-frame-alist)
 
 ;; Frame size and position
 ;; =============================================================================
