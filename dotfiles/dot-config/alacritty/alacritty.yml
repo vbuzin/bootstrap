@@ -10,7 +10,7 @@ shell:
 
 window:
   dimensions:
-    columns: 138
+    columns: 140
     lines: 48
   padding:
     x: 20
@@ -24,8 +24,10 @@ font:
     family: Cascadia Code
     style: Regular
   bold:
-    style: Semibold
+    style: Bold
   size: 14.0
+  offset:
+    y: 2
 
 cursor:
   style:

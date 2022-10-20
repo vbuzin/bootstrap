@@ -3,6 +3,7 @@ hostname = `hostname -s`.strip
 is_tlnd = (hostname == "LT-Q5R6H9G174")
 is_home = (hostname == "vbmaca")
 
+brew "fd"
 brew "fzf"
 brew "mas"
 brew "p7zip"
