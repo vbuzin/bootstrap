@@ -3,10 +3,8 @@ hostname = `hostname -s`.strip
 is_tlnd = (hostname == "LT-Q5R6H9G174")
 is_home = (hostname == "vbmaca")
 
-brew "fd"
 brew "fzf"
 brew "mas"
-brew "nvim"
 brew "p7zip"
 brew "ripgrep"
 brew "stow"
@@ -20,7 +18,7 @@ cask "figma"
 cask "firefox"
 cask "microsoft-office" unless is_home
 cask "notion"
-cask "protonvpn"
+cask "protonvpn" unless is_tlnd 
 cask "slack" unless is_home
 cask "tidal"
 cask "visual-studio-code"

@@ -27,7 +27,7 @@ ifeq (,$(wildcard $(HOME)/.zprezto))
 	@echo $(call message,"Installing https://github.com/sorin-ionescu/prezto and submodules")
 	@git clone --depth 1 --recursive https://github.com/sorin-ionescu/prezto.git $(HOME)/.zprezto
 endif
-	@stow dotfiles
+	@stow --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} dotfiles
 
 # apps
 # ==============================================================================
@@ -41,7 +41,21 @@ emacs: brew
 	@echo $(call message,"Installing and configuring Emacs")
 	@brew install emacs --cask
 	@brew install aspell coreutils gnupg
-	@stow emacs
+	@stow --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} emacs
+
+# nvim
+# ==============================================================================
+nvim: brew dotfiles
+	@echo $(call message,"Installing and configuring Nvim")
+	@brew install neovim fd
+	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config nvim
+
+_nvim: 
+	@echo $(call message,"Installing and configuring Nvim")
+	@-brew uninstall neovim fd 
+	@brew autoremove
+	@stow -D --target=${HOME}/.config nvim
+	@rm -rf ${HOME}/.local
 
 # brew
 # ==============================================================================
