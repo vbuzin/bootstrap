@@ -10,8 +10,8 @@ shell:
 
 window:
   dimensions:
-    columns: 140
-    lines: 48
+    columns: 138
+    lines: 46
   padding:
     x: 20
     y: 20
@@ -36,20 +36,25 @@ cursor:
   vi_mode_style: Underline
 
 key_bindings:
-  # (macOS only)
-  # treating Alt as Meta
-  - { key: F,        mods: Alt,     chars: "\x1bf"                                     }
-  - { key: B,        mods: Alt,     chars: "\x1bb"                                     }
-  - { key: D,        mods: Alt,     chars: "\x1bd"                                     }
-  - { key: V,        mods: Alt,     chars: "\x1bv"                                     }
-  - { key: W,        mods: Alt,     chars: "\x1bw"                                     }
-  - { key: Up,       mods: Alt,     chars: "\x1b[1;5A"                                 }
-  - { key: Down,     mods: Alt,     chars: "\x1b[1;5B"                                 }
-  - { key: Left,     mods: Alt,     chars: "\x1bb"                                     }
-  - { key: Right,    mods: Alt,     chars: "\x1bf"                                     }
+  - { key: F,        mods: Alt,     chars: "\x1bf"                       }
+  - { key: B,        mods: Alt,     chars: "\x1bb"                       }
+  - { key: D,        mods: Alt,     chars: "\x1bd"                       }
+  - { key: V,        mods: Alt,     chars: "\x1bv"                       }
+  - { key: W,        mods: Alt,     chars: "\x1bw"                       }
+  - { key: Up,       mods: Alt,     chars: "\x1b[1;5A"                   }
+  - { key: Down,     mods: Alt,     chars: "\x1b[1;5B"                   }
+  - { key: Left,     mods: Alt,     chars: "\x1bb"                       }
+  - { key: Right,    mods: Alt,     chars: "\x1bf"                       }
 
-  - { key: W,        mods: Alt,                      action: Copy                      }
-  - { key: Y,        mods: Control,                  action: Paste                     }
+  - { key: W,        mods: Alt,     action: Copy        }
+  - { key: Y,        mods: Command, action: Paste       }
+
+  - { key: Key0,           mods: Command,     action: ResetFontSize         }
+  - { key: Equals,         mods: Command,     action: IncreaseFontSize      }
+  - { key: Plus,           mods: Command,     action: IncreaseFontSize      }
+  - { key: NumpadAdd,      mods: Command,     action: IncreaseFontSize      }
+  - { key: Minus,          mods: Command,     action: DecreaseFontSize      }
+  - { key: NumpadSubtract, mods: Command,     action: DecreaseFontSize      }
 
 schemes:
   tokyo-night: &tokyo-night

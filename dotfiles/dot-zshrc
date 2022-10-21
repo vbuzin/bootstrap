@@ -9,12 +9,7 @@ fi
 
 ### aliases
 
-alias exa='exa -la'
-
 ### aliases
-
-# bat
-export BAT_THEME="OneHalfDark"
 
 # fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

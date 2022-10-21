@@ -6,3 +6,5 @@ Brewfile.lock.json
 !/emacs/dot-emacs.d/snippets
 /emacs/dot-emacs.d/init-custom.el
 /emacs/**/*
+
+/dotfiles/dot-config/nvim/plugin

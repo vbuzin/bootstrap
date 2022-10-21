@@ -6,6 +6,7 @@ is_home = (hostname == "vbmaca")
 brew "fd"
 brew "fzf"
 brew "mas"
+brew "nvim"
 brew "p7zip"
 brew "ripgrep"
 brew "stow"
