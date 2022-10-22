@@ -7,4 +7,6 @@ Brewfile.lock.json
 /emacs/dot-emacs.d/init-custom.el
 /emacs/**/*
 
-/dotfiles/dot-config/nvim/plugin
+/dotfiles/dot-config/nvim
+/dotfiles/dot-config/iterm2
+/dotfiles/dot-config/alacritty

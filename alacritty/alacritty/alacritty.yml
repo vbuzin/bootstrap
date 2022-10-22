@@ -21,10 +21,10 @@ window:
 
 font:
   normal:
-    family: Cascadia Code
+    family: CaskaydiaCove Nerd Font Mono
     style: Regular
   bold:
-    style: Bold
+    style: Semibold
   size: 14.0
   offset:
     y: 2
@@ -36,18 +36,19 @@ cursor:
   vi_mode_style: Underline
 
 key_bindings:
-  - { key: F,        mods: Alt,     chars: "\x1bf"                       }
-  - { key: B,        mods: Alt,     chars: "\x1bb"                       }
-  - { key: D,        mods: Alt,     chars: "\x1bd"                       }
-  - { key: V,        mods: Alt,     chars: "\x1bv"                       }
-  - { key: W,        mods: Alt,     chars: "\x1bw"                       }
-  - { key: Up,       mods: Alt,     chars: "\x1b[1;5A"                   }
-  - { key: Down,     mods: Alt,     chars: "\x1b[1;5B"                   }
-  - { key: Left,     mods: Alt,     chars: "\x1bb"                       }
-  - { key: Right,    mods: Alt,     chars: "\x1bf"                       }
+  - { key: B,        mods: Alt,     chars: "\x1bb"            }
+  - { key: C,        mods: Alt,     chars: "\x1bc"            }
+  - { key: D,        mods: Alt,     chars: "\x1bd"            }
+  - { key: F,        mods: Alt,     chars: "\x1bf"            }
+  - { key: R,        mods: Alt,     chars: "\x1br"            }
+  - { key: V,        mods: Alt,     chars: "\x1bv"            }
+  - { key: W,        mods: Alt,     chars: "\x1bw"            }
 
-  - { key: W,        mods: Alt,     action: Copy        }
-  - { key: Y,        mods: Command, action: Paste       }
+  - { key: Left,     mods: Alt,     chars: "\x1bb"            }
+  - { key: Right,    mods: Alt,     chars: "\x1bf"            }
+
+  - { key: Slash,   mods: Control,  chars: "\x1f"             }
+  - { key: H,       mods: Control,  chars: "\x1f"             }
 
   - { key: Key0,           mods: Command,     action: ResetFontSize         }
   - { key: Equals,         mods: Command,     action: IncreaseFontSize      }

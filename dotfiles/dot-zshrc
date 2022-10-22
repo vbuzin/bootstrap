@@ -11,8 +11,13 @@ fi
 
 ### aliases
 
+# Bat
+export BAT_THEME="TwoDark"
+
 # fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+export FZF_DEFAULT_COMMAND="fd --type f"
 
 # Base16 OneDark
 local color00='#282c34'
@@ -40,8 +45,9 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS"\
 irg() {
   RG_PREFIX="rg --hidden --column --line-number --no-heading --color=always --smart-case "
   INITIAL_QUERY="${*:-}"
-  FZF_DEFAULT_COMMAND="$RG_PREFIX $(printf %q "$INITIAL_QUERY")" \
-  fzf --ansi \
+  IFS=: read -rA selected <<<$(
+    FZF_DEFAULT_COMMAND="$RG_PREFIX $(printf %q "$INITIAL_QUERY")" \
+    fzf --ansi \
       --color "hl:-1:underline,hl+:-1:underline:reverse" \
       --disabled --query "$INITIAL_QUERY" \
       --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
@@ -51,5 +57,8 @@ irg() {
       --delimiter : \
       --header '╱ CTRL-R (Ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
       --preview 'bat --color=always {1} --highlight-line {2}' \
-      --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' 
+      --preview-window 'up,60%,border-bottom,+{2}+3/3,~3'
+  )
+  [ ${#selected[@]} ] && code -ng "${selected[@]:0:1}:${selected[@]:1:1}:${selected[@]:2:1}"
+  # [ ${#selected[@]} ] && nvim "+call cursor(${selected[@]:1:1}, ${selected[@]:2:1})" ${selected[@]:0:1}
 }

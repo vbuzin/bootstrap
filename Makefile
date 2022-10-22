@@ -4,9 +4,6 @@ NC      := '\033[0m'
 message  = $(GRAY)">>> ===== "$(1)" ====="$(NC)
 
 CSHELL         := $(shell dscl . -read ~/ UserShell | sed 's/.*\/\(.*\)$$/\1/')
-ZSH_SOURCE_DIR := $(abspath ./zsh)
-ZSH_TARGET_DIR := $(HOME)
-ZPREZTO_DIR    := $(ZSH_SOURCE_DIR)
 
 .PHONY: all brew apps dotfiles emacs
 
@@ -35,6 +32,31 @@ apps: brew
 	@echo $(call message,"Installing apps")
 	@brew bundle --file Brewfile
 
+# brew
+# ==============================================================================
+brew:
+ifneq (,$(shell which brew))
+	@echo $(call message,"Updating Homebrew")
+	@brew update && brew upgrade && brew upgrade --cask
+else
+	@echo $(call message,"Installing Homebrew")
+	@ruby -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+	@eval $(/opt/homebrew/bin/brew shellenv)
+endif
+
+# alacritty
+# ==============================================================================
+alacritty: brew dotfiles
+	@echo $(call message,"Installing and configuring Alacritty")
+	@brew install alacritty --cask
+	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config alacritty
+
+_alacritty:
+	@echo $(call message,"Uninstalling alacritty")
+	@-brew uninstall --cask alacritty
+	@brew autoremove
+	@stow -D --ignore=.DS_Store --target=${HOME}/.config alacritty
+
 # emacs
 # ==============================================================================
 emacs: brew
@@ -47,24 +69,13 @@ emacs: brew
 # ==============================================================================
 nvim: brew dotfiles
 	@echo $(call message,"Installing and configuring Nvim")
-	@brew install neovim fd
+	@brew install neovim stylua
 	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config nvim
 
-_nvim: 
-	@echo $(call message,"Installing and configuring Nvim")
-	@-brew uninstall neovim fd 
+_nvim:
+	@echo $(call message,"Unistalling Nvim and dependencies")
+	@-brew uninstall neovim stylua
 	@brew autoremove
-	@stow -D --target=${HOME}/.config nvim
+	@stow -D --ignore=.DS_Store --target=${HOME}/.config nvim
 	@rm -rf ${HOME}/.local
 
-# brew
-# ==============================================================================
-brew:
-ifneq (,$(shell which brew))
-	@echo $(call message,"Updating Homebrew")
-	@brew update && brew upgrade && brew upgrade --cask
-else
-	@echo $(call message,"Installing Homebrew")
-	@ruby -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-	@eval $(/opt/homebrew/bin/brew shellenv)
-endif

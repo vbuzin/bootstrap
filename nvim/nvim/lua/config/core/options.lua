@@ -1,22 +1,23 @@
--- mapleader
-vim.g.mapleader = " "
-
 local opt = vim.opt -- to set options
 
-opt.tabstop = 4
-opt.softtabstop = 4
-opt.shiftwidth = 4
-opt.expandtab = true
-
-opt.hlsearch = true
-opt.incsearch = true
-
-opt.backspace = { "indent", "eol", "start" }
+opt.autowriteall = true
 opt.clipboard = "unnamedplus"
 opt.completeopt = "menu,menuone,noselect"
 opt.cursorline = true
+opt.expandtab = true
+opt.filetype = "on"
 opt.guicursor = ""
+opt.linebreak = true
 opt.number = true
 opt.relativenumber = true
+opt.shiftwidth = 4
+opt.showbreak = " +++ "
+opt.showmatch = true
+opt.showmode = false
+opt.smartcase = true
+opt.smartindent = true
+opt.softtabstop = 4
+opt.tabstop = 4
 opt.termguicolors = true
+opt.timeoutlen = 500
 opt.wrap = false

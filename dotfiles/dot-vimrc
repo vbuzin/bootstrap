@@ -27,11 +27,15 @@ set autoindent
 set expandtab
 set backspace=indent,eol,start
 set complete-=i
+set cursorline
+set cursorlineopt=number
 set display=truncate
 set hidden " allow switching buffers without writing to disk
 set nrformats-=octal
 set showcmd
 set ruler
+set background=dark
+set termguicolors
 set smarttab
 set wildmenu
 
@@ -88,7 +92,8 @@ endif
 
 set number relativenumber " turn line numbering on at startup
 
-highlight LineNr term=bold cterm=NONE ctermfg=white ctermbg=NONE 
+highlight LineNR ctermfg=008
+highlight CursorLineNR ctermfg=255
 
 " -- Searching ---------------------------------------------------------------
 

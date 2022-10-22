@@ -3,6 +3,9 @@ hostname = `hostname -s`.strip
 is_tlnd = (hostname == "LT-Q5R6H9G174")
 is_home = (hostname == "vbmaca")
 
+brew "bat"
+brew "exa"
+brew "fd"
 brew "fzf"
 brew "mas"
 brew "p7zip"
@@ -11,14 +14,14 @@ brew "stow"
 brew "tmux"
 
 cask "1password"
-cask "alacritty"
 cask "brave-browser"
 cask "docker"
 cask "figma"
 cask "firefox"
+cask "iterm2"
 cask "microsoft-office" unless is_home
 cask "notion"
-cask "protonvpn" unless is_tlnd 
+cask "protonvpn" unless is_tlnd
 cask "slack" unless is_home
 cask "tidal"
 cask "visual-studio-code"
@@ -26,12 +29,13 @@ cask "zoom" unless is_tlnd # managed
 
 cask "homebrew/cask-drivers/logi-options-plus"
 cask "homebrew/cask-fonts/font-cascadia-code"
+cask "homebrew/cask-fonts/font-caskaydia-cove-nerd-font"
 
 mas "1Password for Safari", id: 1569813296
 mas "AdGuard for Safari", id: 1440147259
 mas "Affinity Designer", id: 824171161
-mas "Affinity Photo", id: 824183456 unless is_tlnd 
-mas "Affinity Publisher", id: 881418622 unless is_tlnd 
+mas "Affinity Photo", id: 824183456 unless is_tlnd
+mas "Affinity Publisher", id: 881418622 unless is_tlnd
 mas "Grammarly: Writing App", id: 1462114288
 
 mas "Keynote", id: 409183694 unless is_tlnd
