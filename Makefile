@@ -1,20 +1,20 @@
-GRAY    := '\033[1;90m'
-NC      := '\033[0m'
+PATH := $(PATH):/opt/homebrew/bin
+SHELL := env PATH=$(PATH) /bin/bash
 
-message  = $(GRAY)">>> ===== "$(1)" ====="$(NC)
-
-CSHELL         := $(shell dscl . -read ~/ UserShell | sed 's/.*\/\(.*\)$$/\1/')
-
-.PHONY: all brew apps dotfiles emacs
+message  = " >>> ============ "$(1)" ============ <<< "
 
 # all
 # ==============================================================================
-all: brew apps dotfiles
+all: brew apps dotfiles tmux
+.PHONY: all dotfiles apps brew alacritty _alacritty emacs nvim _nvim tmux
 
 # dotfiles
 # ==============================================================================
-dotfiles:
-	@echo $(call message,"Linking dotfiles")
+CSHELL := $(shell dscl . -read ~/ UserShell | sed 's/.*\/\(.*\)$$/\1/')
+CONFIG_TARGET_DIR := $(abspath $(HOME)/.config)
+
+dotfiles: 
+	@echo $(call message,"Configuring prezto")
 ifneq ($(CSHELL),zsh)
 	@echo "Changing your shell to zsh"
 	@chsh -s /bin/zsh
@@ -26,23 +26,14 @@ ifeq (,$(wildcard $(HOME)/.zprezto))
 endif
 	@stow --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} dotfiles
 
+$(CONFIG_TARGET_DIR):
+	@mkdir -p $@
+
 # apps
 # ==============================================================================
 apps: brew
 	@echo $(call message,"Installing apps")
 	@brew bundle --file Brewfile
-
-# brew
-# ==============================================================================
-brew:
-ifneq (,$(shell which brew))
-	@echo $(call message,"Updating Homebrew")
-	@brew update && brew upgrade && brew upgrade --cask
-else
-	@echo $(call message,"Installing Homebrew")
-	@ruby -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-	@eval $(/opt/homebrew/bin/brew shellenv)
-endif
 
 # alacritty
 # ==============================================================================
@@ -56,6 +47,17 @@ _alacritty:
 	@-brew uninstall --cask alacritty
 	@brew autoremove
 	@stow -D --ignore=.DS_Store --target=${HOME}/.config alacritty
+
+# brew
+# ==============================================================================
+brew:
+ifneq (,$(shell which brew))
+	@echo $(call message,"Updating Homebrew")
+	@brew update && brew upgrade && brew upgrade --cask
+else
+	@echo $(call message,"Installing Homebrew")
+	@/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+endif
 
 # emacs
 # ==============================================================================
@@ -79,3 +81,8 @@ _nvim:
 	@stow -D --ignore=.DS_Store --target=${HOME}/.config nvim
 	@rm -rf ${HOME}/.local
 
+# tmux
+# ==============================================================================
+tmux: brew dotfiles
+	@echo $(call message,"Configuring tmux")
+	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config tmux
