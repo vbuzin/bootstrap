@@ -13,7 +13,7 @@ all: brew apps dotfiles tmux
 CSHELL := $(shell dscl . -read ~/ UserShell | sed 's/.*\/\(.*\)$$/\1/')
 CONFIG_TARGET_DIR := $(abspath $(HOME)/.config)
 
-dotfiles: 
+dotfiles: $(CONFIG_TARGET_DIR)
 	@echo $(call message,"Configuring prezto")
 ifneq ($(CSHELL),zsh)
 	@echo "Changing your shell to zsh"
@@ -86,3 +86,4 @@ _nvim:
 tmux: brew dotfiles
 	@echo $(call message,"Configuring tmux")
 	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config tmux
+

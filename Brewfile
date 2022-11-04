@@ -20,10 +20,8 @@ cask "figma"
 cask "firefox"
 cask "iterm2"
 cask "microsoft-office" unless is_home
-cask "notion"
 cask "protonvpn" unless is_tlnd
 cask "slack" unless is_home
-cask "tidal"
 cask "visual-studio-code"
 cask "zoom" unless is_tlnd # managed
 
@@ -37,7 +35,6 @@ mas "Affinity Designer", id: 824171161
 mas "Affinity Photo", id: 824183456 unless is_tlnd
 mas "Affinity Publisher", id: 881418622 unless is_tlnd
 mas "Grammarly: Writing App", id: 1462114288
-mas "Notion Web Clipper", id: 1559269364
 
 mas "Keynote", id: 409183694 unless is_tlnd
 mas "Numbers", id: 409203825 unless is_tlnd
