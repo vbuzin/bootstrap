@@ -31,9 +31,9 @@ cask "homebrew/cask-fonts/font-caskaydia-cove-nerd-font"
 
 mas "1Password for Safari", id: 1569813296
 mas "AdGuard for Safari", id: 1440147259
-mas "Affinity Designer", id: 824171161
-mas "Affinity Photo", id: 824183456 unless is_tlnd
-mas "Affinity Publisher", id: 881418622 unless is_tlnd
+mas "Affinity Designer 2", id: 1616831348
+mas "Affinity Photo 2", id: 1616822987 unless is_tlnd
+mas "Affinity Publisher 2", id: 1606941598 unless is_tlnd
 mas "Grammarly: Writing App", id: 1462114288
 
 mas "Keynote", id: 409183694 unless is_tlnd
