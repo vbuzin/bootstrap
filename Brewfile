@@ -14,6 +14,9 @@ brew "stow"
 brew "tmux"
 
 cask "1password"
+cask "affinity-designer"
+cask "affinity-photo" unless is_tlnd
+cask "affinity-publisher" unless is_tlnd
 cask "brave-browser"
 cask "docker"
 cask "figma"
@@ -31,9 +34,6 @@ cask "homebrew/cask-fonts/font-caskaydia-cove-nerd-font"
 
 mas "1Password for Safari", id: 1569813296
 mas "AdGuard for Safari", id: 1440147259
-mas "Affinity Designer 2", id: 1616831348
-mas "Affinity Photo 2", id: 1616822987 unless is_tlnd
-mas "Affinity Publisher 2", id: 1606941598 unless is_tlnd
 mas "Grammarly: Writing App", id: 1462114288
 
 mas "Keynote", id: 409183694 unless is_tlnd
