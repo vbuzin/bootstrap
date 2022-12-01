@@ -13,6 +13,8 @@ brew "ripgrep"
 brew "stow"
 brew "tmux"
 
+tap "homebrew/cask-versions"
+
 cask "1password"
 cask "affinity-designer"
 cask "affinity-photo" unless is_tlnd
