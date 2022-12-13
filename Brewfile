@@ -18,7 +18,7 @@ tap "homebrew/cask-versions"
 cask "1password"
 cask "affinity-designer"
 cask "affinity-photo" unless is_tlnd
-cask "affinity-publisher" unless is_tlnd
+cask "affinity-publisher" 
 cask "brave-browser"
 cask "docker"
 cask "figma"
