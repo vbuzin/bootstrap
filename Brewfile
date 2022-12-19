@@ -32,11 +32,11 @@ cask "zoom" unless is_tlnd # managed
 
 cask "homebrew/cask-drivers/logi-options-plus"
 cask "homebrew/cask-fonts/font-cascadia-code"
-cask "homebrew/cask-fonts/font-caskaydia-cove-nerd-font"
 
 mas "1Password for Safari", id: 1569813296
 mas "AdGuard for Safari", id: 1440147259
 mas "Grammarly: Writing App", id: 1462114288
+mas "iA Writer", id: 775737590
 
 mas "Keynote", id: 409183694 unless is_tlnd
 mas "Numbers", id: 409203825 unless is_tlnd
