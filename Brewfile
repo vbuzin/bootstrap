@@ -27,6 +27,7 @@ cask "iterm2"
 cask "microsoft-office" unless is_home
 cask "protonvpn" unless is_tlnd
 cask "slack" unless is_home
+cask "sporify"
 cask "visual-studio-code"
 cask "zoom" unless is_tlnd # managed
 
