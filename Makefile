@@ -34,6 +34,8 @@ $(CONFIG_TARGET_DIR):
 apps: brew
 	@echo $(call message,"Installing apps")
 	@brew bundle --file Brewfile
+	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config bat
+	@bat cache --build
 
 # alacritty
 # ==============================================================================
