@@ -31,7 +31,6 @@ cask "spotify"
 cask "visual-studio-code"
 cask "zoom" unless is_tlnd # managed
 
-cask "homebrew/cask-drivers/logi-options-plus"
 cask "homebrew/cask-fonts/font-cascadia-code"
 
 mas "1Password for Safari", id: 1569813296
