@@ -65,9 +65,16 @@ endif
 # ==============================================================================
 emacs: brew
 	@echo $(call message,"Installing and configuring Emacs")
-	@brew install emacs --cask
+	@brew install --cask emacs
 	@brew install aspell coreutils gnupg
 	@stow --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} emacs
+
+_emacs: brew
+	@echo $(call message,"Installing and configuring Emacs")
+	@brew uninstall --zap emacs
+	@brew uninstall aspell coreutils gnupg
+	@brew autoremove
+	@stow -D --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} emacs
 
 # nvim
 # ==============================================================================
