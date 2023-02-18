@@ -25,6 +25,7 @@ cask "figma"
 cask "firefox"
 cask "iterm2"
 cask "microsoft-office" unless is_home
+cask "pixelsnap" unless is_tlnd
 cask "protonvpn" unless is_tlnd
 cask "slack" unless is_home
 cask "spotify"
