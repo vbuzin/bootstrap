@@ -22,8 +22,9 @@ cask "affinity-publisher"
 cask "brave-browser"
 cask "docker"
 cask "figma"
-cask "firefox"
 cask "iterm2"
+cask "logi-options-plus"
+cask "lunar"
 cask "microsoft-office" unless is_home
 cask "pixelsnap" unless is_tlnd
 cask "protonvpn" unless is_tlnd
