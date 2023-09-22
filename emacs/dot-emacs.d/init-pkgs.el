@@ -1,4 +1,4 @@
-;;; -*- lexical-binding: t -*-
+;;; init-pkgs.el -*- lexical-binding: t; no-byte-compile: t; -*-
 
 ;;; Configure packages
 ;; =============================================================================
@@ -31,22 +31,23 @@
 ;; =============================================================================
 (use-package avy
   :bind
-  (("s-J" . avy-goto-char)
-   ("s-j" . avy-goto-char-2)))
+  (("s-j" . avy-goto-char)
+   ("s-J" . avy-goto-char-2)))
 
 (use-package anzu
   :hook (after-init . global-anzu-mode)
-  :bind (("M-%"   . anzu-query-replace)
-         ("C-M-%" . anzu-query-replace-regexp)))
+  :bind
+  (("M-%" . anzu-query-replace)
+   ("C-M-%" . anzu-query-replace-regexp)))
 
 (use-package beacon
   :init
   (beacon-mode 1)
-  :bind ("C-c b" . beacon-blink))
+  :bind ("C-` b" . beacon-blink))
 
 (use-package company
   :hook (after-init . global-company-mode)
-  :bind (("s-." . company-complete)
+  :bind (("s-/" . company-complete)
          :map company-active-map
          ([tab] . nil))
   :config
@@ -58,12 +59,12 @@
   (setq company-show-numbers t)
   (setq company-tooltip-align-annotations t))
 
-(use-package dash-at-point
-  :bind (("C-c d" . dash-at-point)
-         ("C-c D" . dash-at-point-with-docset)))
-
-(use-package dockerfile-mode
-  :mode "Dockerfile\\'")
+(use-package dired
+  :ensure nil
+  :config
+  (require'ls-lisp)
+  (setq ls-lisp-use-insert-directory-program nil)
+  (setq ls-lisp-dirs-first t))
 
 (use-package doom-modeline
   :hook (after-init . doom-modeline-mode)
@@ -72,7 +73,7 @@
   (setq doom-modeline-continuous-word-count-modes
         '(markdown-mode gfm-mode org-mode))
   (setq doom-modeline-enable-word-count t)
-  (setq doom-modeline-height 28)
+  (setq doom-modeline-height 24)
   (setq doom-modeline-icon nil)
   (setq doom-modeline-persp-name nil))
 
@@ -99,29 +100,6 @@
 (use-package duplicate-thing
   :bind ("s-d" . duplicate-thing))
 
-(use-package eterm-256color
-  :hook (term-mode . eterm-256color-mode))
-
-(use-package eshell
-  :ensure nil
-  :hook (eshell-mode .
-            (lambda ()
-              (eshell-cmpl-initialize)
-              (define-key eshell-mode-map [remap eshell-pcomplete] 'helm-esh-pcomplete)
-              (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)))
-  :config
-  (setq eshell-destroy-buffer-when-process-dies t)
-  (setq eshell-hist-ignoredups t)
-  (setq eshell-prompt-regexp "^[^#$\n]*[#$] "
-        eshell-prompt-function
-        (lambda nil
-          (concat
-           "[" (user-login-name) "@" (system-name) " "
-           (if (string= (eshell/pwd) (getenv "HOME"))
-               "~" (eshell/basename (eshell/pwd)))
-           "]"
-           (if (= (user-uid) 0) "# " "$ ")))))
-
 (use-package expand-region
   :bind (("s-=" . er/expand-region)
          ("s--" . er/contract-region)))
@@ -133,24 +111,6 @@
         #'flycheck-display-error-messages-unless-error-list)
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
-(use-package flyspell
-  :hook ((org-mode  . flyspell-mode)
-         (prog-mode . flyspell-prog-mode))
-  :ensure nil
-  :config
-  (use-package flyspell-correct
-    :after flyspell
-    :bind (:map flyspell-mode-map ("C-;" . flyspell-correct-wrapper)))
-
-  (when (executable-find "aspell")
-    (require 'ispell)
-    (progn
-      (setq ispell-program-name "aspell")
-      (setq ispell-list-command "--list")
-
-      (add-to-list 'ispell-extra-args "--sug-mode=ultra")
-      (add-to-list 'ispell-extra-args "--lang=en_UK"))))
-
 (use-package fringe-current-line
   :demand t
   :config
@@ -159,34 +119,30 @@
 (use-package helm
   :hook (after-init . helm-mode)
   :bind
-  (("M-x"   . helm-M-x)
-   ("C-h a" . helm-apropos)
+  (("C-h a" . helm-apropos)
    ("C-h I" . helm-info)
-   ("C-x b" . helm-buffers-list)
 
-   ("s-/"   . helm-mini)
-   ("s-f"   . helm-find-files)
-   ("s-g"   . helm-do-grep-ag)
-   ("s-I"   . helm-imenu-in-all-buffers)
-   ("s-i"   . helm-semantic-or-imenu)
-   ("s-m"   . helm-all-mark-rings)
-   ("s-o"   . helm-occur)
-   ("s-r"   . helm-resume)
-   ("s-y"   . helm-show-kill-ring)
+   ("C-` c" . helm-resume)
+   ("C-` b" . helm-filtered-bookmarks)
+   ("C-` f" . helm-find)
+   ("C-` g" . helm-do-grep-ag)
 
+   ("s-f" . helm-find-files)
+   ("s-b" . helm-mini)
+   ("s-i" . helm-semantic-or-imenu)
+   ("s-m" . helm-all-mark-rings)
+   ("s-o" . helm-occur)
+   ("s-y" . helm-show-kill-ring)
+
+   ([remap execute-extended-command] . helm-M-x)
    ([remap find-file] . helm-find-files))
-  :custom
-  (helm-completion-style 'emacs)
+
   :config
   (use-package helm-descbinds      :bind ("C-h b" . helm-descbinds))
   (use-package helm-describe-modes :bind ("C-h m" . helm-describe-modes))
-  (use-package helm-c-yasnippet
-    :bind
-    ("C-c y" . helm-yas-complete)
-    :config
-    (setq helm-yas-space-match-any-greedy t))
 
   (setq completion-styles '(flex))
+  (setq helm-candidate-number-limit 100)
   (setq helm-ff-file-name-history-use-recentf t)
   (setq helm-grep-ag-command "rg --color=always --colors \
 'match:fg:magenta' --smart-case --no-heading --line-number %s %s %s")
@@ -194,7 +150,9 @@
   (setq helm-split-window-default-side 'same)
 
   (helm-mode t)
-  (helm-adaptive-mode t))
+  (helm-adaptive-mode t)
+
+  (add-to-list 'helm-mini-default-sources 'helm-source-files-in-current-dir t))
 
 (use-package helpful
   :bind
@@ -207,24 +165,16 @@
 (use-package indent-guide
   :hook (prog-mode . indent-guide-mode))
 
-(use-package lsp-mode
-  :commands lsp lsp-deferred
-  :hook (lsp-mode . lsp-enable-which-key-integration)
-  :config
-  (setq lsp-rust-analyzer-cargo-watch-command "clippy")
-  (setq lsp-prefer-flymake nil) ;; prefer flycheck.
-  (lsp-enable-imenu))
-
 (use-package magit
   :config
   (magit-auto-revert-mode t)
   (setq magit-diff-refine-hunk 'all)
   :bind
-  (("C-c ms" . magit-status)
-   ("C-c ml" . magit-log-all)
-   ("C-c mb" . magit-blame-addition)
-   ("C-c md" . magit-dispatch)
-   ("C-c mf" . magit-file-popup)))
+  (("C-` ms" . magit-status)
+   ("C-` ml" . magit-log-all)
+   ("C-` mb" . magit-blame-addition)
+   ("C-` md" . magit-dispatch)
+   ("C-` mf" . magit-file-popup)))
 
 (use-package move-text
   :bind (("M-S-<up>"   . move-text-up)
@@ -239,19 +189,6 @@
   :hook
   ((prog-mode . rainbow-mode)))
 
-;; Rust
-(use-package rustic
-  :hook (rustic-mode . lsp-deferred)
-  :mode ("\\.rs\\'"  . rustic-mode)
-  :custom
-  ;; use nord colors
-  (rustic-ansi-faces xterm-color-names)
-  :config
-  (add-to-list 'flycheck-checkers 'rustic-clippy)
-  (setq rustic-lsp-server 'rust-analyzer)
-  (setq rustic-flycheck-clippy-params "--message-format=json")
-  (setq rustic-format-on-save t))
-
 (use-package recentf
   :ensure nil
   :config
@@ -261,9 +198,6 @@
   (add-to-list 'recentf-exclude (expand-file-name package-user-dir))
   (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\|ftp\\)?:")
   (add-to-list 'recentf-exclude (file-name-directory (car (last load-path)))))
-
-(use-package register-list
-  :bind ("C-x r L" . register-list))
 
 (use-package shackle
   :hook (after-init . shackle-mode)
@@ -284,21 +218,14 @@
   (setq shackle-rules
         '(("CAPTURE-.*+\\.org$?\\|*Org Select*" :regexp t :same t)
           ("*Capture*" :same t)
-          (Info-mode :same t)
           (completion-list-mode :same t)
+          (Info-mode :same t)
           (help-mode :same t)
           (helpful-mode :same t))))
 
 (use-package shrink-whitespace
-  :bind ("C-c ." . shrink-whitespace))
-
-(use-package term
-  :ensure nil
-  :hook (term-mode . (lambda ()
-                       (make-local-variable 'scroll-margin)
-                       (setq scroll-margin 0)))
-  :config
-  (setq explicit-shell-file-name "/bin/zsh"))
+  :bind
+  ("C-` ." . shrink-whitespace))
 
 (use-package vlf
   :config
@@ -306,26 +233,17 @@
   (setq vlf-application 'dont-ask))
 
 (use-package which-key
-  :init
-  (which-key-mode)
+  :demand t
   :config
-  (setq which-key-side-window-max-width 0.8)
-  (setq which-key-popup-type 'side-window)
-  (setq which-key-side-window-location 'right)
-  (setq which-key-max-display-columns 1)
-  (setq which-key-max-description-length 40))
-
-(use-package yaml-mode
-  :mode "\\.yml\\'")
+  (which-key-mode)
+  (which-key-setup-side-window-right))
 
 (use-package yasnippet
   :defer 1
   :config
-  (setq yas-verbosity 1) ; No need to be so verbose
+  (setq yas-verbosity 1)
   (setq yas-wrap-around-region t)
   (yas-global-mode)
   (yas-reload-all))
 
-;; Local Variables:
-;; byte-compile-warnings: (not free-vars)
-;; End:
+;;; end of init-pkgs.el

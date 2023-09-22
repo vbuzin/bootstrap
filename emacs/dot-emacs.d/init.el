@@ -1,80 +1,40 @@
-;;; Env and some defaults
+;;; init.el -*- lexical-binding: t; no-byte-compile: t; -*-
+
+;;; Env
 ;; =============================================================================
-(if (find-font (font-spec :name "Cascadia Code"))
-    (push '(font . "Cascadia Code-14") default-frame-alist))
-
-(setenv "LANG"   "en_US.UTF-8")
-(setenv "LC_ALL" "en_US.UTF-8")
-
-;; fixing env on macs
-(setenv "PATH"
-        (concat
-         (getenv "PATH")
-         (concat ":" (expand-file-name "~/bin"))
-         (concat ":" (expand-file-name "~/.local/bin"))
-         (concat ":" (expand-file-name "~/.cargo/bin"))
-         ":/usr/local/bin"
-         ":/usr/local/sbin"
-         ":/opt/homebrew/bin/"
-         ":/Library/TeX/texbin"))
-
-(setq exec-path (split-string (getenv "PATH") ":"))
-
-;; remaping cmd, fn and option keys
-(setq mac-command-modifier 'super
-      mac-option-modifier  'meta
-      ns-function-modifier 'hyper)  ; make Fn key do Hyper
-
-(setq ns-use-proxy-icon nil
-      frame-title-format " ")
+(set-language-environment "UTF-8")
+(setq default-input-method nil) ;; the previous sets this one which we don't want
 
 (setq default-directory "~/")
 
-(setq-default cursor-type 'hbar)
-(setq-default line-spacing 2)
-(setq-default fill-column 80)
-
-;;; Place all auto-saves and backups in the temp directory
-;; =============================================================================
-(defconst vb:cfg-tmp-dir
+;; place all auto-saves and backups in the temp directory
+(defconst my:cfg-tmp-dir
   (expand-file-name
    (format "emacs%d" (user-uid)) temporary-file-directory))
 
-(setq backup-directory-alist `((".*" . ,vb:cfg-tmp-dir))
-      auto-save-file-name-transforms `((".*" ,vb:cfg-tmp-dir t))
-      auto-save-list-file-prefix vb:cfg-tmp-dir)
+(setq backup-directory-alist `((".*" . ,my:cfg-tmp-dir))
+      auto-save-file-name-transforms `((".*" ,my:cfg-tmp-dir t))
+      auto-save-list-file-prefix my:cfg-tmp-dir)
 
 ;;; Misc
 ;; =============================================================================
+;; remaping cmd, fn and option keys
+(setq mac-command-modifier 'super
+      mac-option-modifier  'meta)
 
 ;; protect the `*scratch*' and `*Messages*’ buffers.
 (with-current-buffer "*scratch*" (emacs-lock-mode 'kill))
 (with-current-buffer "*Messages*" (emacs-lock-mode 'kill))
-
-;; if using coreutils
-(when (executable-find "gls")
-  (setq insert-directory-program "gls"
-        dired-use-ls-dired t
-        dired-listing-switches "-ADFGXclh --group-directories-first")
-
-  (add-hook 'dired-mode-hook '(lambda () (setq mode-name "Dired"))))
 
 ;; move between windows with super+arrow
 (when (fboundp 'windmove-default-keybindings)
   (windmove-default-keybindings 'super))
 
 ;; better scrolling
-(setq scroll-margin 5
-      hscroll-step 1
-      scroll-conservatively 100000
-      scroll-preserve-screen-position t
-      mouse-wheel-scroll-amount '(3 ((shift) . 1) ((control) . nil))
-      mouse-wheel-progressive-speed nil)
-
 (setq Man-notify-method 'bully)
-(setq auth-sources '("~/.authinfo" "~/.authinfo.gpg" "~/.netrc")
-      ange-ftp-netrc-filename auth-sources)
-(setq compilation-scroll-output t)
+(setq confirm-kill-emacs 'y-or-n-p)
+(setq display-line-numbers-type 'relative)
+(setq display-time-format " %I:%M%p ")(setq compilation-scroll-output t)
 (setq confirm-kill-emacs 'y-or-n-p)
 (setq display-line-numbers-type 'relative)
 (setq display-time-default-load-average nil)
@@ -91,7 +51,11 @@
 (setq reb-re-syntax 'string)
 (setq require-final-newline t)
 (setq ring-bell-function 'ignore)
+(setq pixel-scroll-precision-mode t)
 (setq save-interprogram-paste-before-kill t)
+(setq scroll-conservatively 100000)
+(setq scroll-margin 5)
+(setq scroll-preserve-screen-position t)
 (setq set-mark-command-repeat-pop t)
 (setq shell-file-name "zsh")
 (setq split-width-threshold nil)
@@ -123,13 +87,9 @@
 (save-place-mode t)              ;; open a file at the last place visited
 (show-paren-mode t)              ;; visualise matching parens
 (which-function-mode t)          ;; displays current function name in the mode line
-(winner-mode t)                  ;; record/restor window configuration
 
 ;; enable line numbers for prog modes
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-
-;; use utf-8
-(prefer-coding-system 'utf-8-unix)
 
 ;; calendar
 (setq calendar-date-style 'european)
@@ -164,7 +124,6 @@
 
 ;;; Loading the rest
 ;; =============================================================================
-
 ;; keep custom stuff out
 (setq custom-file (expand-file-name "init-custom.el" user-emacs-directory))
 
@@ -177,9 +136,6 @@
        "init-custom"
        "init-pkgs"
        "init-org"
-       "init-keys"
-       ))
+       "init-keys"))
 
-;; Local Variables:
-;; byte-compile-warnings: (not free-vars)
-;; End:
+;;; end of init.el
