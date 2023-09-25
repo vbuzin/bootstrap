@@ -150,9 +150,7 @@
   (setq helm-split-window-default-side 'same)
 
   (helm-mode t)
-  (helm-adaptive-mode t)
-
-  (add-to-list 'helm-mini-default-sources 'helm-source-files-in-current-dir t))
+  (helm-adaptive-mode t))
 
 (use-package helpful
   :bind
