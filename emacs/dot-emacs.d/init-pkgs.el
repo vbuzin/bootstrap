@@ -66,8 +66,11 @@
   (setq ls-lisp-use-insert-directory-program nil)
   (setq ls-lisp-dirs-first t))
 
+(use-package dockerfile-mode)
+
 (use-package doom-modeline
-  :hook (after-init . doom-modeline-mode)
+  :hook
+  (after-init . doom-modeline-mode)
   :config
   (setq doom-modeline-buffer-state-icon nil)
   (setq doom-modeline-continuous-word-count-modes
@@ -93,7 +96,7 @@
      `(helm-header ((t (:height ,scale :box (:line-width ,stroke :color ,bg)))))
      `(helm-source-header ((t (:background nil :weight semi-bold))))))
 
-  (setq doom-themes-enable-bold nil
+  (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
   (doom-themes-org-config))
 

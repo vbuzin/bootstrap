@@ -26,13 +26,11 @@
       inhibit-startup-screen t
       initial-scratch-message nil)
 
-(set-face-attribute 'default nil :family "Cascadia Code" :height 140)
+(setq initial-frame-alist '((width . 138) (height . 48)))
 
-(let ((my:default-font "Cascadia Code"))
-  (when (find-font (font-spec :name my:default-font))
-    (set-face-attribute 'default nil :family my:default-font :height 140)
-    (copy-face 'default 'variable-pitch)
-    (copy-face 'default 'fixed-pitch)))
+(set-face-attribute 'default nil :family "Cascadia Code" :height 140)
+(copy-face 'default 'variable-pitch)
+(copy-face 'default 'fixed-pitch)
 
 (setq ns-use-proxy-icon nil
       frame-title-format " ")
@@ -47,7 +45,6 @@
       '((ns-appearance . dark)
         (ns-transparent-titlebar . t)))
 
-(setq initial-frame-alist '((width . 138) (height . 48)))
 
 ;;; Server mode
 ;; =============================================================================

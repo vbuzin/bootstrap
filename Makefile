@@ -6,7 +6,7 @@ message  = " >>> ============ "$(1)" ============ <<< "
 # all
 # ==============================================================================
 all: brew apps dotfiles tmux
-.PHONY: all dotfiles apps brew alacritty _alacritty emacs nvim _nvim tmux
+.PHONY: all dotfiles apps brew alacritty _alacritty emacs _emacs nvim _nvim tmux
 
 # dotfiles
 # ==============================================================================
@@ -36,9 +36,6 @@ apps: brew
 	@brew bundle --file Brewfile
 	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config bat
 	@bat cache --build
-
-$(CONFIG_TARGET_DIR):
-	@mkdir -p $@
 
 # alacritty
 # ==============================================================================
