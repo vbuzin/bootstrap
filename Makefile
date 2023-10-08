@@ -37,6 +37,9 @@ apps: brew
 	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config bat
 	@bat cache --build
 
+$(CONFIG_TARGET_DIR):
+	@mkdir -p $@
+
 # alacritty
 # ==============================================================================
 alacritty: brew dotfiles
@@ -66,13 +69,13 @@ endif
 emacs: brew
 	@echo $(call message,"Installing and configuring Emacs")
 	@brew install --cask emacs
-	@brew install aspell coreutils gnupg
+	@brew install gnupg
 	@stow --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} emacs
 
 _emacs: brew
 	@echo $(call message,"Installing and configuring Emacs")
 	@brew uninstall --zap emacs
-	@brew uninstall aspell coreutils gnupg
+	@brew uninstall gnupg
 	@brew autoremove
 	@stow -D --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} emacs
 
