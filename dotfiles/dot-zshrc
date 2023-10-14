@@ -10,7 +10,6 @@ fi
 ### aliases
 alias ea="exa -la --group-directories-first"
 alias eat="exa -laT --group-directories-first"
-
 ### aliases
 
 # Bat
@@ -21,10 +20,10 @@ export BAT_THEME="tokyonight"
 
 export FZF_DEFAULT_COMMAND="fd --type f"
 
-export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS' 
-   --color=fg:#c5cdd9,bg:#2b2f43,hl:#6cb6eb 
-   --color=fg+:#c5cdd9,bg+:#2b2f43,hl+:#5dbbc1 
-   --color=info:#88909f,prompt:#ec7279,pointer:#d38aea 
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+   --color=fg:#c5cdd9,bg:#2b2f43,hl:#6cb6eb
+   --color=fg+:#c5cdd9,bg+:#2b2f43,hl+:#5dbbc1
+   --color=info:#88909f,prompt:#ec7279,pointer:#d38aea
    --color=marker:#a0c980,spinner:#ec7279,header:#5dbbc1'
 
 irg() {

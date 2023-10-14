@@ -80,12 +80,12 @@ _emacs: brew
 # ==============================================================================
 nvim: brew dotfiles
 	@echo $(call message,"Installing and configuring Nvim")
-	@brew install neovim stylua
+	@brew install neovim
 	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config nvim
 
 _nvim:
 	@echo $(call message,"Unistalling Nvim and dependencies")
-	@-brew uninstall neovim stylua
+	@-brew uninstall neovim
 	@brew autoremove
 	@stow -D --ignore=.DS_Store --target=${HOME}/.config nvim
 	@rm -rf ${HOME}/.local

@@ -13,19 +13,30 @@ end
 local packer_bootstrap = ensure_packer()
 
 return require('packer').startup(function(use)
-    use 'wbthomason/packer.nvim'
-
     use 'folke/tokyonight.nvim'
-
-    use 'nvim-lualine/lualine.nvim'
-
-    use 'mbbill/undotree'
-
     use 'folke/which-key.nvim'
-
     use 'kylechui/nvim-surround'
-
-    use 'neovim/nvim-lspconfig'
+    use 'lewis6991/gitsigns.nvim'
+    use 'lukas-reineke/indent-blankline.nvim'
+    use 'mbbill/undotree'
+    use {
+        'NeogitOrg/neogit',
+        requires = {
+            'nvim-lua/plenary.nvim'
+        }
+    }
+    use {
+        'neovim/nvim-lspconfig',
+        requires = {
+            -- Automatically install LSPs to stdpath for neovim
+            'williamboman/mason.nvim',
+            'williamboman/mason-lspconfig.nvim'
+        }
+    }
+    use 'numToStr/Comment.nvim'
+    use 'nvim-lualine/lualine.nvim'
+    use 'wbthomason/packer.nvim'
+    use 'windwp/nvim-autopairs'
 
     -- Completion
     use 'hrsh7th/cmp-nvim-lsp'
