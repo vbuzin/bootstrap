@@ -13,6 +13,8 @@ end
 local packer_bootstrap = ensure_packer()
 
 return require('packer').startup(function(use)
+    use 'wbthomason/packer.nvim'
+
     use 'folke/tokyonight.nvim'
     use 'folke/which-key.nvim'
     use 'kylechui/nvim-surround'
@@ -35,7 +37,6 @@ return require('packer').startup(function(use)
     }
     use 'numToStr/Comment.nvim'
     use 'nvim-lualine/lualine.nvim'
-    use 'wbthomason/packer.nvim'
     use 'windwp/nvim-autopairs'
 
     -- Completion
