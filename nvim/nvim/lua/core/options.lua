@@ -12,19 +12,18 @@ end
 opt.timeout = true
 opt.timeoutlen = 700
 
-opt.termguicolors = true
-
 opt.tabstop = 4
 opt.softtabstop = 4
 opt.shiftwidth = 4
 opt.expandtab = true
 
+opt.cursorline = true
 opt.incsearch = true
-opt.smartcase = true
-
 opt.number = true
 opt.relativenumber = true
-
-opt.cursorline = true
+opt.smartcase = true
 opt.smartindent = true
+opt.termguicolors = true
+opt.wildmode = 'longest,list,full'
+opt.wildoptions = 'pum'
 opt.wrap = false
