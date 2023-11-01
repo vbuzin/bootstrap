@@ -1,14 +1,15 @@
 " -- General -----------------------------------------------------------------
-" Use Vim settings, rather than Vi settings (much better!).
-" This must be first, because it changes other options as a side effect.
 if &compatible
   set nocompatible
 endif
 
-" Determine the file type name and possibly its contents.
-if has('filetype')
-  filetype indent plugin on
-endif
+filetype indent plugin on
+syntax on
+
+set termguicolors
+
+colorscheme sorbet
+hi Normal guibg=NONE ctermbg=NONE
 
 " Position the cursor, visually select and scroll with the mouse.
 if has('mouse')
@@ -85,18 +86,10 @@ else
 endif
 
 " -- Line numbers ------------------------------------------------------------
-
 set number relativenumber " turn line numbering on at startup
 
-highlight LineNR ctermfg=245
-highlight CursorLineNR ctermfg=245
-
 " -- Searching ---------------------------------------------------------------
-
 set ignorecase
 set incsearch
 set nowrapscan
 set smartcase
-
-" -- Keys --------------------------------------------------------------------
-map Q gq " do formatting with Q

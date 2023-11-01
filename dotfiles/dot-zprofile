@@ -28,7 +28,9 @@ export LC_ALL=en_US.UTF-8
 typeset -gU cdpath fpath mailpath path
 
 # Completion paths
-fpath+=(/opt/homebrew/share/zsh/site-functions)
+if type brew &>/dev/null; then
+    fpath+=($(brew --prefix)/share/zsh/site-functions)
+fi
 
 # Set the list of directories that cd searches.
 # cdpath=(
