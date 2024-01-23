@@ -1,0 +1,8 @@
+/* #282c33 */
+@-moz-document url("about:newtab"), url("about:home"), url("about:firefoxview-next") {
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --newtab-background-color: 282c33 !important;
+    }
+  }
+}

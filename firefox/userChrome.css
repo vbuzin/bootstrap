@@ -11,3 +11,7 @@
  .tabbrowser-tab:not([selected]):not([pinned]):hover .tab-close-button {
   display: -moz-inline-box !important;
 }
+
+.browserContainer {
+  background-color: #282c33 !important;
+}
