@@ -7,11 +7,14 @@
 }
 
 /* show close button on hover */
-#tabbrowser-tabs[closebuttons="activetab"]
- .tabbrowser-tab:not([selected]):not([pinned]):hover .tab-close-button {
-  display: -moz-inline-box !important;
+.tabbrowser-tab:not([pinned]) .tab-close-button {
+  display: none !important
+}
+
+.tabbrowser-tab:not([pinned]):hover .tab-close-button {
+  display: inline-flex !important
 }
 
 .browserContainer {
-  background-color: #282c33 !important;
+  background-color: #101014 !important;
 }
