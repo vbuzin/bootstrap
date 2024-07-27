@@ -3,7 +3,7 @@ hostname = `hostname -s`.strip
 is_home = (hostname == "vbmaca")
 
 brew "bat"
-brew "exa"
+brew "eza"
 brew "fd"
 brew "fzf"
 brew "mas"
@@ -27,7 +27,6 @@ cask "homebrew/cask-fonts/font-cascadia-code"
 
 mas "1Password for Safari", id: 1569813296
 mas "1Blocker - Ad Blocker", id: 1365531024
-mas "Grammarly: Writing App", id: 1462114288
 
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825
