@@ -12,22 +12,11 @@ brew "ripgrep"
 brew "stow"
 brew "tmux"
 
-tap "homebrew/cask-versions"
-
 cask "1password"
+cask "1password-cli"
 cask "affinity-designer"
 cask "brave-browser"
-cask "docker"
+cask "font-cascadia-code"
 cask "iterm2"
-cask "logi-options-plus"
+cask "logi-options+"
 cask "protonvpn"
-cask "visual-studio-code"
-
-cask "homebrew/cask-fonts/font-cascadia-code"
-
-mas "1Password for Safari", id: 1569813296
-mas "1Blocker - Ad Blocker", id: 1365531024
-
-mas "Keynote", id: 409183694
-mas "Numbers", id: 409203825
-mas "Pages", id: 409201541
