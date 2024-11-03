@@ -6,3 +6,12 @@
     }
   }
 }
+
+@-moz-document url(about:privatebrowsing) {
+  :root {
+      --in-content-page-background: #101014 !important;
+  }
+  div.showPrivate.showSearch.container {
+    display: none;
+  }
+}
