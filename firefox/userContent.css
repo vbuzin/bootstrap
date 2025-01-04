@@ -1,17 +1,24 @@
-/* #282c33 */
-@-moz-document url("about:newtab"), url("about:home"), url("about:preferences"), url("about:firefoxview-next") {
+@-moz-document 
+  url("about:addons"),
+  url("about:firefoxview"),
+  url("about:home"),
+  url("about:newtab"),
+  url("about:preferences"),
+  url("about:support") {
   @media (prefers-color-scheme: dark) {
     :root {
       --newtab-background-color: #101014 !important;
+      --newtab-background-color-secondary: #101014 !important;
       --in-content-page-background: #101014 !important;
     }
   }
 }
 
-@-moz-document url(about:privatebrowsing) {
+@-moz-document url(about:privatebrowsing){
   :root {
-      --in-content-page-background: #101014 !important;
+    --in-content-page-background: #101014 !important;
   }
+
   div.showPrivate.showSearch.container {
     display: none;
   }

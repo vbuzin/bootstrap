@@ -3,7 +3,11 @@
 }
 
 #navigator-toolbox {
-    font-family: "-apple-system" !important
+    font-family: "-apple-system" !important;
+}
+
+#alltabs-button {
+    display: none !important;
 }
 
 /* show close button on hover */
