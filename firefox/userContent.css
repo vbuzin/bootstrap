@@ -4,6 +4,9 @@
   url("about:home"),
   url("about:newtab"),
   url("about:preferences"),
+  url("about:processes"),
+  url("about:profiles"),
+  url("about:memory"),
   url("about:support") {
   @media (prefers-color-scheme: dark) {
     :root {
