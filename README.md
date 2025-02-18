@@ -5,7 +5,16 @@
 </p>
 
 ---
-The ultimate purpose is to automate configuration of my laptop(s) and keep them in sync.
+This project is a personal configuration repository. It includes configuration files and scripts for various tools and applications such as:
+
+- Terminal emulators (Alacritty, iTerm2)
+- Shell configuration (Zsh with Prezto)
+- Text editors (Neovim, Emacs, Vim)
+- Version control (Git)
+- Package management (Homebrew)
+- Other utilities (fzf, bat, tmux)
+
+The project uses GNU Stow to manage dotfiles and includes a Makefile to automate the installation and configuration process. The ultimate purpose is to simplify the initial setup of my machines.
 
 <p align="center">Copyright &copy; 2019-present Slava Buzin</p>
 
