@@ -6,6 +6,13 @@
     display: none !important;
 }
 
+#alltabs-button,
+#nav-bar-customization-target #vertical-spacer,
+#page-action-buttons #picture-in-picture-button,
+#page-action-buttons #pageAction-urlbar-_testpilot-containers {
+    display: none !important;
+}
+
 #tabbrowser-tabs {
   &:is([expanded]), :is([orient=horizontal]) {
     .tabbrowser-tab:not([pinned]) .tab-close-button { 
@@ -18,6 +25,10 @@
   }
 }
 
+#tabbrowser-tabbox {
+  box-shadow: none !important;
+}
+
 .browserContainer {
-  background-color: #101014 !important;
+  background-color: #292c33 !important;
 }
