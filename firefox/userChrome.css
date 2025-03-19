@@ -29,6 +29,8 @@
   box-shadow: none !important;
 }
 
+browser[type="content-primary"], 
+browser[type="content"], 
 .browserContainer {
-  background-color: #292c33 !important;
+  background-color: #1C1D1D !important;
 }

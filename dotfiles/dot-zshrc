@@ -13,7 +13,7 @@ alias eat="eza -laT --group-directories-first"
 ### aliases
 
 # Bat
-export BAT_THEME="tokyonight"
+export BAT_THEME="TwoDark"
 
 # fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

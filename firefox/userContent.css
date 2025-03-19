@@ -7,19 +7,20 @@
   url("about:processes"),
   url("about:profiles"),
   url("about:memory"),
+  url("about:config"),
   url("about:support") {
   @media (prefers-color-scheme: dark) {
     :root {
-      --newtab-background-color: #101014 !important;
-      --newtab-background-color-secondary: #101014 !important;
-      --in-content-page-background: #101014 !important;
+      --newtab-background-color: #1C1D1D !important;
+      --newtab-background-color-secondary: #1C1D1D !important;
+      --in-content-page-background: #1C1D1D !important;
     }
   }
 }
 
 @-moz-document url(about:privatebrowsing){
   :root {
-    --in-content-page-background: #101014 !important;
+    --in-content-page-background: #1C1D1D !important;
   }
 
   div.showPrivate.showSearch.container {
