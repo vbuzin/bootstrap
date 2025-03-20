@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "version": "1.0.0",
+  "name": "Mostly Flat",
+  "theme": {
+    "colors": {
+      "bookmark_text": [ 253, 253, 253 ],
+      "button_background": [ 59, 59, 63 ],
+      "frame": [ 32, 33, 36 ],
+      "frame_overlay": [ 82, 82, 86 ],
+      "omnibox_background": [ 32, 33, 36 ],
+      "omnibox_text": [ 253, 253, 253 ],
+      "tab_background_text": [ 253, 253, 253 ],
+      "tab_text": [ 253, 253, 253 ],
+      "toolbar_button_icon": [ 253, 253, 253 ],
+      "toolbar_text": [ 187, 188, 188 ],
+      "toolbar": [ 59, 59, 63 ]
+    },
+    "tints": {
+      "buttons": [ 0.5, 0.006999999999999999, 0.735 ]
+    }
+  }
+}
