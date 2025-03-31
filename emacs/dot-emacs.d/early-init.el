@@ -26,11 +26,10 @@
       inhibit-startup-screen t
       initial-scratch-message nil)
 
-(setq initial-frame-alist '((width . 138) (height . 48)))
-
-(set-face-attribute 'default nil :family "Cascadia Code" :height 140)
-(copy-face 'default 'variable-pitch)
+(set-face-attribute 'default nil :family "SF Mono" :height 150)
 (copy-face 'default 'fixed-pitch)
+(copy-face 'default 'fixed-pitch-serif)
+(copy-face 'default 'variable-pitch)
 
 (setq ns-use-proxy-icon nil
       frame-title-format " ")
@@ -45,6 +44,7 @@
       '((ns-appearance . dark)
         (ns-transparent-titlebar . t)))
 
+(defun display-startup-echo-area-message () "Do nothing.")
 
 ;;; Server mode
 ;; =============================================================================

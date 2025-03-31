@@ -34,7 +34,8 @@
 (setq Man-notify-method 'bully)
 (setq confirm-kill-emacs 'y-or-n-p)
 (setq display-line-numbers-type 'relative)
-(setq display-time-format " %I:%M%p ")(setq compilation-scroll-output t)
+(setq display-time-format " %I:%M%p ")
+(setq compilation-scroll-output t)
 (setq confirm-kill-emacs 'y-or-n-p)
 (setq display-line-numbers-type 'relative)
 (setq display-time-default-load-average nil)
@@ -62,6 +63,7 @@
 (setq tab-stop-list (number-sequence 4 200 4))
 (setq use-dialog-box nil)
 (setq vc-follow-symlinks t)
+(setq which-key-side-window-location 'right)
 
 (setq-default indent-tabs-mode nil)
 (setq-default indicate-empty-lines t)
@@ -69,6 +71,7 @@
 (setq-default truncate-lines t)
 
 ;; mode line settings
+(delete-selection-mode t)
 (line-number-mode t)
 (column-number-mode t)
 (size-indication-mode t)
@@ -87,6 +90,7 @@
 (save-place-mode t)              ;; open a file at the last place visited
 (show-paren-mode t)              ;; visualise matching parens
 (which-function-mode t)          ;; displays current function name in the mode line
+(which-key-mode t)               ;; show keybinding for the mode after 1 sec
 
 ;; enable line numbers for prog modes
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
@@ -119,8 +123,8 @@
         upcase-region))
 
 ;; cleanup on save
+(setq whitespace-style '(trailing missing-newline-at-eof))
 (add-hook 'before-save-hook 'whitespace-cleanup)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;;; Loading the rest
 ;; =============================================================================
@@ -135,7 +139,8 @@
       (list
        "init-custom"
        "init-pkgs"
-       "init-org"
-       "init-keys"))
+;       "init-org"
+       "init-keys"
+       ))
 
 ;;; end of init.el

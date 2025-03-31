@@ -72,7 +72,7 @@ emacs: brew
 _emacs: brew
 	@echo $(call message,"Installing and configuring Emacs")
 	@brew uninstall --zap emacs
-	@brew uninstall gnupg
+	@brew uninstall --zap gnupg
 	@brew autoremove
 	@stow -D --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} emacs
 

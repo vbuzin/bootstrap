@@ -26,7 +26,7 @@ and kill the buffer in it also."
 (global-set-key (kbd "s-0") 'text-scale-adjust) ;; font size
 (global-set-key (kbd "s-k") 'my/close-and-kill-this-pane)
 
-(global-set-key [remap fill-paragraph] #'vb/fill-or-unfill)
+(global-set-key [remap fill-paragraph] #'my/fill-or-unfill)
 
 ;;; registers
 (set-register ?e `(file . ,user-emacs-directory))

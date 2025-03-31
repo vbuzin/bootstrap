@@ -29,83 +29,58 @@
 
 ;;; Core packages
 ;; =============================================================================
-(use-package avy
-  :bind
-  (("s-j" . avy-goto-char)
-   ("s-J" . avy-goto-char-2)))
-
-(use-package anzu
-  :hook (after-init . global-anzu-mode)
-  :bind
-  (("M-%" . anzu-query-replace)
-   ("C-M-%" . anzu-query-replace-regexp)))
-
-(use-package beacon
-  :init
-  (beacon-mode 1)
-  :bind ("C-` b" . beacon-blink))
-
 (use-package company
-  :hook (after-init . global-company-mode)
+  :hook (prog-mode . company-mode)
   :bind (("s-/" . company-complete)
          :map company-active-map
          ([tab] . nil))
   :config
-  (setq company-dabbrev-code-ignore-case nil)
-  (setq company-dabbrev-downcase nil)
-  (setq company-dabbrev-ignore-case nil)
-  (setq company-idle-delay 0)
   (setq company-require-match nil)
   (setq company-show-numbers t)
   (setq company-tooltip-align-annotations t))
 
-(use-package dired
+(use-package desktop
+  :init
+  (desktop-save-mode t)
   :ensure nil
   :config
-  (require'ls-lisp)
-  (setq ls-lisp-use-insert-directory-program nil)
-  (setq ls-lisp-dirs-first t))
-
-(use-package dockerfile-mode)
-
-(use-package doom-modeline
-  :hook
-  (after-init . doom-modeline-mode)
-  :config
-  (setq doom-modeline-buffer-state-icon nil)
-  (setq doom-modeline-continuous-word-count-modes
-        '(markdown-mode gfm-mode org-mode))
-  (setq doom-modeline-enable-word-count t)
-  (setq doom-modeline-height 24)
-  (setq doom-modeline-icon nil)
-  (setq doom-modeline-persp-name nil))
+  ;; Only persist frame state, not buffers
+  (setq desktop-globals-to-save '((frame-parameters)))
+  ;; Exclude all file-visiting buffers by matching every file name.
+  (setq desktop-files-not-to-save ".*")
+  ;; Do not prompt when saving the desktop:
+  ;; Setting desktop-save to t causes Emacs to automatically save without asking.
+  (setq desktop-save t))
 
 (use-package doom-themes
-  :init
-  (load-theme 'doom-one t)
+  :init (load-theme 'doom-vibrant t)
   :config
-  (let ((scale 0.9) (stroke 7)
+  (let ((scale 1) (stroke 6)
         (bg (face-attribute 'mode-line :background))
-        (fg (face-attribute 'default :foreground)))
+        (fg (face-attribute 'default :foreground))
+        (hl (face-attribute 'region :background)))
     (custom-set-faces
-     `(fringe ((t (:inherit default :foreground ,fg))))
-     `(header-line ((t (:height ,scale :box (:line-width ,stroke :color ,bg)))))
-     `(line-number-current-line ((t (:inherit default :weight normal))))
-     `(mode-line ((t (:height ,scale))))
-     `(helm-grep-finish ((t (:inherit mode-line :box (:line-width ,stroke :color ,bg)))))
-     `(helm-header ((t (:height ,scale :box (:line-width ,stroke :color ,bg)))))
-     `(helm-source-header ((t (:background nil :weight semi-bold))))))
+     `(header-line ((t (:inherit helm-header :weight bold :box (:line-width 5 :color ,bg)))))
+     `(help-key-binding ((t :inherit helm-M-x-key)))
+     `(Info-quoted ((t (:inherit font-lock-comment-face :slant italic))))
 
-  (setq doom-themes-enable-bold t
-        doom-themes-enable-italic t)
+     `(helm-descbinds-binding ((t :inherit default)))
+     `(helm-descbinds-key ((t :inherit helm-M-x-key)))
+     `(helm-header ((t (:inherit mode-line))))
+     `(helm-M-x-key ((t (:foreground "orange" :box nil))))))
+
   (doom-themes-org-config))
 
-(use-package duplicate-thing
-  :bind ("s-d" . duplicate-thing))
+(use-package doom-modeline
+  :init (doom-modeline-mode t)
+  :config
+  (setq doom-modeline-height 25)
+  (setq doom-modeline-hud t)
+  (setq doom-modeline-icon nil)
+  (setq doom-modeline-support-imenu t))
 
 (use-package expand-region
-  :bind (("s-=" . er/expand-region)
-         ("s--" . er/contract-region)))
+  :bind ("s-=" . er/expand-region))
 
 (use-package flycheck
   :hook (prog-mode . flycheck-mode)
@@ -122,129 +97,56 @@
 (use-package helm
   :hook (after-init . helm-mode)
   :bind
-  (("C-h a" . helm-apropos)
-   ("C-h I" . helm-info)
+  (("C-c h b" . helm-bookmarks)
+   ("C-c h g" . helm-do-grep-ag)
+   ("C-c h i" . helm-semantic-or-imenu)
+   ("C-c h I" . helm-imenu-in-all-buffers)
+   ("C-c h m" . helm-all-mark-rings)
+   ("C-c h y" . helm-show-kill-ring)
 
-   ("C-` c" . helm-resume)
-   ("C-` b" . helm-filtered-bookmarks)
-   ("C-` f" . helm-find)
-   ("C-` g" . helm-do-grep-ag)
-
-   ("s-f" . helm-find-files)
-   ("s-b" . helm-mini)
-   ("s-i" . helm-semantic-or-imenu)
-   ("s-m" . helm-all-mark-rings)
-   ("s-o" . helm-occur)
-   ("s-y" . helm-show-kill-ring)
-
+   ([remap apropos-command] . helm-apropos)
    ([remap execute-extended-command] . helm-M-x)
    ([remap find-file] . helm-find-files))
-
+   ([remap list-buffers] . helm-buffers-list)
+   ([remap occur] . helm-occur)
+   ([remap switch-to-buffer] . helm-multi-files)
   :config
-  (use-package helm-descbinds      :bind ("C-h b" . helm-descbinds))
-  (use-package helm-describe-modes :bind ("C-h m" . helm-describe-modes))
+  (use-package helm-descbinds      :bind ([remap describe-bindings] . helm-descbinds))
+  (use-package helm-describe-modes :bind ([remap describe-mode] . helm-describe-modes))
 
-  (setq completion-styles '(flex))
-  (setq helm-candidate-number-limit 100)
   (setq helm-ff-file-name-history-use-recentf t)
-  (setq helm-grep-ag-command "rg --color=always --colors \
-'match:fg:magenta' --smart-case --no-heading --line-number %s %s %s")
-  (setq helm-show-completion-display-function 'helm-default-display-buffer)
+  (setq helm-grep-ag-command (concat
+        "rg --color=always"
+        "--smart-case"
+        "--no-heading"
+        "--hidden"
+        "--line-number %s %s %s"))
   (setq helm-split-window-default-side 'same)
 
   (helm-mode t)
   (helm-adaptive-mode t))
 
-(use-package helpful
-  :bind
-  (([remap describe-function] . helpful-callable)
-   ([remap describe-key]      . helpful-key)
-   ([remap describe-symbol]   . helpful-symbol)
-   ([remap describe-variable] . helpful-variable)
-   ("C-h ." . helpful-at-point)))
-
-(use-package indent-guide
-  :hook (prog-mode . indent-guide-mode))
-
-(use-package magit
-  :config
-  (magit-auto-revert-mode t)
-  (setq magit-diff-refine-hunk 'all)
-  :bind
-  (("C-` ms" . magit-status)
-   ("C-` ml" . magit-log-all)
-   ("C-` mb" . magit-blame-addition)
-   ("C-` md" . magit-dispatch)
-   ("C-` mf" . magit-file-popup)))
-
 (use-package move-text
-  :bind (("M-S-<up>"   . move-text-up)
-         ("M-S-<down>" . move-text-down)))
-
-(use-package project)
-
-(use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode))
-
-(use-package rainbow-mode
-  :hook
-  ((prog-mode . rainbow-mode)))
-
-(use-package recentf
-  :ensure nil
+  :bind (("M-<up>" . move-text-up)
+         ("M-<down>" . move-text-down))
   :config
-  (setq recentf-max-saved-items 100)
-
-  (add-to-list 'recentf-exclude "\\.gpg\\'")
-  (add-to-list 'recentf-exclude (expand-file-name package-user-dir))
-  (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\|ftp\\)?:")
-  (add-to-list 'recentf-exclude (file-name-directory (car (last load-path)))))
-
-(use-package shackle
-  :hook (after-init . shackle-mode)
-  :config
-  (with-eval-after-load 'org
-    ;; HACK: compatibility issue with `org-switch-to-buffer-other-window'
-    (advice-add #'org-switch-to-buffer-other-window
-                :override #'switch-to-buffer-other-window)
-
-    ;; tags buffer is too small otherwise
-    (advice-add #'org-fit-window-to-buffer
-                :around #'(lambda (orig-fun &rest args)
-                            (if (string= (buffer-name) " *Org tags*")
-                                (delete-other-windows)
-                              (apply orig-fun args)))))
-
-  (setq shackle-default-rule nil)
-  (setq shackle-rules
-        '(("CAPTURE-.*+\\.org$?\\|*Org Select*" :regexp t :same t)
-          ("*Capture*" :same t)
-          (completion-list-mode :same t)
-          (Info-mode :same t)
-          (help-mode :same t)
-          (helpful-mode :same t))))
+  ;; indent after moving
+  (let ((adv (lambda (&rest ignored)
+               (let ((deactivate deactivate-mark))
+                 (if (region-active-p)
+                     (indent-region (region-beginning) (region-end))
+                   (indent-region (line-beginning-position) (line-end-position)))
+                 (setq deactivate-mark deactivate)))))
+    (advice-add 'move-text-up :after adv)
+    (advice-add 'move-text-down :after adv)))
 
 (use-package shrink-whitespace
   :bind
-  ("C-` ." . shrink-whitespace))
+  ("s-." . shrink-whitespace))
 
 (use-package vlf
   :config
   (require 'vlf-setup)
   (setq vlf-application 'dont-ask))
-
-(use-package which-key
-  :demand t
-  :config
-  (which-key-mode)
-  (which-key-setup-side-window-right))
-
-(use-package yasnippet
-  :defer 1
-  :config
-  (setq yas-verbosity 1)
-  (setq yas-wrap-around-region t)
-  (yas-global-mode)
-  (yas-reload-all))
 
 ;;; end of init-pkgs.el
