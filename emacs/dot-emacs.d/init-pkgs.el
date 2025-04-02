@@ -40,17 +40,29 @@
   (setq company-tooltip-align-annotations t))
 
 (use-package desktop
-  :init
-  (desktop-save-mode t)
   :ensure nil
+  :init
+  (desktop-save-mode 1)
   :config
-  ;; Only persist frame state, not buffers
-  (setq desktop-globals-to-save '((frame-parameters)))
-  ;; Exclude all file-visiting buffers by matching every file name.
-  (setq desktop-files-not-to-save ".*")
-  ;; Do not prompt when saving the desktop:
-  ;; Setting desktop-save to t causes Emacs to automatically save without asking.
-  (setq desktop-save t))
+  (setq desktop-globals-to-save '((frame-parameters))
+        desktop-files-not-to-save "^$"
+        desktop-buffers-not-to-save nil
+        desktop-load-locked-desktop t
+        desktop-restore-frames t
+        desktop-restore-forces-onscreen nil
+        desktop-save t)
+
+  ;; Guard var to ensure single execution
+  (defvar my/desktop-restored nil)
+
+  ;; Safe desktop-read on first live frame
+  (add-hook 'after-make-frame-functions
+            (lambda (frame)
+              (when (and (not my/desktop-restored)
+                         (frame-live-p frame))
+                (setq my/desktop-restored t)
+                (with-selected-frame frame
+                  (ignore-errors (desktop-read)))))))
 
 (use-package doom-themes
   :init (load-theme 'doom-vibrant t)
@@ -60,15 +72,9 @@
         (fg (face-attribute 'default :foreground))
         (hl (face-attribute 'region :background)))
     (custom-set-faces
-     `(header-line ((t (:inherit helm-header :weight bold :box (:line-width 5 :color ,bg)))))
-     `(help-key-binding ((t :inherit helm-M-x-key)))
-     `(Info-quoted ((t (:inherit font-lock-comment-face :slant italic))))
-
-     `(helm-descbinds-binding ((t :inherit default)))
-     `(helm-descbinds-key ((t :inherit helm-M-x-key)))
-     `(helm-header ((t (:inherit mode-line))))
-     `(helm-M-x-key ((t (:foreground "orange" :box nil))))))
-
+     `(fringe ((t (:inherit default :foreground ,fg))))
+     `(line-number-current-line ((t (:inherit default :foreground ,fg :weight normal))))
+     `(Info-quoted ((t (:inherit font-lock-comment-face :slant italic))))))
   (doom-themes-org-config))
 
 (use-package doom-modeline
@@ -78,6 +84,9 @@
   (setq doom-modeline-hud t)
   (setq doom-modeline-icon nil)
   (setq doom-modeline-support-imenu t))
+
+(use-package duplicate-thing
+  :bind ("s-d" . duplicate-thing))
 
 (use-package expand-region
   :bind ("s-=" . er/expand-region))
@@ -107,7 +116,6 @@
    ([remap apropos-command] . helm-apropos)
    ([remap execute-extended-command] . helm-M-x)
    ([remap find-file] . helm-find-files))
-   ([remap list-buffers] . helm-buffers-list)
    ([remap occur] . helm-occur)
    ([remap switch-to-buffer] . helm-multi-files)
   :config
@@ -125,6 +133,18 @@
 
   (helm-mode t)
   (helm-adaptive-mode t))
+
+;; (use-package ido
+;;   :init (ido-mode t)
+;;   :config
+;;   (use-package ido-completing-read+ :init (ido-ubiquitous-mode t))
+;;   (setq ido-everywhere nil
+;;         ido-enable-flex-matching t
+;;         ido-virtual-buffers t
+;;         ido-use-faces t
+;;         ido-use-filename-at-point 'guess
+;;         ido-default-buffer-method 'selected-window
+;;        ido-show-dot-for-dired t))
 
 (use-package move-text
   :bind (("M-<up>" . move-text-up)

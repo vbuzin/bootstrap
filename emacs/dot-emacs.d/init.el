@@ -32,12 +32,9 @@
 
 ;; better scrolling
 (setq Man-notify-method 'bully)
-(setq confirm-kill-emacs 'y-or-n-p)
-(setq display-line-numbers-type 'relative)
-(setq display-time-format " %I:%M%p ")
 (setq compilation-scroll-output t)
 (setq confirm-kill-emacs 'y-or-n-p)
-(setq display-line-numbers-type 'relative)
+(setq dired-listing-switches "-alF")
 (setq display-time-default-load-average nil)
 (setq display-time-format " %I:%M%p ")
 (setq echo-keystrokes 0.02)
@@ -48,11 +45,11 @@
 (setq make-backup-files nil)
 (setq mode-line-percent-position '(-3 "%o"))
 (setq ns-pop-up-frames nil)
+(setq pixel-scroll-precision-mode t)
 (setq pop-up-frames nil)
 (setq reb-re-syntax 'string)
 (setq require-final-newline t)
 (setq ring-bell-function 'ignore)
-(setq pixel-scroll-precision-mode t)
 (setq save-interprogram-paste-before-kill t)
 (setq scroll-conservatively 100000)
 (setq scroll-margin 5)
@@ -65,6 +62,7 @@
 (setq vc-follow-symlinks t)
 (setq which-key-side-window-location 'right)
 
+(setq-default fringe-indicator-alist nil) ;; disable fringe bitmap
 (setq-default indent-tabs-mode nil)
 (setq-default indicate-empty-lines t)
 (setq-default tab-width 4)
@@ -91,9 +89,6 @@
 (show-paren-mode t)              ;; visualise matching parens
 (which-function-mode t)          ;; displays current function name in the mode line
 (which-key-mode t)               ;; show keybinding for the mode after 1 sec
-
-;; enable line numbers for prog modes
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
 ;; calendar
 (setq calendar-date-style 'european)
@@ -122,6 +117,11 @@
         narrow-to-region
         upcase-region))
 
+;; line numbers for prog modes
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+;; display help full size
+(add-to-list 'display-buffer-alist '("*Help*" display-buffer-same-window))
+
 ;; cleanup on save
 (setq whitespace-style '(trailing missing-newline-at-eof))
 (add-hook 'before-save-hook 'whitespace-cleanup)
@@ -135,12 +135,13 @@
 (unless (file-exists-p custom-file)
   (write-region "" nil custom-file))
 
+;; put config path into 'e' register
+(set-register ?e `(file . ,user-emacs-directory))
 (mapc #'(lambda (file) (load (locate-user-emacs-file file)))
       (list
        "init-custom"
        "init-pkgs"
-;       "init-org"
+       "init-org"
        "init-keys"
        ))
-
 ;;; end of init.el

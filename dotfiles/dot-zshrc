@@ -10,6 +10,7 @@ fi
 ### aliases
 alias ea="eza -la --group-directories-first"
 alias eat="eza -laT --group-directories-first"
+alias em='emacsclient -c -n -a "vi"'
 ### aliases
 
 # Bat
@@ -46,3 +47,5 @@ irg() {
   [ ${#selected[@]} ] && code -ng "${selected[@]:0:1}:${selected[@]:1:1}:${selected[@]:2:1}"
   # [ ${#selected[@]} ] && nvim "+call cursor(${selected[@]:1:1}, ${selected[@]:2:1})" ${selected[@]:0:1}
 }
+
+export EMACS_SOCKET_NAME="${TMPDIR}/emacs$(id -u)/server"
