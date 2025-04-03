@@ -44,6 +44,9 @@
       '((ns-appearance . dark)
         (ns-transparent-titlebar . t)))
 
+;; some space all around
+(set-frame-parameter nil 'internal-border-width 10)
+
 (defun display-startup-echo-area-message () "Do nothing.")
 
 ;;; end of early-init.el

@@ -9,20 +9,34 @@
 
 ;; locations
 (setq org-directory (expand-file-name "~/Documents/OM/"))
+
 ;; put org path into 'o' register
 (set-register ?o `(file . ,org-directory))
 
-(setq org-default-notes-file (concat org-directory "/inbox.org"))
-(setq org-attach-directory   (concat org-directory "/_ data/"))
-(setq org-archive-location   (concat org-directory "/_ archive/%s_arch::"))
+(defvar my/default-capture-target
+  (concat org-directory "0_inbox/" (format-time-string "%Y-%b") ".org"))
 
-(setq org-refile-targets
-      '((nil              :maxlevel . 3)
+(defvar my/agenda-and-refile-targets
+  (directory-files-recursively org-directory "\\.org\\'" nil
+                               (lambda (f) (not (string-match-p "/__" f)))))
+
+(setq org-default-notes-file my/default-capture-target)
+(setq org-attach-directory (concat org-directory "/__data/"))
+(setq org-archive-location (concat org-directory "/__archive/%s_arch::"))
+
+(setq org-agenda-files my/agenda-and-refile-targets)
+(setq org-refile-allow-creating-parent-nodes t
+      org-refile-use-outline-path 'file
+      org-outline-path-complete-in-steps nil
+      org-refile-allow-creating-parent-nodes 'confirm
+      org-refile-targets
+      '((nil :maxlevel . 3)
         (org-agenda-files :maxlevel . 3)))
 
 (with-eval-after-load 'org
   ;; encrypt headlines
   (require 'org-crypt)
+  (setq org-tags-exclude-from-inheritance '("crypt"))
   (org-crypt-use-before-save-magic))
 
 (setq org-adapt-indentation t)
@@ -37,7 +51,7 @@
 (setq org-startup-align-all-tables t)
 (setq org-startup-folded 'overview)
 (setq org-startup-indented t)
-(setq org-tags-exclude-from-inheritance '("crypt"))
+(setq org-yank-adjusted-subtrees t)
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "WIP(s!)" "|" "DONE(d!)")
@@ -57,7 +71,7 @@
 (setq org-capture-templates
       `(("l" "Daily Log" entry
          (file+function
-          (lambda () (concat org-directory "_ inbox/" (format-time-string "%Y-%b") ".org"))
+          ,my/default-capture-target
           (lambda ()
             (let* ((today (format-time-string "%d-%a"))
                    (pos (org-find-exact-headline-in-buffer today)))

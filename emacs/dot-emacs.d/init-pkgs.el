@@ -105,46 +105,33 @@
 
 (use-package helm
   :hook (after-init . helm-mode)
-  :bind
-  (("C-c h b" . helm-bookmarks)
-   ("C-c h g" . helm-do-grep-ag)
-   ("C-c h i" . helm-semantic-or-imenu)
-   ("C-c h I" . helm-imenu-in-all-buffers)
-   ("C-c h m" . helm-all-mark-rings)
-   ("C-c h y" . helm-show-kill-ring)
+  :bind (("C-c h b" . helm-bookmarks)
+         ("C-c h g" . helm-do-grep-ag)
+         ("C-c h i" . helm-semantic-or-imenu)
+         ("C-c h I" . helm-imenu-in-all-buffers)
+         ("C-c h m" . helm-all-mark-rings)
+         ("C-c h y" . helm-show-kill-ring)
 
-   ([remap apropos-command] . helm-apropos)
-   ([remap execute-extended-command] . helm-M-x)
-   ([remap find-file] . helm-find-files))
-   ([remap occur] . helm-occur)
-   ([remap switch-to-buffer] . helm-multi-files)
+         ([remap apropos-command] . helm-apropos)
+         ([remap execute-extended-command] . helm-M-x)
+         ([remap find-file] . helm-find-files)
+         ([remap occur] . helm-occur)
+         ([remap switch-to-buffer] . helm-multi-files))
   :config
-  (use-package helm-descbinds      :bind ([remap describe-bindings] . helm-descbinds))
+  (use-package helm-descbinds :bind ([remap describe-bindings] . helm-descbinds))
   (use-package helm-describe-modes :bind ([remap describe-mode] . helm-describe-modes))
 
   (setq helm-ff-file-name-history-use-recentf t)
   (setq helm-grep-ag-command (concat
-        "rg --color=always"
-        "--smart-case"
-        "--no-heading"
-        "--hidden"
-        "--line-number %s %s %s"))
+                              "rg --color=always"
+                              "--smart-case"
+                              "--no-heading"
+                              "--hidden"
+                              "--line-number %s %s %s"))
   (setq helm-split-window-default-side 'same)
 
   (helm-mode t)
   (helm-adaptive-mode t))
-
-;; (use-package ido
-;;   :init (ido-mode t)
-;;   :config
-;;   (use-package ido-completing-read+ :init (ido-ubiquitous-mode t))
-;;   (setq ido-everywhere nil
-;;         ido-enable-flex-matching t
-;;         ido-virtual-buffers t
-;;         ido-use-faces t
-;;         ido-use-filename-at-point 'guess
-;;         ido-default-buffer-method 'selected-window
-;;        ido-show-dot-for-dired t))
 
 (use-package move-text
   :bind (("M-<up>" . move-text-up)
