@@ -1,0 +1,40 @@
+{
+  "manifest_version": 2,
+  "version": "1.0",
+  "name": "One Dark Borderless",
+  "theme": {
+    "images": {},
+    "properties": {},
+    "colors": {
+      "toolbar": "rgb(41, 44, 51)",
+      "toolbar_text": "rgb(250, 250, 250)",
+      "frame": "rgb(41, 44, 51)",
+      "tab_background_text": "rgb(220, 220, 220)",
+      "toolbar_field": "rgb(41, 44, 51)",
+      "toolbar_field_text": "rgb(220, 220, 220)",
+      "tab_line": "rgb(64, 72, 87)",
+      "popup": "rgb(31, 33, 37)",
+      "popup_text": "rgb(250, 250, 250)",
+      "button_background_active": "rgb(31, 33, 37)",
+      "button_background_hover": "rgb(31, 33, 37)",
+      "ntp_background": "rgb(41, 44, 51)",
+      "popup_border": "rgba(64, 72, 87, 0.25)",
+      "popup_highlight": "rgb(64, 72, 87)",
+      "sidebar_border": "rgba(64, 72, 87, 0.25)",
+      "sidebar": "rgb(41, 44, 51)",
+      "tab_loading": "rgb(220, 220, 220)",
+      "tab_selected": "rgb(53, 56, 61)",
+      "toolbar_bottom_separator": "rgba(41, 44, 51, 0)",
+      "toolbar_field_border_focus": "rgba(64, 72, 87, 0.15)",
+      "toolbar_field_border": "rgba(41, 44, 51, 0)",
+      "toolbar_field_highlight": "rgb(64, 72, 87)",
+      "toolbar_top_separator": "rgba(41, 44, 51, 0)",
+      "toolbar_vertical_separator": "rgb(220, 220, 220)"
+    },
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "xxx-xxxxx@icloud.com"
+      }
+    }
+  }
+}
