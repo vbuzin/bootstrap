@@ -76,6 +76,26 @@ _emacs: brew
 	@brew autoremove
 	@stow -D --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} emacs
 
+# firefox 
+# ==============================================================================
+firefox: brew
+	@echo $(call message,"Installing and configuring Firefox")
+	@brew install --cask firefox
+	@FIREFOX_APP=/Applications/Firefox.app && \
+		xattr -r -d com.apple.quarantine $$FIREFOX_APP && \
+		stow --ignore=.DS_Store --override=.* -d firefox --target=$$FIREFOX_APP/Contents/Resources/ settings
+
+firefox-cfg:
+	@echo $(call message,"Provisioning userChrome and userContent")
+	@FIREFOX_PROFILE=$$(grep -A1 '\[Install' "${HOME}/Library/Application Support/Firefox/profiles.ini" | grep 'Default=' | cut -d'/' -f2) && \
+		FIREFOX_PROFILE_PATH="${HOME}/Library/Application Support/Firefox/Profiles/$$FIREFOX_PROFILE" && \
+		stow --ignore=.DS_Store --override=.* -d firefox --target="$$FIREFOX_PROFILE_PATH" chrome
+
+_firefox:
+	@echo $(call message,"Uninstalling Firefox")
+	@brew uninstall --zap --cask firefox
+	@brew autoremove
+
 # nvim
 # ==============================================================================
 nvim: brew dotfiles

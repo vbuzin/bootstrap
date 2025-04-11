@@ -11,16 +11,16 @@
   url("about:support") {
   @media (prefers-color-scheme: dark) {
     :root {
-      --newtab-background-color: #1C1D1D !important;
-      --newtab-background-color-secondary: #1C1D1D !important;
-      --in-content-page-background: #1C1D1D !important;
+      --newtab-background-color: #292c33 !important;
+      --newtab-background-color-secondary: #292c33 !important;
+      --in-content-page-background: #292c33 !important;
     }
   }
 }
 
 @-moz-document url(about:privatebrowsing){
   :root {
-    --in-content-page-background: #1C1D1D !important;
+    --in-content-page-background: #292c33 !important;
   }
 
   div.showPrivate.showSearch.container {

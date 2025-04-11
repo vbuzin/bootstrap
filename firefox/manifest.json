@@ -1,7 +1,7 @@
 {
-  "manifest_version": 2,
-  "version": "1.0",
-  "name": "One Dark Borderless",
+  "manifest_version": 3,
+  "version": "1.1",
+  "name": "One Dark Borderless - Minimal",
   "theme": {
     "images": {},
     "properties": {},
@@ -30,11 +30,11 @@
       "toolbar_field_highlight": "rgb(64, 72, 87)",
       "toolbar_top_separator": "rgba(41, 44, 51, 0)",
       "toolbar_vertical_separator": "rgb(220, 220, 220)"
-    },
-    "browser_specific_settings": {
-      "gecko": {
-        "id": "xxx-xxxxx@icloud.com"
-      }
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{231ddc35-8632-4eb9-a695-dcf74167e49c}"
     }
   }
 }
