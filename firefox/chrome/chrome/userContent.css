@@ -1,26 +1,23 @@
 @-moz-document 
   url("about:addons"),
+  url("about:config"),
   url("about:firefoxview"),
   url("about:home"),
+  url("about:memory"),
   url("about:newtab"),
   url("about:preferences"),
   url("about:processes"),
   url("about:profiles"),
-  url("about:memory"),
-  url("about:config"),
-  url("about:support") {
+  url("about:support"),
+  url(about:privatebrowsing) {
   @media (prefers-color-scheme: dark) {
     :root {
       --newtab-background-color: #292c33 !important;
       --newtab-background-color-secondary: #292c33 !important;
       --in-content-page-background: #292c33 !important;
+      --background-color-box: #1f2125 !important;
+      --color-accent-primary: #61afef !important;
     }
-  }
-}
-
-@-moz-document url(about:privatebrowsing){
-  :root {
-    --in-content-page-background: #292c33 !important;
   }
 
   div.showPrivate.showSearch.container {

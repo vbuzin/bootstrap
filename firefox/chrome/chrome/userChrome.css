@@ -1,16 +1,16 @@
 #personal-bookmarks .bookmark-item:not([container]) .toolbarbutton-icon {
-    display: none !important;
+  display: none !important;
 }
 
 #alltabs-button {
-    display: none !important;
+  display: none !important;
 }
 
 #alltabs-button,
 #nav-bar-customization-target #vertical-spacer,
 #page-action-buttons #picture-in-picture-button,
 #page-action-buttons #pageAction-urlbar-_testpilot-containers {
-    display: none !important;
+  display: none !important;
 }
 
 #tabbrowser-tabs {
@@ -18,7 +18,7 @@
     .tabbrowser-tab:not([pinned]) .tab-close-button { 
       display: none !important
     }
-
+    
     .tabbrowser-tab:not([pinned]):hover .tab-close-button {
       display: inline-flex !important
     }     
