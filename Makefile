@@ -39,9 +39,11 @@ apps: brew
 
 # alacritty
 # ==============================================================================
-alacritty: brew dotfiles
+alacritty: brew dotfiles tmux
 	@echo $(call message,"Installing and configuring Alacritty")
 	@brew install alacritty --cask
+	@ALACRITTY_APP=/Applications/Alacritty.app && \
+			xattr -r -d com.apple.quarantine $$ALACRITTY_APP
 	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config alacritty
 
 _alacritty:
@@ -116,3 +118,6 @@ tmux: brew dotfiles
 	@echo $(call message,"Configuring tmux")
 	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config tmux
 
+_tmux: 
+	@echo $(call message,"Uninstalling tmux")
+	@stow -D --ignore=.DS_Store --target=${HOME}/.config tmux
