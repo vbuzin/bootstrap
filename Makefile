@@ -91,7 +91,7 @@ firefox-cfg:
 	@echo $(call message,"Provisioning userChrome and userContent")
 	@FIREFOX_PROFILE=$$(grep -A1 '\[Install' "${HOME}/Library/Application Support/Firefox/profiles.ini" | grep 'Default=' | cut -d'/' -f2) && \
 		FIREFOX_PROFILE_PATH="${HOME}/Library/Application Support/Firefox/Profiles/$$FIREFOX_PROFILE" && \
-		stow --ignore=.DS_Store --override=.* -d firefox --target="$$FIREFOX_PROFILE_PATH" chrome
+		cp -R ./firefox/chrome "$$FIREFOX_PROFILE_PATH"/
 
 _firefox:
 	@echo $(call message,"Uninstalling Firefox")
