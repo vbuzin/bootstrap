@@ -87,6 +87,7 @@ firefox: brew
 		xattr -r -d com.apple.quarantine $$FIREFOX_APP && \
 		stow --ignore=.DS_Store --override=.* -d firefox --target=$$FIREFOX_APP/Contents/Resources/ settings
 
+# linking doesn't work for some reason
 firefox-cfg:
 	@echo $(call message,"Provisioning userChrome and userContent")
 	@FIREFOX_PROFILE=$$(grep -A1 '\[Install' "${HOME}/Library/Application Support/Firefox/profiles.ini" | grep 'Default=' | cut -d'/' -f2) && \
