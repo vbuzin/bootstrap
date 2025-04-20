@@ -32,24 +32,6 @@ if type brew &>/dev/null; then
     fpath+=($(brew --prefix)/share/zsh/site-functions)
 fi
 
-# Set the list of directories that cd searches.
-# cdpath=(
-#   $cdpath
-# )
-
-# Set the list of directories that Zsh searches for programs.
-path=(
-    /usr/local/{bin,sbin}
-    $HOME/.local/bin
-    $HOME/bin
-    $path
-)
-
-#
-# Less
-#
-
-# Set the default Less options.
 # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
 # Remove -X and -F (exit if the content fits on one screen) to enable it.
 export LESS='-F -g -i -M -R -S -w -X -z-4'
@@ -66,3 +48,13 @@ fi
 if [ -x /opt/homebrew/bin/brew ]; then
   eval $(/opt/homebrew/bin/brew shellenv)
 fi
+
+# Set the list of directories that Zsh searches for programs.
+path=(
+    /usr/local/{bin,sbin}
+    $HOME/.local/bin
+    $HOME/bin
+    $(/opt/homebrew/bin/brew --prefix rustup)/bin
+    $path
+)
+

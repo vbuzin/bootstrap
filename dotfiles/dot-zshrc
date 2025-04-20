@@ -49,3 +49,10 @@ irg() {
 }
 
 export EMACS_SOCKET_NAME="${TMPDIR}/emacs$(id -u)/server"
+export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/sbuzin/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
