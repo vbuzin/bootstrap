@@ -133,6 +133,17 @@
   (helm-mode t)
   (helm-adaptive-mode t))
 
+(use-package magit
+  :config
+  (magit-auto-revert-mode t)
+  (setq magit-diff-refine-hunk 'all)
+  :bind
+  (("C-c m s" . magit-status)
+   ("C-c m l" . magit-log-all)
+   ("C-c m b" . magit-blame-addition)
+   ("C-c m d" . magit-dispatch)
+   ("C-c m f" . magit-file-popup)))
+
 (use-package move-text
   :bind (("M-<up>" . move-text-up)
          ("M-<down>" . move-text-down))

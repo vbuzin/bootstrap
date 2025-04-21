@@ -3,12 +3,12 @@
 Brewfile.lock.json
 .vscode
 
-/emacs/**/*
-/emacs/dot-emacs.d/init-custom.el
 !/emacs/script.sh
 !/emacs/org.emacs.daemon.plist
 !/emacs/dot-emacs.d/*.el
 !/emacs/dot-emacs.d/snippets
+/emacs/**/*
+/emacs/dot-emacs.d/init-custom.el
 
 /dotfiles/dot-config/nvim
 /dotfiles/dot-config/iterm2
