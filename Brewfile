@@ -2,11 +2,8 @@ hostname = `hostname -s`.strip
 
 is_home = (hostname == "vbmaca")
 
-brew "bat"
 brew "eza"
 brew "fd"
-brew "fzf"
-brew "mas"
 brew "p7zip"
 brew "ripgrep"
 brew "stow"

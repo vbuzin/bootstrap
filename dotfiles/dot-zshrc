@@ -1,59 +1,10 @@
-#
-# Environment
-#
-
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-### aliases
+# Aliases
 alias ea="eza -la --group-directories-first"
 alias eat="eza -laT --group-directories-first"
-alias em='emacsclient -c -n -a "vi"'
-### aliases
 
-# Bat
-export BAT_THEME="TwoDark"
-
-# fzf
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-export FZF_DEFAULT_COMMAND="fd --type f"
-
-export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
---color=dark
---color=fg:-1,bg:-1,hl:#c678dd,fg+:#ffffff,bg+:#4b5263,hl+:#d858fe
---color=info:#98c379,prompt:#61afef,pointer:#be5046,marker:#e5c07b,spinner:#61afef,header:#61afef
-'
-
-irg() {
-  RG_PREFIX="rg --hidden --column --line-number --no-heading --color=always --smart-case "
-  INITIAL_QUERY="${*:-}"
-  IFS=: read -rA selected <<<$(
-    FZF_DEFAULT_COMMAND="$RG_PREFIX $(printf %q "$INITIAL_QUERY")" \
-    fzf --ansi \
-      --color "hl:-1:underline,hl+:-1:underline:reverse" \
-      --disabled --query "$INITIAL_QUERY" \
-      --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
-      --bind "ctrl-f:unbind(change,ctrl-f)+change-prompt(2. fzf> )+enable-search+clear-query+rebind(ctrl-r)" \
-      --bind "ctrl-r:unbind(ctrl-r)+change-prompt(1. ripgrep> )+disable-search+reload($RG_PREFIX {q} || true)+rebind(change,ctrl-f)" \
-      --prompt '1. Ripgrep> ' \
-      --delimiter : \
-      --header '╱ CTRL-R (Ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
-      --preview 'bat --color=always {1} --highlight-line {2}' \
-      --preview-window 'up,60%,border-bottom,+{2}+3/3,~3'
-  )
-  [ ${#selected[@]} ] && code -ng "${selected[@]:0:1}:${selected[@]:1:1}:${selected[@]:2:1}"
-  # [ ${#selected[@]} ] && nvim "+call cursor(${selected[@]:1:1}, ${selected[@]:2:1})" ${selected[@]:0:1}
-}
-
-export EMACS_SOCKET_NAME="${TMPDIR}/emacs$(id -u)/server"
 export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
-
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/sbuzin/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
-# End of Docker CLI completions
-

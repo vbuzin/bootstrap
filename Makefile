@@ -1,56 +1,28 @@
-PATH := $(PATH):/opt/homebrew/bin
-SHELL := env PATH=$(PATH) /bin/bash
+PATH    := $(PATH):/opt/homebrew/bin
+SHELL   := env PATH=$(PATH) /bin/bash
+CFG_DIR := $(abspath $(HOME)/.config)
+$(shell mkdir -p $(CFG_DIR))
 
-message  = " >>> ============ "$(1)" ============ <<< "
+message  = " >>> ==================== "$(1)" ==================== <<< "
 
 # all
 # ==============================================================================
-all: brew apps dotfiles tmux
-.PHONY: all dotfiles apps brew alacritty _alacritty emacs _emacs nvim _nvim tmux
-
-# dotfiles
+all: shell brew
+.PHONY: alacritty _alacritty emacs _emacs firefox firefox-cfg _firefox nvim _nvim tmux _tmux
+# shell
 # ==============================================================================
-CSHELL := $(shell dscl . -read ~/ UserShell | sed 's/.*\/\(.*\)$$/\1/')
-CONFIG_TARGET_DIR := $(abspath $(HOME)/.config)
+PREZTO_DIR := $(abspath $(HOME)/.zprezto)
 
-dotfiles: $(CONFIG_TARGET_DIR)
-	@echo $(call message,"Configuring prezto")
-ifneq ($(CSHELL),zsh)
-	@echo "Changing your shell to zsh"
-	@chsh -s /bin/zsh
-endif
+shell: brew
+	@echo $(call message,"Installing prezto and submodules")
+	@if [ ! -d $(PREZTO_DIR) ]; then \
+		@git clone --depth 1 --recursive https://github.com/sorin-ionescu/prezto.git $(PREZTO_DIR); \
+	fi
+	@cd $(PREZTO_DIR) && git pull && \
+	git submodule sync --recursive && \
+	git submodule update --init --recursive
 
-ifeq (,$(wildcard $(HOME)/.zprezto))
-	@echo $(call message,"Installing https://github.com/sorin-ionescu/prezto and submodules")
-	@git clone --depth 1 --recursive https://github.com/sorin-ionescu/prezto.git $(HOME)/.zprezto
-endif
 	@stow --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} dotfiles
-
-$(CONFIG_TARGET_DIR):
-	@mkdir -p $@
-
-# apps
-# ==============================================================================
-apps: brew
-	@echo $(call message,"Installing apps")
-	@brew bundle --file Brewfile
-	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config bat
-	@bat cache --build
-
-# alacritty
-# ==============================================================================
-alacritty: brew dotfiles tmux
-	@echo $(call message,"Installing and configuring Alacritty")
-	@brew install alacritty --cask
-	@ALACRITTY_APP=/Applications/Alacritty.app && \
-			xattr -r -d com.apple.quarantine $$ALACRITTY_APP
-	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config alacritty
-
-_alacritty:
-	@echo $(call message,"Uninstalling alacritty")
-	@-brew uninstall --cask alacritty
-	@brew autoremove
-	@stow -D --ignore=.DS_Store --target=${HOME}/.config alacritty
 
 # brew
 # ==============================================================================
@@ -62,25 +34,42 @@ else
 	@echo $(call message,"Installing Homebrew")
 	@/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 endif
+	@brew bundle --file Brewfile
+	@stow --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} brew
+
+# alacritty
+# ==============================================================================
+alacritty: shell tmux
+	@echo $(call message,"Installing and configuring Alacritty")
+	@brew install alacritty --cask
+	@ALACRITTY_APP=/Applications/Alacritty.app && \
+			xattr -r -d com.apple.quarantine $$ALACRITTY_APP
+	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config alacritty
+
+_alacritty:
+	@echo $(call message,"Uninstalling alacritty")
+	@-brew uninstall --cask --zap alacritty
+	@brew autoremove
+	@stow -D --ignore=.DS_Store --target=${HOME}/.config alacritty
 
 # emacs
 # ==============================================================================
-emacs: brew
+emacs: shell
 	@echo $(call message,"Installing and configuring Emacs")
 	@brew install --cask emacs
 	@brew install gnupg
-	@stow --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} emacs
+	@stow --dotfiles --target=${HOME} emacs
 
-_emacs: brew
+_emacs:
 	@echo $(call message,"Installing and configuring Emacs")
 	@brew uninstall --zap emacs
 	@brew uninstall --zap gnupg
 	@brew autoremove
-	@stow -D --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} emacs
+	@stow -D --dotfiles --target=${HOME} emacs
 
-# firefox 
+# firefox
 # ==============================================================================
-firefox: brew
+firefox: shell
 	@echo $(call message,"Installing and configuring Firefox")
 	@brew install --cask firefox
 	@FIREFOX_APP=/Applications/Firefox.app && \
@@ -101,24 +90,24 @@ _firefox:
 
 # nvim
 # ==============================================================================
-nvim: brew dotfiles
+nvim: shell
 	@echo $(call message,"Installing and configuring Nvim")
 	@brew install neovim
 	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config nvim
 
 _nvim:
 	@echo $(call message,"Unistalling Nvim and dependencies")
-	@-brew uninstall neovim
+	@brew uninstall neovim
 	@brew autoremove
 	@stow -D --ignore=.DS_Store --target=${HOME}/.config nvim
 	@rm -rf ${HOME}/.local
 
 # tmux
 # ==============================================================================
-tmux: brew dotfiles
+tmux: shell
 	@echo $(call message,"Configuring tmux")
 	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config tmux
 
-_tmux: 
+_tmux:
 	@echo $(call message,"Uninstalling tmux")
 	@stow -D --ignore=.DS_Store --target=${HOME}/.config tmux
