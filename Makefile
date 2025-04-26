@@ -1,7 +1,5 @@
 PATH    := $(PATH):/opt/homebrew/bin
 SHELL   := env PATH=$(PATH) /bin/bash
-CFG_DIR := $(abspath $(HOME)/.config)
-$(shell mkdir -p $(CFG_DIR))
 
 message  = " >>> ==================== "$(1)" ==================== <<< "
 
@@ -9,11 +7,13 @@ message  = " >>> ==================== "$(1)" ==================== <<< "
 # ==============================================================================
 all: shell brew
 .PHONY: alacritty _alacritty emacs _emacs firefox firefox-cfg _firefox nvim _nvim tmux _tmux
+
 # shell
 # ==============================================================================
+CONFIG_DIR := $(abspath $(HOME)/.config)
 PREZTO_DIR := $(abspath $(HOME)/.zprezto)
 
-shell: brew
+shell: brew $(CONFIG_DIR) $(VIMPLG_DIR)
 	@echo $(call message,"Installing prezto and submodules")
 	@if [ ! -d $(PREZTO_DIR) ]; then \
 		@git clone --depth 1 --recursive https://github.com/sorin-ionescu/prezto.git $(PREZTO_DIR); \
@@ -23,6 +23,9 @@ shell: brew
 	git submodule update --init --recursive
 
 	@stow --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} dotfiles
+
+$(CONFIG_DIR):
+	mkdir -p $@
 
 # brew
 # ==============================================================================
@@ -93,21 +96,22 @@ _firefox:
 nvim: shell
 	@echo $(call message,"Installing and configuring Nvim")
 	@brew install neovim
-	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config nvim
+	@stow --target=${CONFIG_DIR} nvim
 
 _nvim:
 	@echo $(call message,"Unistalling Nvim and dependencies")
 	@brew uninstall neovim
 	@brew autoremove
-	@stow -D --ignore=.DS_Store --target=${HOME}/.config nvim
+	@stow -D --target=${CONFIG_DIR} nvim
 	@rm -rf ${HOME}/.local
 
 # tmux
 # ==============================================================================
 tmux: shell
 	@echo $(call message,"Configuring tmux")
-	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config tmux
+	@stow --ignore=.DS_Store --override=.* --target=${CONFIG_DIR} tmux
 
 _tmux:
 	@echo $(call message,"Uninstalling tmux")
-	@stow -D --ignore=.DS_Store --target=${HOME}/.config tmux
+	@stow -D --ignore=.DS_Store --target=${CONFIG_DIR} tmux
+

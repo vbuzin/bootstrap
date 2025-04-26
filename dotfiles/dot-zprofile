@@ -13,12 +13,3 @@ export LC_ALL=en_US.UTF-8
 
 # Ensure path arrays do not contain duplicates.
 typeset -gU cdpath fpath mailpath path
-
-# Source all .zsh files (including symlinks and hidden files) in $HOME
-if [[ -d "$HOME" ]]; then
-    setopt nullglob dotglob
-    for file in "$HOME"/*.zsh; do
-        [[ -r "$file" && (-f "$file" || -L "$file") ]] && source "$file"
-    done
-    unsetopt nullglob dotglob
-fi

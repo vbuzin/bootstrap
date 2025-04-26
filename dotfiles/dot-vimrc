@@ -1,95 +1,243 @@
-" -- General -----------------------------------------------------------------
+" ==============================================================================
+"  Vim Configuration File
+" ==============================================================================
+
+" -- General Settings ----------------------------------------------------------
+" Basic configurations for Vim behavior and appearance
+
 if &compatible
-  set nocompatible
+    set nocompatible                " Disable Vi compatibility mode
 endif
 
-filetype indent plugin on
-syntax on
+filetype indent plugin on         " Enable filetype detection, indentation, and plugins
+syntax on                         " Enable syntax highlighting
 
-set termguicolors
-
-colorscheme sorbet
-hi Normal guibg=NONE ctermbg=NONE
-
-" Position the cursor, visually select and scroll with the mouse.
+" Mouse support: Enable mouse for navigation and selection
 if has('mouse')
-  if &term =~ 'xterm'
-    set mouse=a
-  else
-    set mouse=nvi
-  endif
+    if &term =~ 'xterm'
+        set mouse=a                   " Enable mouse in all modes for xterm
+    else
+        set mouse=nvi                 " Enable mouse in normal, visual, and insert modes
+    endif
 endif
 
 if has('syntax') && has('eval')
-  packadd! matchit
+    packadd! matchit                " Load matchit plugin for extended % matching
 endif
 
-set autoindent
-set expandtab
-set backspace=indent,eol,start
-set complete-=i
-set display=truncate
-set hidden " allow switching buffers without writing to disk
-set nrformats-=octal
-set showcmd
-set ruler
-set smarttab
-set wildmenu
+set noerrorbells                  " Disable error bells
+set visualbell                    " Use visual bell instead of beeping
+set t_vb=                         " Disable visual bell flash
 
-" Esc kicks-off faster
+set hidden                        " Allow switching buffers without saving
+set linebreak                     " Ensure lines are broken at appropriate places
+set nrformats-=octal              " Treat numbers with leading zeros as decimal
+set number                        " Show absolute line numbers
+set relativenumber                " Show relative line numbers
+set ruler                         " Show cursor position in the status line
+set showcmd                       " Show command in the last line
+set showbreak=+---                " Visually indicate line breakes
+set wildmenu                      " Enhanced command-line completion
+
+" Timeout settings for key sequences
 set ttimeout
-set ttimeoutlen=100
+set ttimeoutlen=100               " Timeout for key codes (ms)
+set timeoutlen=800                " Timeout for mapped key sequences (ms)
 
-set timeoutlen=500
+" -- Editing Settings ----------------------------------------------------------
+" Configurations related to text editing and indentation
+
+set autoindent                    " Copy indent from current line when starting a new line
+set expandtab                     " Use spaces instead of tabs
+set backspace=indent,eol,start    " Allow backspacing over indentation, line breaks, and start of insert
+set smarttab                      " Insert tabs according to shiftwidth
+set clipboard=unnamed             " Use system clipboard for yank, delete, change, and put operations
+set pastetoggle=<F2>              " Toggle paste mode with F3 to prevent auto-indentation issues when pasting
+set tabstop=4                     " Number of spaces that a <Tab> in the file counts for
+set shiftwidth=4                  " Number of spaces to use for each step of (auto)indent
+
+" -- Navigation Settings -------------------------------------------------------
+" Settings to improve scrolling and cursor movement
+
+set scrolloff=5                   " Keep 5 lines visible above and below the cursor
+set sidescrolloff=5               " Keep 5 columns visible to the left and right of the cursor
+
+" -- Searching Settings --------------------------------------------------------
+" Configurations for search behavior
+
+set ignorecase                    " Ignore case in search patterns
+set incsearch                     " Show matches as you type
+set nowrapscan                    " Do not wrap around when searching
+set smartcase                     " Override ignorecase if search pattern contains uppercase letters
+set hlsearch                      " Highlight all search matches
+
+" -- Key Mappings --------------------------------------------------------------
+" Custom key mappings for improved workflow
+nnoremap <Space> <Nop>
+let mapleader = "\<Space>"        " Set leader key to space
+
+" File operations
+nnoremap <silent> <leader>w <Cmd>w<CR>
+
+" Streamline buffer ops
+nnoremap <leader>bb <C-^>   " Switch between current and last buffer
+nnoremap <leader>bn <Cmd>bn<CR> " Go to next buffer
+nnoremap <leader>bp <Cmd>bp<CR> " Go to previous buffer
+nnoremap <leader>bd <Cmd>bd<CR> " Close buffer
+
+" Clear search highlights
+nnoremap <silent> <C-l> <Cmd>nohlsearch<CR> " Clear search highlights with Ctrl-L
+
+" -- Autocommands --------------------------------------------------------------
+" Automatic commands for specific events
 
 if has("autocmd")
-  " When editing a file, always jump to the last cursor position
-  autocmd BufReadPost *
-  \ if line("'\"") > 0 && line ("'\"") <= line("$") |
-  \   exe "normal g'\"" |
-  \ endif
+    " Jump to the last cursor position when reopening a file
+    autocmd BufReadPost *
+                \ if line("'\"") > 0 && line("'\"") <= line("$") |
+                \   exe "normal g'\"" |
+                \ endif
+
+    " Open help files in a full window
+    autocmd FileType help wincmd o
+
+    " Auto-reload files when changed externally
+    set autoread
+    autocmd FocusGained,BufEnter * :checktime
+
+    " Auto-save on focus lost
+    autocmd FocusLost * :wa
+
+    " Delete trainling whitespace
+    autocmd BufWritePre * let save_view = winsaveview() | %s/\s\+$//e | call winrestview(save_view)
 endif
 
-" Set to auto read when a file is changed from the outside
-set autoread
-au FocusGained,BufEnter * :silent! !
-
-" -- Backup and swap ---------------------------------------------------------
-" directories
-
-" Store undofile in to fixed location
+" -- Backup and Swap -----------------------------------------------------------
 if has('persistent_undo')
-  set undofile
-  
-  if !isdirectory(&undodir)
-      silent! execute "!mkdir -p " . &undodir
-  endif
-
-  set undodir=~/.vimtmp/undodir
-endif 
+    set undofile
+    set undodir=~/.vimtmp/undodir
+    if !isdirectory(&undodir)
+        call mkdir(&undodir, "p", 0700)  " Create undo directory portably
+    endif
+endif
 
 set directory=~/.vimtmp/swap
 if !isdirectory(&directory)
-    silent! execute "!mkdir -p " . &directory
+    call mkdir(&directory, "p", 0700)    " Create swap directory portably
 endif
 
 if has("vms")
-  set nobackup
+    set nobackup
 else
-  set backup
-  set backupext=.bak
-  
-  set backupdir=~/.vimtmp/backup
-  if !isdirectory(&backupdir)
-      silent! execute "!mkdir -p " . &backupdir
-  endif
+    set backup
+    set backupext=.bak
+    set backupdir=~/.vimtmp/backup
+    if !isdirectory(&backupdir)
+        call mkdir(&backupdir, "p", 0700)  " Create backup directory portably
+    endif
 endif
 
-" -- Line numbers ------------------------------------------------------------
-set number relativenumber " turn line numbering on at startup
+" -- Colours -------------------------------------------------------------------
+" Set background and enable syntax highlighting
+set background=dark
+syntax on
 
-" -- Searching ---------------------------------------------------------------
-set ignorecase
-set incsearch
-set nowrapscan
-set smartcase
+" Enable true color support for GUI colors in terminal (optional but recommended)
+if has('termguicolors')
+  set termguicolors
+endif
+
+" Enable cursor line highlighting
+set cursorline
+
+" OneDark Color Scheme Definitions
+" Core syntax highlighting groups
+hi Boolean guifg=#D19A66
+hi Character guifg=#98C379
+hi Comment guifg=#5C6370 gui=italic
+hi Conditional guifg=#C678DD
+hi Constant guifg=#56B6C2
+hi Debug guifg=#E06C75
+hi Define guifg=#E5C07B
+hi Delimiter guifg=#ABB2BF
+hi Error guifg=#ABB2BF
+hi Exception guifg=#C678DD
+hi Float guifg=#D19A66
+hi Function guifg=#61AFEF
+hi Identifier guifg=#ABB2BF
+hi Ignore guifg=#5C6370
+hi Include guifg=#E5C07B
+hi Keyword guifg=#C678DD
+hi Label guifg=#C678DD
+hi Macro guifg=#E5C07B
+hi Normal guifg=#ABB2BF guibg=NONE
+hi Number guifg=#D19A66
+hi Operator guifg=#C678DD
+hi PreCondit guifg=#E5C07B
+hi PreProc guifg=#E5C07B
+hi Repeat guifg=#C678DD
+hi Special guifg=#56B6C2
+hi SpecialChar guifg=#56B6C2
+hi SpecialComment guifg=#5C6370 gui=italic
+hi Statement guifg=#C678DD
+hi StorageClass guifg=#E5C07B
+hi String guifg=#98C379
+hi Structure guifg=#E5C07B
+hi Tag guifg=#56B6C2
+hi Todo guifg=#E5C07B gui=bold
+hi Type guifg=#E5C07B
+hi Typedef guifg=#E5C07B
+hi Underlined guifg=#61AFEF gui=underline
+
+" UI elements
+hi CursorLine guibg=NONE gui=NONE cterm=NONE
+hi CursorLineNr guifg=#ABB2BF guibg=NONE cterm=NONE
+hi Directory guifg=#61AFEF
+hi EndOfBuffer guifg=#3B4048 guibg=NONE
+hi ErrorMsg guifg=#E06C75 guibg=NONE
+hi IncSearch guifg=#282C34 guibg=#C678DD
+hi LineNr guifg=#4B5263 guibg=NONE
+hi MatchParen guibg=#3E4452
+hi ModeMsg guifg=#98C379
+hi MoreMsg guifg=#98C379
+hi NonText guifg=#3B4048 guibg=NONE
+hi Pmenu guifg=#ABB2BF guibg=#3E4452
+hi PmenuSel guifg=#282C34 guibg=#61AFEF
+hi Question guifg=#98C379
+hi Search guifg=#282C34 guibg=#E5C07B
+hi StatusLine guifg=#ABB2BF guibg=NONE
+hi StatusLineNC guifg=#5C6370 guibg=NONE
+hi Title guifg=#61AFEF gui=bold
+hi VertSplit guifg=#3E4452 guibg=NONE
+hi Visual guibg=#3E4452
+hi WarningMsg guifg=#E5C07B
+
+" -- Statusline ----------------------------------------------------------------
+set laststatus=2
+
+set statusline=
+set statusline+=%7*\[%n]                                  " Buffer number
+set statusline+=%1*\ %<%t\                                " File + path
+set statusline+=%2*\ %y\                                  " FileType
+set statusline+=%3*\ %{''.(&fenc!=''?&fenc:&enc).''}      " Encoding
+set statusline+=%3*\ %{(&bomb?\",BOM\":\"\")}\            " Encoding2 (BOM)
+set statusline+=%4*\ %{&ff}\                              " FileFormat (dos/unix..)
+set statusline+=%8*\ %=\ row:%l/%L\ (%03p%%)\             " Rownumber/total (%)
+set statusline+=%9*\ col:%03c\                            " Colnr
+set statusline+=%0*\ \ %m%r%w\ %P\ \                      " Modified? Readonly? Top/bot (last segment)
+
+" Statusline highlight groups (based on OneDark color scheme, less colorful)
+highlight User1 guifg=#61AFEF guibg=NONE  " Filename: Blue (accent)
+highlight User2 guifg=#5C6370 guibg=NONE  " Filetype: Grey (secondary)
+highlight User3 guifg=#5C6370 guibg=NONE  " Encoding/BOM: Grey (secondary)
+highlight User4 guifg=#5C6370 guibg=NONE  " File format: Grey (secondary)
+highlight User7 guifg=#ABB2BF guibg=NONE  " Buffer number: White (primary)
+highlight User8 guifg=#ABB2BF guibg=NONE  " Row/percentage: White (primary)
+highlight User9 guifg=#ABB2BF guibg=NONE  " Column: White (primary)
+highlight User0 guifg=#ABB2BF guibg=NONE  " Default (flags, last segment): White (primary)
+
+" Ensure transparency at all levels (fix background issue)
+hi clear Normal
+hi clear StatusLine
+hi clear StatusLineNC
+
