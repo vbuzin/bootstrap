@@ -1,117 +1,164 @@
-PATH    := $(PATH):/opt/homebrew/bin
-SHELL   := env PATH=$(PATH) /bin/bash
+# Refactored Makefile with renamed targets and full cleanup
 
-message  = " >>> ==================== "$(1)" ==================== <<< "
+# Variables
+PATH        := $(PATH):/opt/homebrew/bin
+SHELL       := env PATH=$(PATH) /bin/bash
+CONFIG_DIR  := $(HOME)/.config
+PREZTO_DIR  := $(HOME)/.zprezto
+BREWFILE    := $(CURDIR)/Brewfile
+STOW_OPTS   := --ignore=.DS_Store --override=.*
 
-# all
-# ==============================================================================
-all: shell brew
-.PHONY: alacritty _alacritty emacs _emacs firefox firefox-cfg _firefox nvim _nvim tmux _tmux
+# Message helper
+msg = @echo ">>> $(1) <<<"
 
-# shell
-# ==============================================================================
-CONFIG_DIR := $(abspath $(HOME)/.config)
-PREZTO_DIR := $(abspath $(HOME)/.zprezto)
+# Phony targets
+.PHONY: all shell clean-shell brew clean-brew alacritty clean-alacritty emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux clean help
 
-shell: brew $(CONFIG_DIR) $(VIMPLG_DIR)
-	@echo $(call message,"Installing prezto and submodules")
-	@if [ ! -d $(PREZTO_DIR) ]; then \
-		@git clone --depth 1 --recursive https://github.com/sorin-ionescu/prezto.git $(PREZTO_DIR); \
-	fi
-	@cd $(PREZTO_DIR) && git pull && \
-	git submodule sync --recursive && \
-	git submodule update --init --recursive
+# Default target
+all: shell brew alacritty emacs firefox nvim tmux
+	$(call msg,"Setup complete! Run 'make firefox-config' after Firefox initializes.")
 
-	@stow --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} dotfiles
+# Help target
+help:
+	@echo "Available targets:"
+	@echo "  all                : Install all components (shell, brew, alacritty, emacs, firefox, nvim, tmux)"
+	@echo "  shell              : Install and configure shell with Prezto"
+	@echo "  clean-shell        : Remove shell configuration and Prezto directory"
+	@echo "  brew               : Install or update Homebrew and bundle dependencies"
+	@echo "  clean-brew         : Remove brew configuration (Homebrew uninstallation is optional)"
+	@echo "  alacritty          : Install and configure Alacritty"
+	@echo "  clean-alacritty    : Uninstall Alacritty and remove configuration"
+	@echo "  emacs              : Install and configure Emacs"
+	@echo "  clean-emacs        : Uninstall Emacs and remove configuration"
+	@echo "  firefox            : Install Firefox, initialize profile, and stow application settings"
+	@echo "  firefox-config     : Configure Firefox profile with custom CSS"
+	@echo "  clean-firefox      : Uninstall Firefox and remove stowed settings"
+	@echo "  nvim               : Install and configure Neovim"
+	@echo "  clean-nvim         : Uninstall Neovim and remove configuration"
+	@echo "  tmux               : Configure Tmux"
+	@echo "  clean-tmux         : Remove Tmux configuration"
+	@echo "  clean              : Remove all installed configurations (use with caution)"
+	@echo "  help               : Show this help message"
 
+# Directory creation
 $(CONFIG_DIR):
-	mkdir -p $@
+	@mkdir -p $@
 
-# brew
-# ==============================================================================
+# Homebrew management
 brew:
-ifneq (,$(shell which brew))
-	@echo $(call message,"Updating Homebrew")
-	@brew update && brew upgrade && brew upgrade --cask
-else
-	@echo $(call message,"Installing Homebrew")
-	@/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-endif
-	@brew bundle --file Brewfile
-	@stow --dotfiles --ignore=.DS_Store --override=.* --target=${HOME} brew
+	$(call msg,"Managing Homebrew")
+	@if command -v brew >/dev/null 2>&1; then \
+		brew update && brew upgrade && brew upgrade --cask; \
+	else \
+		/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || { echo "Homebrew install failed"; exit 1; }; \
+	fi
+	@brew bundle --file=$(BREWFILE) || { echo "Brew bundle failed"; exit 1; }
+	@stow --dotfiles $(STOW_OPTS) --target=$(HOME) brew
 
-# alacritty
-# ==============================================================================
-alacritty: shell tmux
-	@echo $(call message,"Installing and configuring Alacritty")
-	@brew install alacritty --cask
-	@ALACRITTY_APP=/Applications/Alacritty.app && \
-			xattr -r -d com.apple.quarantine $$ALACRITTY_APP
-	@stow --ignore=.DS_Store --override=.* --target=${HOME}/.config alacritty
+clean-brew:
+	$(call msg,"Cleaning Brew configuration")
+	@stow -D --dotfiles $(STOW_OPTS) --target=$(HOME) brew
+	@echo "Note: To fully uninstall Homebrew and its dependencies, run '/bin/bash -c \"$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)\"'"
 
-_alacritty:
-	@echo $(call message,"Uninstalling alacritty")
-	@-brew uninstall --cask --zap alacritty
-	@brew autoremove
-	@stow -D --ignore=.DS_Store --target=${HOME}/.config alacritty
+# Shell setup (Prezto)
+shell: $(CONFIG_DIR)
+	$(call msg,"Setting up shell with Prezto")
+	@if [ ! -d $(PREZTO_DIR) ]; then \
+		git clone --depth 1 --recursive https://github.com/sorin-ionescu/prezto.git $(PREZTO_DIR) || exit 1; \
+	else \
+		cd $(PREZTO_DIR) && git pull && git submodule sync --recursive && git submodule update --init --recursive -j8; \
+	fi
+	@stow --dotfiles $(STOW_OPTS) --target=$(HOME) dotfiles
 
-# emacs
-# ==============================================================================
+clean-shell:
+	$(call msg,"Cleaning shell configuration")
+	@stow -D --dotfiles $(STOW_OPTS) --target=$(HOME) dotfiles
+	@if [ -d $(PREZTO_DIR) ]; then \
+		rm -rf $(PREZTO_DIR); \
+		echo "Prezto directory removed"; \
+	fi
+
+# Alacritty
+alacritty: shell
+	$(call msg,"Installing Alacritty")
+	@brew install --cask alacritty
+	@if [ "$$(uname)" = "Darwin" ]; then \
+		xattr -r -d com.apple.quarantine /Applications/Alacritty.app; \
+	fi
+	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) alacritty
+
+clean-alacritty:
+	$(call msg,"Cleaning Alacritty")
+	@brew uninstall --cask --zap alacritty 2>/dev/null || true
+	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) alacritty
+
+# Emacs
 emacs: shell
-	@echo $(call message,"Installing and configuring Emacs")
+	$(call msg,"Installing Emacs")
 	@brew install --cask emacs
 	@brew install gnupg
-	@stow --dotfiles --target=${HOME} emacs
+	@stow --dotfiles $(STOW_OPTS) --target=$(HOME) emacs
 
-_emacs:
-	@echo $(call message,"Installing and configuring Emacs")
-	@brew uninstall --zap emacs
-	@brew uninstall --zap gnupg
-	@brew autoremove
-	@stow -D --dotfiles --target=${HOME} emacs
+clean-emacs:
+	$(call msg,"Cleaning Emacs")
+	@brew uninstall --cask --zap emacs 2>/dev/null || true
+	@brew uninstall gnupg 2>/dev/null || true
+	@stow -D --dotfiles $(STOW_OPTS) --target=$(HOME) emacs
 
-# firefox
-# ==============================================================================
+# Firefox Installation and Configuration
 firefox: shell
-	@echo $(call message,"Installing and configuring Firefox")
+	$(call msg,"Installing Firefox and initializing profile")
 	@brew install --cask firefox
-	@FIREFOX_APP=/Applications/Firefox.app && \
-		xattr -r -d com.apple.quarantine $$FIREFOX_APP && \
-		stow --ignore=.DS_Store --override=.* -d firefox --target=$$FIREFOX_APP/Contents/Resources/ settings
+	@if [ "$$(uname)" = "Darwin" ]; then \
+		xattr -r -d com.apple.quarantine /Applications/Firefox.app; \
+	fi
+	@stow $(STOW_OPTS) -d firefox --target=/Applications/Firefox.app/Contents/Resources/ settings
+	# Launch Firefox briefly to create a default profile
+	@/Applications/Firefox.app/Contents/MacOS/firefox-bin --headless & \
+	FIREFOX_PID=$$!; \
+	sleep 5; \
+	kill $$FIREFOX_PID 2>/dev/null || true
+	@echo "Firefox installed and profile initialized. Run 'make firefox-config' to apply customizations."
 
-# linking doesn't work for some reason
-firefox-cfg:
-	@echo $(call message,"Provisioning userChrome and userContent")
-	@FIREFOX_PROFILE=$$(grep -A1 '\[Install' "${HOME}/Library/Application Support/Firefox/profiles.ini" | grep 'Default=' | cut -d'/' -f2) && \
-		FIREFOX_PROFILE_PATH="${HOME}/Library/Application Support/Firefox/Profiles/$$FIREFOX_PROFILE" && \
-		cp -R ./firefox/chrome "$$FIREFOX_PROFILE_PATH"/
+firefox-config:
+	$(call msg,"Configuring Firefox")
+	@FIREFOX_PROFILE=$$(grep -A1 '^\[Install' "${HOME}/Library/Application Support/Firefox/profiles.ini" | grep 'Default=' | cut -d'/' -f2); \
+	if [ -z "$$FIREFOX_PROFILE" ]; then \
+		echo "No default profile found. Please ensure Firefox has initialized a profile."; \
+		exit 1; \
+	fi; \
+	FIREFOX_PROFILE_PATH="${HOME}/Library/Application Support/Firefox/Profiles/$$FIREFOX_PROFILE"; \
+	mkdir -p "$$FIREFOX_PROFILE_PATH/chrome"; \
+	cp -R ./firefox/chrome/* "$$FIREFOX_PROFILE_PATH/chrome/"; \
+	echo "Firefox configuration applied to $$FIREFOX_PROFILE_PATH/chrome"
 
-_firefox:
-	@echo $(call message,"Uninstalling Firefox")
-	@brew uninstall --zap --cask firefox
-	@brew autoremove
+clean-firefox:
+	$(call msg,"Cleaning Firefox")
+	@stow -D $(STOW_OPTS) -d firefox --target=/Applications/Firefox.app/Contents/Resources/ settings || true
+	@brew uninstall --cask --zap firefox 2>/dev/null || true
 
-# nvim
-# ==============================================================================
+# Neovim
 nvim: shell
-	@echo $(call message,"Installing and configuring Nvim")
+	$(call msg,"Installing Neovim")
 	@brew install neovim
-	@stow --target=${CONFIG_DIR} nvim
+	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) nvim
 
-_nvim:
-	@echo $(call message,"Unistalling Nvim and dependencies")
-	@brew uninstall neovim
-	@brew autoremove
-	@stow -D --target=${CONFIG_DIR} nvim
-	@rm -rf ${HOME}/.local
+clean-nvim:
+	$(call msg,"Cleaning Neovim")
+	@brew uninstall neovim 2>/dev/null || true
+	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) nvim
+	@rm -rf $(HOME)/.local/share/nvim $(HOME)/.local/state/nvim 2>/dev/null || true
 
-# tmux
-# ==============================================================================
+# Tmux
 tmux: shell
-	@echo $(call message,"Configuring tmux")
-	@stow --ignore=.DS_Store --override=.* --target=${CONFIG_DIR} tmux
+	$(call msg,"Configuring Tmux")
+	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) tmux
 
-_tmux:
-	@echo $(call message,"Uninstalling tmux")
-	@stow -D --ignore=.DS_Store --target=${CONFIG_DIR} tmux
+clean-tmux:
+	$(call msg,"Cleaning Tmux")
+	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) tmux
 
+# Full cleanup
+# WARNING: This will remove all installed configurations and may delete user data.
+clean: clean-alacritty clean-emacs clean-firefox clean-nvim clean-tmux clean-shell clean-brew
+	$(call msg,"Full cleanup complete")
