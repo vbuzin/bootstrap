@@ -1,5 +1,3 @@
-# Refactored Makefile with renamed targets and full cleanup
-
 # Variables
 PATH        := $(PATH):/opt/homebrew/bin
 SHELL       := env PATH=$(PATH) /bin/bash
