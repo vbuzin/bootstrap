@@ -10,23 +10,27 @@ if vim.fn.executable("rg") == 1 then
 end
 
 opt.autowrite = true
-opt.timeout = true
-opt.timeoutlen = 700
-opt.tabstop = 4
-opt.softtabstop = 4
-opt.shiftwidth = 4
-opt.expandtab = true
 opt.cursorline = true
+opt.expandtab = true
 opt.incsearch = true
 opt.laststatus = 3
+opt.showmode = true
 opt.number = true
 opt.relativenumber = true
 opt.smartcase = true
-opt.smartindent = true
+opt.splitbelow = true
+opt.splitright = true
 opt.termguicolors = true
+opt.timeout = true
+opt.timeoutlen = 700
+opt.undofile = true
 opt.wildmode = "list:longest"
 opt.wildoptions = "pum"
 opt.wrap = false
-opt.splitright = true
-opt.splitbelow = true
-opt.undofile = true
+
+-- Indentation
+opt.shiftwidth = 2
+opt.softtabstop = 2
+opt.tabstop = 2
+opt.smartindent = true
+

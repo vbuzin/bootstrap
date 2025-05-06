@@ -53,8 +53,8 @@ set backspace=indent,eol,start    " Allow backspacing over indentation, line bre
 set smarttab                      " Insert tabs according to shiftwidth
 set clipboard=unnamed             " Use system clipboard for yank, delete, change, and put operations
 set pastetoggle=<F2>              " Toggle paste mode with F3 to prevent auto-indentation issues when pasting
-set tabstop=4                     " Number of spaces that a <Tab> in the file counts for
-set shiftwidth=4                  " Number of spaces to use for each step of (auto)indent
+set tabstop=2                     " Number of spaces that a <Tab> in the file counts for
+set shiftwidth=2                  " Number of spaces to use for each step of (auto)indent
 
 " -- Navigation Settings -------------------------------------------------------
 " Settings to improve scrolling and cursor movement
