@@ -64,7 +64,7 @@ shell: $(CONFIG_DIR)
 	@if [ ! -d $(PREZTO_DIR) ]; then \
 		git clone --depth 1 --recursive https://github.com/sorin-ionescu/prezto.git $(PREZTO_DIR) || exit 1; \
 	else \
-		cd $(PREZTO_DIR) && git pull && git submodule sync --recursive && git submodule update --init --recursive -j8; \
+		cd $(PREZTO_DIR) && git pull && git submodule sync --recursive && git submodule update --init --recursive; \
 	fi
 	@stow --dotfiles $(STOW_OPTS) --target=$(HOME) dotfiles
 
