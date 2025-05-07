@@ -1,4 +1,5 @@
 return {
+  -- Snacks
   {
     "folke/snacks.nvim",
     priority = 1000,
@@ -30,6 +31,7 @@ return {
       { "<leader>sT", function () Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } }) end, desc = "Todo/Fix/Fixme" },
     }
   },
+  --- Which key
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
@@ -38,19 +40,21 @@ return {
     },
     keys = {
       { "<leader>?",
-        function()
-          require("which-key").show({ global = false })
-        end,
-        desc = "Buffer local keymaps",
+        function() require("which-key").show({ global = false }) end,
+        desc = "Buffer local keymaps"
       },
-    },
+    }
   },
+  -- Surround
   {
     "kylechui/nvim-surround",
     event = "VeryLazy",
-    config = function()
-      require("nvim-surround").setup({
-          -- Configuration here, or leave empty to use defaults
-      })
+    config = function() require("nvim-surround").setup({ }) end
   },
+  -- Autopair
+  {
+    'windwp/nvim-autopairs',
+    event = "InsertEnter",
+    config = true
+  }
 }

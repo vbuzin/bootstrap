@@ -2,11 +2,6 @@
   display: none !important;
 }
 
-#alltabs-button {
-  display: none !important;
-}
-
-#alltabs-button,
 #nav-bar-customization-target #vertical-spacer,
 #page-action-buttons #picture-in-picture-button,
 #page-action-buttons #pageAction-urlbar-_testpilot-containers {
@@ -15,13 +10,13 @@
 
 #tabbrowser-tabs {
   &:is([expanded]), :is([orient=horizontal]) {
-    .tabbrowser-tab:not([pinned]) .tab-close-button { 
+    .tabbrowser-tab:not([pinned]) .tab-close-button {
       display: none !important
     }
-    
+
     .tabbrowser-tab:not([pinned]):hover .tab-close-button {
       display: inline-flex !important
-    }     
+    }
   }
 }
 
@@ -29,8 +24,14 @@
   box-shadow: none !important;
 }
 
-browser[type="content-primary"], 
-browser[type="content"], 
+browser[type="content-primary"],
+browser[type="content"],
 .browserContainer {
   background-color: #292c33 !important;
+}
+
+/* Add extra margins for collapsed groups */
+#tabbrowser-tabs[orient="vertical"] tab-group[collapsed] .tab-group-label-container {
+  margin-bottom: var(--space-small);
+  margin-top: var(--space-small);
 }

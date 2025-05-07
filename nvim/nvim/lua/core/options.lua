@@ -11,12 +11,11 @@ end
 
 opt.autowrite = true
 opt.cursorline = true
-opt.expandtab = true
 opt.incsearch = true
 opt.laststatus = 3
-opt.showmode = true
 opt.number = true
 opt.relativenumber = true
+opt.showmode = false
 opt.smartcase = true
 opt.splitbelow = true
 opt.splitright = true
@@ -33,4 +32,5 @@ opt.shiftwidth = 2
 opt.softtabstop = 2
 opt.tabstop = 2
 opt.smartindent = true
+opt.expandtab = true
 
