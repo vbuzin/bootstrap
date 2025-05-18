@@ -6,7 +6,7 @@
 " Basic configurations for Vim behavior and appearance
 
 if &compatible
-    set nocompatible                " Disable Vi compatibility mode
+    set nocompatible              " Disable Vi compatibility mode
 endif
 
 filetype indent plugin on         " Enable filetype detection, indentation, and plugins
@@ -15,14 +15,14 @@ syntax on                         " Enable syntax highlighting
 " Mouse support: Enable mouse for navigation and selection
 if has('mouse')
     if &term =~ 'xterm'
-        set mouse=a                   " Enable mouse in all modes for xterm
+        set mouse=a               " Enable mouse in all modes for xterm
     else
-        set mouse=nvi                 " Enable mouse in normal, visual, and insert modes
+        set mouse=nvi             " Enable mouse in normal, visual, and insert modes
     endif
 endif
 
 if has('syntax') && has('eval')
-    packadd! matchit                " Load matchit plugin for extended % matching
+    packadd! matchit              " Load matchit plugin for extended % matching
 endif
 
 set noerrorbells                  " Disable error bells
@@ -31,6 +31,7 @@ set t_vb=                         " Disable visual bell flash
 
 set hidden                        " Allow switching buffers without saving
 set linebreak                     " Ensure lines are broken at appropriate places
+set nowrap                        " Disable line wrapping by default
 set nrformats-=octal              " Treat numbers with leading zeros as decimal
 set number                        " Show absolute line numbers
 set relativenumber                " Show relative line numbers

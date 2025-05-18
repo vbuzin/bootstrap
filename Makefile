@@ -59,7 +59,7 @@ clean-brew:
 	@echo "Note: To fully uninstall Homebrew and its dependencies, run '/bin/bash -c \"$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)\"'"
 
 # Shell setup (Prezto)
-shell: $(CONFIG_DIR)
+shell: $(CONFIG_DIR) brew
 	$(call msg,"Setting up shell with Prezto")
 	@if [ ! -d $(PREZTO_DIR) ]; then \
 		git clone --depth 1 --recursive https://github.com/sorin-ionescu/prezto.git $(PREZTO_DIR) || exit 1; \
@@ -112,7 +112,7 @@ firefox: shell
 	fi
 	@stow $(STOW_OPTS) -d firefox --target=/Applications/Firefox.app/Contents/Resources/ settings
 	# Launch Firefox briefly to create a default profile
-	@/Applications/Firefox.app/Contents/MacOS/firefox-bin --headless & \
+	@/Applications/Firefox.app/Contents/MacOS/firefox --headless & \
 	FIREFOX_PID=$$!; \
 	sleep 5; \
 	kill $$FIREFOX_PID 2>/dev/null || true

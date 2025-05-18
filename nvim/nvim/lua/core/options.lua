@@ -14,6 +14,7 @@ opt.cursorline = true
 opt.incsearch = true
 opt.laststatus = 3
 opt.number = true
+opt.pumheight = 15
 opt.relativenumber = true
 opt.showmode = false
 opt.smartcase = true
