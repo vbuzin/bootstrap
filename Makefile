@@ -1,10 +1,11 @@
 # Variables
-PATH        := $(PATH):/opt/homebrew/bin
-SHELL       := env PATH=$(PATH) /bin/bash
-CONFIG_DIR  := $(HOME)/.config
-PREZTO_DIR  := $(HOME)/.zprezto
-BREWFILE    := $(CURDIR)/Brewfile
-STOW_OPTS   := --ignore=.DS_Store --override=.*
+PATH             := $(PATH):/opt/homebrew/bin
+SHELL            := env PATH=$(PATH) /bin/bash
+CONFIG_DIR       := $(HOME)/.config
+EMACS_CONFIG_DIR := $(HOME)/.emacs.d
+PREZTO_DIR       := $(HOME)/.zprezto
+BREWFILE         := $(CURDIR)/Brewfile
+STOW_OPTS        := --ignore=.DS_Store --override=.*
 
 # Message helper
 msg = @echo ">>> $(1) <<<"
@@ -91,17 +92,21 @@ clean-alacritty:
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) alacritty
 
 # Emacs
-emacs: shell
+emacs: $(EMACS_CONFIG_DIR) shell
 	$(call msg,"Installing Emacs")
 	@brew install --cask emacs
 	@brew install gnupg
-	@stow --dotfiles $(STOW_OPTS) --target=$(HOME) emacs
+	@stow --no-folding --dotfiles $(STOW_OPTS) --target=$(HOME) emacs
 
 clean-emacs:
 	$(call msg,"Cleaning Emacs")
 	@brew uninstall --cask --zap emacs 2>/dev/null || true
 	@brew uninstall gnupg 2>/dev/null || true
-	@stow -D --dotfiles $(STOW_OPTS) --target=$(HOME) emacs
+	@stow -D --no-folding --dotfiles $(STOW_OPTS) --target=$(HOME) emacs
+	@rm -rf $(EMACS_CONFIG_DIR) 2>/dev/null || true
+
+$(EMACS_CONFIG_DIR):
+	@mkdir -p $@
 
 # Firefox Installation and Configuration
 firefox: shell
@@ -111,7 +116,7 @@ firefox: shell
 		xattr -r -d com.apple.quarantine /Applications/Firefox.app; \
 	fi
 	@stow $(STOW_OPTS) -d firefox --target=/Applications/Firefox.app/Contents/Resources/ settings
-	# Launch Firefox briefly to create a default profile
+# Launch Firefox briefly to create a default profile
 	@/Applications/Firefox.app/Contents/MacOS/firefox --headless & \
 	FIREFOX_PID=$$!; \
 	sleep 5; \
