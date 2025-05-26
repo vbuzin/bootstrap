@@ -170,6 +170,12 @@
 (use-package shrink-whitespace
   :bind ("C-c ." . shrink-whitespace)) ;; Intelligently delete whitespace
 
+(use-package visual-fill-column
+  :hook
+  (org-mode . visual-fill-column-mode)
+  :config
+  (setq visual-fill-column-width 80))
+
 (use-package vlf ;; View Large Files
   :config
   (require 'vlf-setup)

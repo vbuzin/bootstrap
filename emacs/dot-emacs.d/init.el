@@ -37,6 +37,8 @@
   (setq mac-command-modifier 'super  ;; Treat Command key as Super
         mac-option-modifier  'meta)) ;; Treat Option key as Meta
 
+(set-register ?e `(file . ,user-emacs-directory))
+
 ;;; Miscellaneous Settings
 ;; =============================================================================
 ;; Protect important buffers from accidental closing
