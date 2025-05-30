@@ -26,7 +26,6 @@ Unfills (sets `fill-column` to `point-max`) on subsequent immediate call."
 ;; =============================================================================
 (global-set-key (kbd "RET") #'newline-and-indent)   ;; Auto-indent on RET
 (global-set-key (kbd "s-0") #'text-scale-adjust)    ;; Adjust text scale (font size)
-(global-set-key (kbd "s-/") #'completion-at-point)  ;; complete with CMD-/
 
 ;; Super-k to close current window and kill its buffer
 (global-set-key (kbd "s-k") #'my/close-and-kill-this-pane)

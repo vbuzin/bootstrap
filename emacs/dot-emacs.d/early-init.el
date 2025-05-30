@@ -4,16 +4,15 @@
 ;; =============================================================================
 (setq package-enable-at-startup nil) ;; Initialize packages manually later
 
-;; Defer garbage collection and file handler processing during startup
-(let ((orig-gc-cons-threshold gc-cons-threshold)
-      (orig-file-name-handler-alist file-name-handler-alist))
-  (setq gc-cons-threshold most-positive-fixnum
-        file-name-handler-alist nil)
-  ;; Restore original values after startup
+;; More meaningful GC threshold
+(setq gc-cons-threshold (* 100 1024 1024)
+      read-process-output-max (* 1024 1024))
+
+;; Defer file handler processing during startup
+(let ((orig-file-name-handler-alist file-name-handler-alist))
+  (setq file-name-handler-alist nil)
   (add-hook 'emacs-startup-hook
-            (lambda ()
-              (setq gc-cons-threshold orig-gc-cons-threshold
-                    file-name-handler-alist orig-file-name-handler-alist))))
+            (lambda () (setq file-name-handler-alist orig-file-name-handler-alist))))
 
 ;;; Minimalistic UI Tweaks
 ;; =============================================================================
@@ -45,6 +44,8 @@
           (ns-appearance . dark)
           (ns-transparent-titlebar . t))))
 
+(set-frame-parameter nil 'internal-border-width 10) ;; Add some padding
+
 ;; Font Configuration
 ;; Consider a fallback font if "SF Mono" isn't universally available.
 (set-face-attribute 'default nil :family "SF Mono" :height 130)
@@ -54,8 +55,5 @@
 
 ;; Default Fill Column
 (setq-default fill-column 80)             ;; Keep fill-column at 80 for buffers that use it
-
-;; Frame Appearance
-(set-frame-parameter nil 'internal-border-width 10) ;; Add some internal padding
 
 ;;; end of early-init.el

@@ -33,7 +33,7 @@
 ;;; Core Packages
 ;; =============================================================================
 
-;; Completion System (Vertico, Consult, Marginalia, Orderless, Embark)
+;; Completion System (Vertico, Consult, Marginalia, Orderless)
 ;; -----------------------------------------------------------------------------
 (use-package vertico
   :init
@@ -47,6 +47,7 @@
   (setq completion-in-region-function #'consult-completion-in-region)
   :bind
   ("s-; b" . consult-buffer)
+  ("s-; c" . consult-mode-command)
   ("s-; f" . consult-fd)
   ("s-; g" . consult-ripgrep)
   ("s-; i" . consult-imenu)
@@ -70,26 +71,6 @@
   (completion-styles '(orderless basic)) ;; Use orderless completion style
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
-
-(use-package embark
-  :init
-  (setq prefix-help-command #'embark-prefix-help-command)
-  :bind
-  (("s-."   . embark-act)
-   ("s-:"   . embark-dwim)
-   ("C-h B" . embark-bindings))
-  :config
-  ;; Configure how Embark Collect buffers are displayed
-  ;; This prevents them from taking over the current window or creating small ones
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
-
-(use-package embark-consult
-  :ensure t ;; Ensure embark-consult is installed
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode)) ;; Enable preview for Embark collect
 
 ;; Dired (Directory Editor)
 ;; -----------------------------------------------------------------------------
@@ -181,8 +162,51 @@
   (require 'vlf-setup)
   (setq vlf-application 'dont-ask)) ;; Automatically use VLF for large files
 
+(use-package undo-tree
+  :init
+  (global-undo-tree-mode t)
+  :config
+  (setq undo-tree-history-directory-alist `(("." . ,my:emacs-tmp-dir))))
+
 ;; Coding
 ;; -----------------------------------------------------------------------------
+(use-package company
+  :hook (prog-mode . company-mode)
+  :bind (("s-/" . company-complete)
+         :map company-active-map
+         ([tab] . nil))
+  :config
+  (setq company-require-match nil)
+  (setq company-show-numbers t)
+  (setq company-tooltip-align-annotations t))
+
+(use-package flycheck
+  :hook (prog-mode . flycheck-mode)
+  :config
+  (setq flycheck-display-errors-function
+        #'flycheck-display-error-messages-unless-error-list)
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+
+(use-package lsp-mode
+  :commands lsp
+  :hook
+  (lsp-mode . lsp-enable-which-key-integration)
+  :config
+  ;; eslint
+  (setq lsp-eslint-auto-fix-on-save t
+        lsp-eslint-format t
+        lsp-eslint-validate '("javascript" "javascriptreact" "typescript" "typescriptreact")
+        lsp-format-buffer-on-save t
+        ;; disable ts-ls formatting
+        lsp-javascript-format-enable nil
+        lsp-typescript-format-enable nil)
+
+  (setq lsp-headerline-breadcrumb-enable nil))
+
+(use-package lsp-tailwindcss
+  :after lsp-mode
+  :init (setq lsp-tailwindcss-add-on-mode t))
+
 (use-package magit
   :bind
   (("C-c ms" . magit-status)
@@ -197,4 +221,16 @@
   (magit-auto-revert-mode t)
   (setq magit-diff-refine-hunk 'all))
 
+(use-package project
+  :ensure nil
+  :config
+  (add-to-list 'project-vc-extra-root-markers ".project-root"))
+
+(use-package treesit-auto
+  :demand t
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 ;;; end of init-pkgs.el

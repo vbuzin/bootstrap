@@ -8,14 +8,14 @@
 (setq default-directory "~/")      ;; Start in home directory
 
 ;; Centralize temporary files (backups, auto-saves)
-(defconst my/emacs-tmp-dir
+(defconst my:emacs-tmp-dir
   (expand-file-name (format "emacs%d" (user-uid)) temporary-file-directory)
   "Directory for Emacs temporary files like backups and auto-saves.")
-(make-directory my/emacs-tmp-dir t) ; Ensure directory exists
+(make-directory my:emacs-tmp-dir t) ; Ensure directory exists
 
-(setq backup-directory-alist `((".*" . ,my/emacs-tmp-dir))
-      auto-save-file-name-transforms `((".*" ,my/emacs-tmp-dir t))
-      auto-save-list-file-prefix my/emacs-tmp-dir
+(setq backup-directory-alist `((".*" . ,my:emacs-tmp-dir))
+      auto-save-file-name-transforms `((".*" ,my:emacs-tmp-dir t))
+      auto-save-list-file-prefix my:emacs-tmp-dir
       create-lockfiles nil) ; Avoid littering directories with lockfiles
 
 ;; macOS Specific Environment
@@ -32,6 +32,12 @@
     (when (file-directory-p brew-bin-path)
       (add-to-list 'exec-path brew-bin-path)
       (setenv "PATH" (concat brew-bin-path ":" (getenv "PATH")))))
+
+  ;; SSH agent
+  (setenv "SSH_AUTH_SOCK"
+          (concat
+           (getenv "HOME")
+           "/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"))
 
   ;; Configure macOS modifier keys
   (setq mac-command-modifier 'super  ;; Treat Command key as Super
@@ -58,6 +64,7 @@
       compilation-scroll-output t              ;; Scroll compilation buffer as output arrives
       confirm-kill-emacs 'y-or-n-p             ;; Ask for y/n confirmation when quitting Emacs
       dired-listing-switches "-alFh"           ;; ls switches for Dired (added -h for human-readable)
+      display-line-numbers-type 'relative      ;; Use relative numbers
       display-time-default-load-average nil    ;; Don't show load average in time display
       display-time-format " %I:%M%p "          ;; Time format in mode line
       echo-keystrokes 0.02                     ;; Show keystrokes quickly for feedback
@@ -66,7 +73,6 @@
       kill-do-not-save-duplicates t            ;; Don't save duplicate entries in kill-ring
       line-move-visual t                       ;; Visual line movement (vs. logical)
       mode-line-percent-position '(-3 "%o")    ;; Position/offset percentage in mode line
-      read-process-output-max (* 1024 1024)    ;; Increase max output read from processes (1MB)
       reb-re-syntax 'string                    ;; Use string syntax for `re-builder`
       require-final-newline t                  ;; Ensure files end with a newline
       save-interprogram-paste-before-kill t    ;; Save clipboard contents before killing Emacs
@@ -81,9 +87,9 @@
 (when (and (display-graphic-p) (fboundp 'pixel-scroll-precision-mode))
   (pixel-scroll-precision-mode t)) ;; Smoother scrolling in GUI
 
-(setq scroll-conservatively 100000       ;; Effectively disable recentering screen on scroll
-      scroll-margin 5                    ;; Keep 5 lines of context around cursor when scrolling
-      scroll-preserve-screen-position t) ;; Try to keep cursor at same screen position during scroll
+(setq scroll-conservatively 100000
+      scroll-step 1
+      scroll-preserve-screen-position nil)
 
 ;; Default buffer-local settings
 (setq-default fringe-indicator-alist nil   ;; Remove default fringe indicators (arrows, etc.)
