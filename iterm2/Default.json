@@ -1,11 +1,5 @@
 {
-  "Ansi 5 Color" : {
-    "Red Component" : 0.7764706015586853,
-    "Color Space" : "sRGB",
-    "Blue Component" : 0.86666667461395264,
-    "Alpha Component" : 1,
-    "Green Component" : 0.47058823704719543
-  },
+  "Thin Strokes" : 4,
   "Working Directory" : "\/Users\/sbuzin",
   "Prompt Before Closing 2" : false,
   "Selected Text Color" : {
@@ -15,7 +9,7 @@
     "Alpha Component" : 1,
     "Green Component" : 0.69803923368453979
   },
-  "Rows" : 50,
+  "Rows" : 52,
   "Ansi 11 Color" : {
     "Red Component" : 0.89803922176361084,
     "Color Space" : "sRGB",
@@ -101,37 +95,37 @@
   "Allow modifyOtherKeys" : true,
   "Custom Command" : "No",
   "Keyboard Map" : {
-    "0xf728-0x0" : {
-      "Action" : 11,
-      "Text" : "0x4"
+    "0x7f-0x80000" : {
+      "Text" : "0x1b 0x7f",
+      "Action" : 11
     },
     "0xf702-0x280000" : {
-      "Action" : 10,
-      "Text" : "b"
+      "Text" : "b",
+      "Action" : 10
     },
     "0xf702-0x300000" : {
-      "Action" : 11,
-      "Text" : "0x1"
-    },
-    "0xf728-0x80000" : {
-      "Action" : 10,
-      "Text" : "d"
-    },
-    "0x7f-0x100000" : {
-      "Action" : 11,
-      "Text" : "0x15"
-    },
-    "0xf703-0x300000" : {
-      "Action" : 11,
-      "Text" : "0x5"
-    },
-    "0x7f-0x80000" : {
-      "Action" : 11,
-      "Text" : "0x1b 0x7f"
+      "Text" : "0x1",
+      "Action" : 11
     },
     "0xf703-0x280000" : {
-      "Action" : 10,
-      "Text" : "f"
+      "Text" : "f",
+      "Action" : 10
+    },
+    "0x7f-0x100000" : {
+      "Text" : "0x15",
+      "Action" : 11
+    },
+    "0xf728-0x80000" : {
+      "Text" : "d",
+      "Action" : 10
+    },
+    "0xf703-0x300000" : {
+      "Text" : "0x5",
+      "Action" : 11
+    },
+    "0xf728-0x0" : {
+      "Text" : "0x4",
+      "Action" : 11
     }
   },
   "Ansi 14 Color" : {
@@ -169,7 +163,7 @@
     "Alpha Component" : 1,
     "Green Component" : 0.68627452850341797
   },
-  "Window Type" : 0,
+  "Window Type" : 11,
   "Use Bright Bold" : true,
   "Cursor Text Color" : {
     "Red Component" : 0.67058825492858887,
@@ -236,9 +230,9 @@
     "Green Component" : 0.14509804546833038
   },
   "Left Option Key Changeable" : true,
+  "Normal Font" : "LigaSFMonoNerdFont-Regular 13",
   "Vertical Spacing" : 1,
   "Blur" : false,
-  "Normal Font" : "LigaSFMonoNerdFont-Regular 13",
   "Ansi 7 Color" : {
     "Red Component" : 0.67058825492858887,
     "Color Space" : "sRGB",
@@ -246,6 +240,7 @@
     "Alpha Component" : 1,
     "Green Component" : 0.69803923368453979
   },
+  "Space" : 0,
   "Command" : "",
   "Terminal Type" : "xterm-256color",
   "Horizontal Spacing" : 1,
@@ -273,7 +268,7 @@
     "Alpha Component" : 1,
     "Green Component" : 0.14509804546833038
   },
-  "Screen" : -1,
+  "Screen" : 0,
   "Non Ascii Font" : "Menlo-Regular 11",
   "Ansi 13 Color" : {
     "Red Component" : 0.7764706015586853,
@@ -285,7 +280,13 @@
   "Columns" : 86,
   "Unicode Normalization" : 0,
   "Visual Bell" : false,
+  "ASCII Ligatures" : false,
   "Custom Directory" : "No",
-  "Thin Strokes" : 4,
-  "ASCII Ligatures" : false
+  "Ansi 5 Color" : {
+    "Red Component" : 0.7764706015586853,
+    "Color Space" : "sRGB",
+    "Blue Component" : 0.86666667461395264,
+    "Alpha Component" : 1,
+    "Green Component" : 0.47058823704719543
+  }
 }
