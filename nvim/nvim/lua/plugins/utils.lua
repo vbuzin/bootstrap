@@ -14,7 +14,7 @@ return {
           "build",
           "target",
         }
-      }
+      },
     },
     keys = {
       -- Files & buffers
@@ -22,11 +22,13 @@ return {
       { "<leader>fe", function() Snacks.explorer() end,                                                      desc = "File Explorer" },
       { "<leader>ff", function() Snacks.picker.files() end,                                                  desc = "Find Files" },
       { "<leader>fr", function() Snacks.picker.recent() end,                                                 desc = "Recent" },
+      { "<leader>fs", function() Snacks.picker.smart() end,                                                  desc = "Smart Find Files" },
       -- Grep
       { "<leader>sb", function() Snacks.picker.lines() end,                                                  desc = "Buffer Lines" },
       { "<leader>sg", function() Snacks.picker.grep() end,                                                   desc = "Grep" },
       { "<leader>sw", function() Snacks.picker.grep_word() end,                                              desc = "Visual selection or word", mode = { "n", "x" } },
       -- Other
+      { "<leader>sC", function() Snacks.picker.commands() end,                                               desc = "Commands" },
       { "<leader>sd", function() Snacks.picker.diagnostics() end,                                            desc = "Diagnostics" },
       { "<leader>sh", function() Snacks.picker.help() end,                                                   desc = "Help Pages" },
       { "<leader>sj", function() Snacks.picker.jumps() end,                                                  desc = "Jumps" },

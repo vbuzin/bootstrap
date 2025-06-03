@@ -151,67 +151,69 @@ endif
 " Enable cursor line highlighting
 set cursorline
 
-" OneDark Color Scheme Definitions
-" Core syntax highlighting groups
-hi Boolean guifg=#D19A66
-hi Character guifg=#98C379
-hi Comment guifg=#5C6370 gui=italic
-hi Conditional guifg=#C678DD
-hi Constant guifg=#56B6C2
-hi Debug guifg=#E06C75
-hi Define guifg=#E5C07B
-hi Delimiter guifg=#ABB2BF
-hi Error guifg=#ABB2BF
-hi Exception guifg=#C678DD
-hi Float guifg=#D19A66
-hi Function guifg=#61AFEF
-hi Identifier guifg=#ABB2BF
-hi Ignore guifg=#5C6370
-hi Include guifg=#E5C07B
-hi Keyword guifg=#C678DD
-hi Label guifg=#C678DD
-hi Macro guifg=#E5C07B
-hi Normal guifg=#ABB2BF guibg=NONE
-hi Number guifg=#D19A66
-hi Operator guifg=#C678DD
-hi PreCondit guifg=#E5C07B
-hi PreProc guifg=#E5C07B
-hi Repeat guifg=#C678DD
-hi Special guifg=#56B6C2
-hi SpecialChar guifg=#56B6C2
-hi SpecialComment guifg=#5C6370 gui=italic
-hi Statement guifg=#C678DD
-hi StorageClass guifg=#E5C07B
-hi String guifg=#98C379
-hi Structure guifg=#E5C07B
-hi Tag guifg=#56B6C2
-hi Todo guifg=#E5C07B gui=bold
-hi Type guifg=#E5C07B
-hi Typedef guifg=#E5C07B
-hi Underlined guifg=#61AFEF gui=underline
+" Core syntax highlighting groups (Tokyo Night)
+" Basic Colors
+hi Normal guifg=#c0caf5 guibg=#1c2030 " Foreground, Background
 
-" UI elements
-hi CursorLine guibg=NONE gui=NONE cterm=NONE
-hi CursorLineNr guifg=#ABB2BF guibg=NONE cterm=NONE
-hi Directory guifg=#61AFEF
-hi EndOfBuffer guifg=#3B4048 guibg=NONE
-hi ErrorMsg guifg=#E06C75 guibg=NONE
-hi IncSearch guifg=#282C34 guibg=#C678DD
-hi LineNr guifg=#4B5263 guibg=NONE
-hi MatchParen guibg=#3E4452
-hi ModeMsg guifg=#98C379
-hi MoreMsg guifg=#98C379
-hi NonText guifg=#3B4048 guibg=NONE
-hi Pmenu guifg=#ABB2BF guibg=#3E4452
-hi PmenuSel guifg=#282C34 guibg=#61AFEF
-hi Question guifg=#98C379
-hi Search guifg=#282C34 guibg=#E5C07B
-hi StatusLine guifg=#ABB2BF guibg=NONE
-hi StatusLineNC guifg=#5C6370 guibg=NONE
-hi Title guifg=#61AFEF gui=bold
-hi VertSplit guifg=#3E4452 guibg=NONE
-hi Visual guibg=#3E4452
-hi WarningMsg guifg=#E5C07B
+" Syntax Highlighting Groups
+hi Boolean guifg=#ff9e64
+hi Character guifg=#9ece6a
+hi Comment guifg=#565f89 gui=italic
+hi Conditional guifg=#bb9af7
+hi Constant guifg=#ff9e64 " Often numbers, true, false
+hi Debug guifg=#f7768e
+hi Define guifg=#bb9af7
+hi Delimiter guifg=#c0caf5 " Default foreground for delimiters
+hi Error guifg=#f7768e guibg=NONE " Error text on default background
+hi Exception guifg=#bb9af7
+hi Float guifg=#ff9e64
+hi Function guifg=#7aa2f7
+hi Identifier guifg=#c0caf5 " Can be more specific if needed, e.g., for variables
+hi Ignore guifg=#414868 " Darker than comment for ignored text
+hi Include guifg=#bb9af7
+hi Keyword guifg=#bb9af7
+hi Label guifg=#7aa2f7 " Often function-like
+hi Macro guifg=#7aa2f7 " Can be function-like or preprocessor-like
+hi Number guifg=#ff9e64
+hi Operator guifg=#89ddff " Using a lighter blue/cyan for operators
+hi PreCondit guifg=#bb9af7
+hi PreProc guifg=#bb9af7
+hi Repeat guifg=#bb9af7
+hi Special guifg=#7dcfff " For special symbols or tokens
+hi SpecialChar guifg=#7dcfff
+hi SpecialComment guifg=#565f89 gui=italic
+hi Statement guifg=#bb9af7
+hi StorageClass guifg=#bb9af7
+hi String guifg=#9ece6a
+hi Structure guifg=#bb9af7
+hi Tag guifg=#7aa2f7 " HTML/XML tags
+hi Todo guifg=#ff9e64 gui=bold " Standout color for Todos
+hi Type guifg=#2ac3de " Cyan for types
+hi Typedef guifg=#2ac3de
+hi Underlined guifg=#7aa2f7 gui=underline
+
+" UI Elements
+hi CursorLine guibg=#1e2030 gui=NONE cterm=NONE " Slightly lighter background for cursor line
+hi CursorLineNr guifg=#7aa2f7 guibg=#1c2030 cterm=NONE " Accent color for line number on cursor line
+hi Directory guifg=#7aa2f7
+hi EndOfBuffer guifg=#3b4048 guibg=NONE " Should be subtle, like background
+hi ErrorMsg guifg=#f7768e guibg=#1c2030
+hi IncSearch guifg=#1c2030 guibg=#ff9e64 " Inverted colors for incremental search
+hi LineNr guifg=#3b4261 guibg=#1c2030 " Line numbers
+hi MatchParen guifg=#c0caf5 guibg=#3b526b " Visible matching parenthesis
+hi ModeMsg guifg=#9ece6a
+hi MoreMsg guifg=#9ece6a
+hi NonText guifg=#3b4048 guibg=NONE " Non-text characters (e.g., trailing spaces)
+hi Pmenu guifg=#c0caf5 guibg=#24283b " Popup menu
+hi PmenuSel guifg=#1c2030 guibg=#7aa2f7 " Popup menu selection
+hi Question guifg=#7aa2f7 " For prompts
+hi Search guifg=#1c2030 guibg=#e0af68 " Search results highlighting (Yellow/Orange background)
+hi StatusLine guifg=#c0caf5 guibg=#1e2030 " Status line text and background
+hi StatusLineNC guifg=#565f89 guibg=#1e2030 " Status line for non-current windows
+hi Title guifg=#7aa2f7 gui=bold
+hi VertSplit guifg=#3b4048 guibg=#1c2030 " Vertical split separator
+hi Visual guibg=#2d3e5e " Visual selection background
+hi WarningMsg guifg=#e0af68 guibg=#1c2030
 
 " -- Statusline ----------------------------------------------------------------
 set laststatus=2
@@ -227,15 +229,16 @@ set statusline+=%8*\ %=\ row:%l/%L\ (%03p%%)\             " Rownumber/total (%)
 set statusline+=%9*\ col:%03c\                            " Colnr
 set statusline+=%0*\ \ %m%r%w\ %P\ \                      " Modified? Readonly? Top/bot (last segment)
 
-" Statusline highlight groups (based on OneDark color scheme, less colorful)
-highlight User1 guifg=#61AFEF guibg=NONE  " Filename: Blue (accent)
-highlight User2 guifg=#5C6370 guibg=NONE  " Filetype: Grey (secondary)
-highlight User3 guifg=#5C6370 guibg=NONE  " Encoding/BOM: Grey (secondary)
-highlight User4 guifg=#5C6370 guibg=NONE  " File format: Grey (secondary)
-highlight User7 guifg=#ABB2BF guibg=NONE  " Buffer number: White (primary)
-highlight User8 guifg=#ABB2BF guibg=NONE  " Row/percentage: White (primary)
-highlight User9 guifg=#ABB2BF guibg=NONE  " Column: White (primary)
-highlight User0 guifg=#ABB2BF guibg=NONE  " Default (flags, last segment): White (primary)
+" Statusline highlight groups
+" Statusline highlight groups (Tokyo Night inspired)
+highlight User1 guifg=#7aa2f7 guibg=#1e2030  " Blue on StatusLine Background
+highlight User2 guifg=#565f89 guibg=#1e2030  " Comment-like color on StatusLine Background
+highlight User3 guifg=#565f89 guibg=#1e2030  " Comment-like color on StatusLine Background
+highlight User4 guifg=#565f89 guibg=#1e2030  " Comment-like color on StatusLine Background
+highlight User7 guifg=#c0caf5 guibg=#1e2030  " Main foreground on StatusLine Background
+highlight User8 guifg=#c0caf5 guibg=#1e2030  " Main foreground on StatusLine Background
+highlight User9 guifg=#c0caf5 guibg=#1e2030  " Main foreground on StatusLine Background
+highlight User0 guifg=#c0caf5 guibg=#1e2030  " Main foreground on StatusLine Background
 
 " Ensure transparency at all levels (fix background issue)
 hi clear Normal

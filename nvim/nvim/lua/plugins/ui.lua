@@ -1,10 +1,12 @@
 return {
   { "nvim-tree/nvim-web-devicons" },
   {
-    "olimorris/onedarkpro.nvim",
-    priority = 1000,     -- Ensure it loads first
+    "folke/tokyonight.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {},
     config = function()
-      vim.cmd("colorscheme onedark")
+      vim.cmd("colorscheme tokyonight-moon")
     end,
   },
   {

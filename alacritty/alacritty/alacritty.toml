@@ -1,140 +1,225 @@
-[window]
-decorations = "buttonless"
-dimensions = { columns = 126, lines = 40 }
-dynamic_padding = true
-padding = { x = 16, y = 16 }
+# Alacritty Configuration
+# Version: 0.13+
 
-[[keyboard.bindings]]
-chars = "\u001Bb"
-key = "B"
-mods = "Alt"
-
-[[keyboard.bindings]]
-chars = "\u001Bc"
-key = "C"
-mods = "Alt"
-
-[[keyboard.bindings]]
-chars = "\u001Bd"
-key = "D"
-mods = "Alt"
-
-[[keyboard.bindings]]
-chars = "\u001Bf"
-key = "F"
-mods = "Alt"
-
-[[keyboard.bindings]]
-chars = "\u001Br"
-key = "R"
-mods = "Alt"
-
-[[keyboard.bindings]]
-chars = "\u001Bv"
-key = "V"
-mods = "Alt"
-
-[[keyboard.bindings]]
-chars = "\u001Bw"
-key = "W"
-mods = "Alt"
-
-[[keyboard.bindings]]
-chars = "\u001Bb"
-key = "Left"
-mods = "Alt"
-
-[[keyboard.bindings]]
-chars = "\u001Bf"
-key = "Right"
-mods = "Alt"
-
-[[keyboard.bindings]]
-chars = "\u001F"
-key = "Slash"
-mods = "Control"
-
-[[keyboard.bindings]]
-chars = "\u001F"
-key = "H"
-mods = "Control"
-
-[[keyboard.bindings]]
-action = "ResetFontSize"
-key = "Key0"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "IncreaseFontSize"
-key = "Equals"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "IncreaseFontSize"
-key = "Plus"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "IncreaseFontSize"
-key = "NumpadAdd"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "DecreaseFontSize"
-key = "Minus"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "DecreaseFontSize"
-key = "NumpadSubtract"
-mods = "Command"
-
-[terminal]
-
-[colors.bright]
-black = "0x4f5666"
-blue = "0x4dc4ff"
-cyan = "0x4cd1e0"
-green = "0xa5e075"
-magenta = "0xde73ff"
-red = "0xff616e"
-white = "0xe6e6e6"
-yellow = "0xf0a45d"
-
-[colors.normal]
-black = "0x3f4451"
-blue = "0x4aa5f0"
-cyan = "0x42b3c2"
-green = "0x8cc265"
-magenta = "0xc162de"
-red = "0xe05561"
-white = "0xd7dae0"
-yellow = "0xd18f52"
-
-[colors.primary]
-background = "0x282c34"
-foreground = "0xabb2bf"
-
-[cursor]
-style = { blinking = "On", shape = "Underline" }
-vi_mode_style = { shape = "Underline" }
+# ==============================================================================
+# SHELL & ENVIRONMENT
+# ==============================================================================
 
 [env]
 TERM = "xterm-256color"
 
-[font]
-size = 14.0
-
-[font.bold]
-style = "Semibold"
-
-[font.normal]
-family = "SF Mono"
-style = "Regular"
-
-[font.offset]
-y = 2
+[terminal]
+osc52 = "CopyPaste"  # Enable OSC 52 for clipboard operations
 
 [terminal.shell]
 program = "/bin/zsh"
-args = ["-l", "-c", "tmux attach -t def 2>/dev/null || tmux new -s def; exec zsh"]
+args = ["-l", "-c", "/opt/homebrew/bin/tmux attach -t def 2>/dev/null || /opt/homebrew/bin/tmux new -s def; exec zsh"]
+
+# ==============================================================================
+# WINDOW CONFIGURATION
+# ==============================================================================
+
+[window]
+decorations = "buttonless"
+opacity = 1.0
+blur = false
+dimensions = { columns = 86, lines = 50 }
+position = { x = 1425, y = 65 }
+padding = { x = 16, y = 16 }
+dynamic_padding = true
+resize_increments = false
+startup_mode = "Windowed"
+title = "Alacritty"
+dynamic_title = true
+
+# ==============================================================================
+# FONT CONFIGURATION
+# ==============================================================================
+
+[font]
+size = 13.0
+builtin_box_drawing = true
+offset = { x = 0, y = 2 }
+
+[font.normal]
+family = "Liga SFMono Nerd Font"
+style = "Light"
+
+[font.bold]
+family = "Liga SFMono Nerd Font"
+style = "Regular"
+
+[font.italic]
+family = "Liga SFMono Nerd Font"
+style = "Light Italic"
+
+[font.bold_italic]
+family = "Liga SFMono Nerd Font"
+style = "Regular Italic"
+
+# ==============================================================================
+# CURSOR CONFIGURATION
+# ==============================================================================
+
+[cursor]
+blink_interval = 750
+blink_timeout = 5
+unfocused_hollow = true
+thickness = 0.15
+
+[cursor.style]
+shape = "Underline"
+blinking = "On"
+
+[cursor.vi_mode_style]
+shape = "Underline"
+blinking = "Off"
+
+# ==============================================================================
+# TERMINAL BEHAVIOR
+# ==============================================================================
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[selection]
+semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+save_to_clipboard = true
+
+# ==============================================================================
+# COLOR SCHEME - Tokyo Night Moon
+# ==============================================================================
+
+[colors.primary]
+background = "#1e2030"     # Tokyo Night Moon background
+foreground = "#c8d3f5"     # Tokyo Night Moon foreground
+dim_foreground = "#828bb8" # Dimmed foreground
+
+[colors.cursor]
+text = "#1e2030"           # Background color for cursor text
+cursor = "#c8d3f5"         # Cursor color
+
+[colors.vi_mode_cursor]
+text = "#1e2030"           # Background color for vi cursor text
+cursor = "#ffc777"         # Vi mode cursor (yellow accent)
+
+[colors.search.matches]
+foreground = "#1e2030"     # Dark text on light background
+background = "#3e68d7"     # Blue highlight
+
+[colors.search.focused_match]
+foreground = "#1e2030"     # Dark text
+background = "#ffc777"     # Yellow highlight for focused match
+
+[colors.footer_bar]
+background = "#2d3f76"     # Slightly lighter than background
+foreground = "#c8d3f5"     # Main foreground
+
+[colors.hints.start]
+foreground = "#1e2030"     # Dark text
+background = "#ffc777"     # Yellow background
+
+[colors.hints.end]
+foreground = "#1e2030"     # Dark text
+background = "#ff757f"     # Red background
+
+[colors.line_indicator]
+foreground = "None"
+background = "None"
+
+[colors.selection]
+text = "CellForeground"    # Keep original text color
+background = "#2d3f76"     # Selection highlight
+
+# Normal colors - Tokyo Night Moon palette
+[colors.normal]
+black   = "#1b1d2b"        # Darker background variant
+red     = "#ff757f"        # Red
+green   = "#c3e88d"        # Green
+yellow  = "#ffc777"        # Yellow
+blue    = "#82aaff"        # Blue
+magenta = "#c099ff"        # Purple/Magenta
+cyan    = "#86e1fc"        # Cyan
+white   = "#c8d3f5"        # Main foreground
+
+# Bright colors - Tokyo Night Moon bright variants
+[colors.bright]
+black   = "#444a73"        # Bright black (comments)
+red     = "#ff98a4"        # Bright red
+green   = "#dfffb7"        # Bright green
+yellow  = "#ffd690"        # Bright yellow
+blue    = "#9ec2ff"        # Bright blue
+magenta = "#d2a6ff"        # Bright purple
+cyan    = "#b4e5ff"        # Bright cyan
+white   = "#e4f0fb"        # Bright white
+
+# Dim colors - Tokyo Night Moon dimmed variants
+[colors.dim]
+black   = "#15161e"        # Very dark
+red     = "#c53b53"        # Dim red
+green   = "#9ece6a"        # Dim green
+yellow  = "#e0af68"        # Dim yellow
+blue    = "#7aa2f7"        # Dim blue
+magenta = "#ad8ee6"        # Dim purple
+cyan    = "#449dab"        # Dim cyan
+white   = "#9aa5ce"        # Dim white
+
+# ==============================================================================
+# KEYBOARD BINDINGS
+# ==============================================================================
+
+[keyboard]
+
+bindings = [
+  { key = "Key0", mods = "Command", action = "ResetFontSize" },
+  { key = "Equals", mods = "Command", action = "IncreaseFontSize" },
+  { key = "Plus", mods = "Command", action = "IncreaseFontSize" },
+  { key = "NumpadAdd", mods = "Command", action = "IncreaseFontSize" },
+  { key = "Minus", mods = "Command", action = "DecreaseFontSize" },
+  { key = "NumpadSubtract", mods = "Command", action = "DecreaseFontSize" },
+  { key = "Left", mods = "Alt", chars = "\u001bb" },
+  { key = "Right", mods = "Alt", chars = "\u001bf" },
+  { key = "A", mods = "Alt", chars = "\u001ba" },
+  { key = "B", mods = "Alt", chars = "\u001bb" },
+  { key = "C", mods = "Alt", chars = "\u001bc" },
+  { key = "D", mods = "Alt", chars = "\u001bd" },
+  { key = "F", mods = "Alt", chars = "\u001bf" },
+  { key = "R", mods = "Alt", chars = "\u001br" },
+  { key = "V", mods = "Alt", chars = "\u001bv" },
+  { key = "W", mods = "Alt", chars = "\u001bw" },
+  { key = "Slash", mods = "Control", chars = "\u001f" },
+  { key = "H", mods = "Control", chars = "\u001f" }
+]
+
+# ==============================================================================
+# MOUSE CONFIGURATION
+# ==============================================================================
+
+[mouse]
+hide_when_typing = true
+bindings = [
+  { mouse = "Right", action = "PasteSelection" }
+]
+
+# ==============================================================================
+# BELL CONFIGURATION
+# ==============================================================================
+
+[bell]
+animation = "EaseOutExpo"
+duration = 0
+color = "#ffffff"
+command = "None"
+
+# ==============================================================================
+# DEBUG (useful for troubleshooting)
+# ==============================================================================
+
+[debug]
+render_timer = false
+persistent_logging = false
+log_level = "Warn"
+print_events = false
+highlight_damage = false
+prefer_egl = false

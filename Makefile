@@ -78,7 +78,7 @@ clean-shell:
 	fi
 
 # Alacritty
-alacritty: shell
+alacritty: shell tmux
 	$(call msg,"Installing Alacritty")
 	@brew install --cask alacritty
 	@if [ "$$(uname)" = "Darwin" ]; then \
