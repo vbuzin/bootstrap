@@ -91,79 +91,41 @@ save_to_clipboard = true
 # COLOR SCHEME - Tokyo Night Moon
 # ==============================================================================
 
+# Default colors
 [colors.primary]
-background = "#1e2030"     # Tokyo Night Moon background
-foreground = "#c8d3f5"     # Tokyo Night Moon foreground
-dim_foreground = "#828bb8" # Dimmed foreground
+background = '#222436'
+foreground = '#c8d3f5'
 
-[colors.cursor]
-text = "#1e2030"           # Background color for cursor text
-cursor = "#c8d3f5"         # Cursor color
-
-[colors.vi_mode_cursor]
-text = "#1e2030"           # Background color for vi cursor text
-cursor = "#ffc777"         # Vi mode cursor (yellow accent)
-
-[colors.search.matches]
-foreground = "#1e2030"     # Dark text on light background
-background = "#3e68d7"     # Blue highlight
-
-[colors.search.focused_match]
-foreground = "#1e2030"     # Dark text
-background = "#ffc777"     # Yellow highlight for focused match
-
-[colors.footer_bar]
-background = "#2d3f76"     # Slightly lighter than background
-foreground = "#c8d3f5"     # Main foreground
-
-[colors.hints.start]
-foreground = "#1e2030"     # Dark text
-background = "#ffc777"     # Yellow background
-
-[colors.hints.end]
-foreground = "#1e2030"     # Dark text
-background = "#ff757f"     # Red background
-
-[colors.line_indicator]
-foreground = "None"
-background = "None"
-
-[colors.selection]
-text = "CellForeground"    # Keep original text color
-background = "#2d3f76"     # Selection highlight
-
-# Normal colors - Tokyo Night Moon palette
+# Normal colors
 [colors.normal]
-black   = "#1b1d2b"        # Darker background variant
-red     = "#ff757f"        # Red
-green   = "#c3e88d"        # Green
-yellow  = "#ffc777"        # Yellow
-blue    = "#82aaff"        # Blue
-magenta = "#c099ff"        # Purple/Magenta
-cyan    = "#86e1fc"        # Cyan
-white   = "#c8d3f5"        # Main foreground
+black = '#1b1d2b'
+red = '#ff757f'
+green = '#c3e88d'
+yellow = '#ffc777'
+blue = '#82aaff'
+magenta = '#c099ff'
+cyan = '#86e1fc'
+white = '#828bb8'
 
-# Bright colors - Tokyo Night Moon bright variants
+# Bright colors
 [colors.bright]
-black   = "#444a73"        # Bright black (comments)
-red     = "#ff98a4"        # Bright red
-green   = "#dfffb7"        # Bright green
-yellow  = "#ffd690"        # Bright yellow
-blue    = "#9ec2ff"        # Bright blue
-magenta = "#d2a6ff"        # Bright purple
-cyan    = "#b4e5ff"        # Bright cyan
-white   = "#e4f0fb"        # Bright white
+black = '#444a73'
+red = '#ff8d94'
+green = '#c7fb6d'
+yellow = '#ffd8ab'
+blue = '#9ab8ff'
+magenta = '#caabff'
+cyan = '#b2ebff'
+white = '#c8d3f5'
 
-# Dim colors - Tokyo Night Moon dimmed variants
-[colors.dim]
-black   = "#15161e"        # Very dark
-red     = "#c53b53"        # Dim red
-green   = "#9ece6a"        # Dim green
-yellow  = "#e0af68"        # Dim yellow
-blue    = "#7aa2f7"        # Dim blue
-magenta = "#ad8ee6"        # Dim purple
-cyan    = "#449dab"        # Dim cyan
-white   = "#9aa5ce"        # Dim white
+# Indexed Colors
+[[colors.indexed_colors]]
+index = 16
+color = '#ff966c'
+
+[[colors.indexed_colors]]
+index = 17
+color = '#c53b53'
 
 # ==============================================================================
 # KEYBOARD BINDINGS

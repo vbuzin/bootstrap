@@ -12,11 +12,11 @@ fi
 
 # Source all .zsh files (including symlinks and hidden files) in $HOME
 if [[ -d "$HOME" ]]; then
-    setopt nullglob dotglob
-    for file in "$HOME"/*.zsh; do
-        [[ -r "$file" && (-f "$file" || -L "$file") ]] && source "$file"
-    done
-    unsetopt nullglob dotglob
+  setopt nullglob dotglob
+  for file in "$HOME"/*.zsh; do
+    [[ -r "$file" && (-f "$file" || -L "$file") ]] && source "$file"
+  done
+  unsetopt nullglob dotglob
 fi
 
 # History
@@ -30,12 +30,12 @@ setopt HIST_SAVE_NO_DUPS
 
 # Conditionals
 if [ -S ${HOME}/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock ]; then
-    export SSH_AUTH_SOCK=${HOME}/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+  export SSH_AUTH_SOCK=${HOME}/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
 fi
 
 if (( $+commands[bat] )); then
   alias cat='bat --paging=never --wrap=never --style="changes"'
-  export BAT_THEME="tokyonight_night"
+  export BAT_THEME="tokyonight_moon"
 fi
 
 if (( $+commands[eza] )); then
@@ -64,19 +64,19 @@ if (( $+commands[fzf] )); then
     RG_PREFIX="rg --hidden --column --line-number --no-heading --color=always --smart-case "
     INITIAL_QUERY="${*:-}"
     IFS=: read -rA selected <<<$(
-      FZF_DEFAULT_COMMAND="$RG_PREFIX $(printf %q "$INITIAL_QUERY")" \
+    FZF_DEFAULT_COMMAND="$RG_PREFIX $(printf %q "$INITIAL_QUERY")" \
       fzf --ansi \
-        --color "hl:-1:underline,hl+:-1:underline:reverse" \
-        --disabled --query "$INITIAL_QUERY" \
-        --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
-        --bind "ctrl-f:unbind(change,ctrl-f)+change-prompt(2. fzf> )+enable-search+clear-query+rebind(ctrl-r)" \
-        --bind "ctrl-r:unbind(ctrl-r)+change-prompt(1. ripgrep> )+disable-search+reload($RG_PREFIX {q} || true)+rebind(change,ctrl-f)" \
-        --bind "esc:abort" \
-        --prompt '1. Ripgrep> ' \
-        --delimiter : \
-        --header '╱ CTRL-R (Ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
-        --preview 'bat --style="numbers,changes" --color=always {1} --highlight-line {2}' \
-        --preview-window 'up,70%,border-bottom,+{2}+3/3,~3'
+      --color "hl:-1:underline,hl+:-1:underline:reverse" \
+      --disabled --query "$INITIAL_QUERY" \
+      --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
+      --bind "ctrl-f:unbind(change,ctrl-f)+change-prompt(2. fzf> )+enable-search+clear-query+rebind(ctrl-r)" \
+      --bind "ctrl-r:unbind(ctrl-r)+change-prompt(1. ripgrep> )+disable-search+reload($RG_PREFIX {q} || true)+rebind(change,ctrl-f)" \
+      --bind "esc:abort" \
+      --prompt '1. Ripgrep> ' \
+      --delimiter : \
+      --header '╱ CTRL-R (Ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
+      --preview 'bat --style="numbers,changes" --color=always {1} --highlight-line {2}' \
+      --preview-window 'up,70%,border-bottom,+{2}+3/3,~3'
     )
     # Exit if no selection was made (e.g., ESC was pressed)
     [ -z "${selected[*]}" ] && return 0
@@ -88,13 +88,13 @@ if (( $+commands[fzf] )); then
   # Advanced customization of fzf options via _fzf_comprun function
   # - The first argument to the function is the name of the command.
   # - You should make sure to pass the rest of the arguments ($@) to fzf.
-_fzf_comprun () {
-  local command=$1
-  shift
+  _fzf_comprun () {
+    local command=$1
+    shift
 
   # One liner: tree-view for dirs, bat for regular files
   local _smart_preview='[[ -d {} ]] && eza -T {} | head -200 || \
-                         bat --style="numbers,changes" --color=always {}'
+    bat --style="numbers,changes" --color=always {}'
 
   case "$command" in
     cd)            fzf --preview 'eza -T {} | head -200' "$@" ;;
@@ -104,16 +104,16 @@ _fzf_comprun () {
   esac
 }
 
-  export FZF_DEFAULT_COMMAND="fd --type f"
-  export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
-  --layout reverse
-  --border
-  --style full
-  --preview-window "up,60%"
-  --preview "bat -n --color=always {}"
-  --color=dark
-  --color=fg:-1,bg:-1,hl:#ad8ee6,fg+:#a9b1d6,bg+:#444b6a,hl+:#bb9af7,border:#444b6a,info:#98c379,prompt:#61afef,pointer:#be5046,marker:#e5c07b,spinner:#61afef,header:#61afef
-  '
+export FZF_DEFAULT_COMMAND="fd --type f"
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+--layout reverse
+--border
+--style full
+--preview-window "up,60%"
+--preview "bat -n --color=always {}"
+--color=dark
+--color=fg:-1,bg:-1,hl:#ad8ee6,fg+:#a9b1d6,bg+:#444b6a,hl+:#bb9af7,border:#444b6a,info:#98c379,prompt:#61afef,pointer:#be5046,marker:#e5c07b,spinner:#61afef,header:#61afef
+'
 fi
 
 if (( $+commands[nvim] )); then

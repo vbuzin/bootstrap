@@ -153,7 +153,7 @@ set cursorline
 
 " Core syntax highlighting groups (Tokyo Night)
 " Basic Colors
-hi Normal guifg=#c0caf5 guibg=#1c2030 " Foreground, Background
+hi Normal guifg=#c0caf5 guibg=#222435 " Foreground, Background
 
 " Syntax Highlighting Groups
 hi Boolean guifg=#ff9e64
@@ -193,27 +193,27 @@ hi Typedef guifg=#2ac3de
 hi Underlined guifg=#7aa2f7 gui=underline
 
 " UI Elements
-hi CursorLine guibg=#1e2030 gui=NONE cterm=NONE " Slightly lighter background for cursor line
-hi CursorLineNr guifg=#7aa2f7 guibg=#1c2030 cterm=NONE " Accent color for line number on cursor line
+hi CursorLine guibg=#222435 gui=NONE cterm=NONE " Slightly lighter background for cursor line
+hi CursorLineNr guifg=#7aa2f7 guibg=#222435 cterm=NONE " Accent color for line number on cursor line
 hi Directory guifg=#7aa2f7
 hi EndOfBuffer guifg=#3b4048 guibg=NONE " Should be subtle, like background
-hi ErrorMsg guifg=#f7768e guibg=#1c2030
-hi IncSearch guifg=#1c2030 guibg=#ff9e64 " Inverted colors for incremental search
-hi LineNr guifg=#3b4261 guibg=#1c2030 " Line numbers
+hi ErrorMsg guifg=#f7768e guibg=#222435
+hi IncSearch guifg=#222435 guibg=#ff9e64 " Inverted colors for incremental search
+hi LineNr guifg=#3b4261 guibg=#222435 " Line numbers
 hi MatchParen guifg=#c0caf5 guibg=#3b526b " Visible matching parenthesis
 hi ModeMsg guifg=#9ece6a
 hi MoreMsg guifg=#9ece6a
 hi NonText guifg=#3b4048 guibg=NONE " Non-text characters (e.g., trailing spaces)
 hi Pmenu guifg=#c0caf5 guibg=#24283b " Popup menu
-hi PmenuSel guifg=#1c2030 guibg=#7aa2f7 " Popup menu selection
+hi PmenuSel guifg=#222435 guibg=#7aa2f7 " Popup menu selection
 hi Question guifg=#7aa2f7 " For prompts
-hi Search guifg=#1c2030 guibg=#e0af68 " Search results highlighting (Yellow/Orange background)
-hi StatusLine guifg=#c0caf5 guibg=#1e2030 " Status line text and background
-hi StatusLineNC guifg=#565f89 guibg=#1e2030 " Status line for non-current windows
+hi Search guifg=#222435 guibg=#e0af68 " Search results highlighting (Yellow/Orange background)
+hi StatusLine guifg=#c0caf5 guibg=#222435 " Status line text and background
+hi StatusLineNC guifg=#565f89 guibg=#222435 " Status line for non-current windows
 hi Title guifg=#7aa2f7 gui=bold
-hi VertSplit guifg=#3b4048 guibg=#1c2030 " Vertical split separator
+hi VertSplit guifg=#3b4048 guibg=#222435 " Vertical split separator
 hi Visual guibg=#2d3e5e " Visual selection background
-hi WarningMsg guifg=#e0af68 guibg=#1c2030
+hi WarningMsg guifg=#e0af68 guibg=#222435
 
 " -- Statusline ----------------------------------------------------------------
 set laststatus=2
@@ -231,14 +231,14 @@ set statusline+=%0*\ \ %m%r%w\ %P\ \                      " Modified? Readonly? 
 
 " Statusline highlight groups
 " Statusline highlight groups (Tokyo Night inspired)
-highlight User1 guifg=#7aa2f7 guibg=#1e2030  " Blue on StatusLine Background
-highlight User2 guifg=#565f89 guibg=#1e2030  " Comment-like color on StatusLine Background
-highlight User3 guifg=#565f89 guibg=#1e2030  " Comment-like color on StatusLine Background
-highlight User4 guifg=#565f89 guibg=#1e2030  " Comment-like color on StatusLine Background
-highlight User7 guifg=#c0caf5 guibg=#1e2030  " Main foreground on StatusLine Background
-highlight User8 guifg=#c0caf5 guibg=#1e2030  " Main foreground on StatusLine Background
-highlight User9 guifg=#c0caf5 guibg=#1e2030  " Main foreground on StatusLine Background
-highlight User0 guifg=#c0caf5 guibg=#1e2030  " Main foreground on StatusLine Background
+highlight User1 guifg=#7aa2f7 guibg=#222435  " Blue on StatusLine Background
+highlight User2 guifg=#565f89 guibg=#222435  " Comment-like color on StatusLine Background
+highlight User3 guifg=#565f89 guibg=#222435  " Comment-like color on StatusLine Background
+highlight User4 guifg=#565f89 guibg=#222435  " Comment-like color on StatusLine Background
+highlight User7 guifg=#c0caf5 guibg=#222435  " Main foreground on StatusLine Background
+highlight User8 guifg=#c0caf5 guibg=#222435  " Main foreground on StatusLine Background
+highlight User9 guifg=#c0caf5 guibg=#222435  " Main foreground on StatusLine Background
+highlight User0 guifg=#c0caf5 guibg=#222435  " Main foreground on StatusLine Background
 
 " Ensure transparency at all levels (fix background issue)
 hi clear Normal
