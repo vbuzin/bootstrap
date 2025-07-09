@@ -7,8 +7,6 @@ brew "ripgrep"
 brew "stow"
 brew "tmux"
 
-cask "1password"
-cask "1password-cli"
 cask "iterm2"
 cask "protonvpn"
 cask "font-sf-mono-nerd-font-ligaturized"
