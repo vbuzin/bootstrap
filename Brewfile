@@ -8,5 +8,4 @@ brew "stow"
 brew "tmux"
 
 cask "iterm2"
-cask "protonvpn"
 cask "font-sf-mono-nerd-font-ligaturized"
