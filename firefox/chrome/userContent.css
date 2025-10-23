@@ -1,5 +1,4 @@
-@-moz-document 
-url("about:addons"),
+@-moz-document url("about:addons"),
 url("about:blank"),
 url("about:config"),
 url("about:firefoxview"),
@@ -13,9 +12,17 @@ url("about:support"),
 url("about:privatebrowsing") {
   @media (prefers-color-scheme: dark) {
     :root {
-      background-color: #292c33 !important;
-      --in-content-page-background: #292c33 !important;
-      accent-color: #61afef !important;
+      --my-background-color: #1c1c1e !important;
+      --my-focus-color: #00bfff !important;
+
+      --focus-outline-color:: var(--my-focus-color) !important;
+      --color-accent-primary: var(--my-focus-color) !important;
+
+      --in-content-page-background: var(--my-background-color) !important;
+      --background-color-canvas: var(--my-background-color) !important;
+
+      background-color: var(--my-background-color) !important;
+      accent-color: var(--my-focus-color) !important;
     }
 
     html.private .container {
