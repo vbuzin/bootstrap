@@ -119,3 +119,13 @@ fi
 if (( $+commands[nvim] )); then
   alias {vi,vim}=nvim
 fi
+
+# Add Homebrew zsh completions (e.g., docker) to $fpath so Prezto/compinit can pick them up
+if command -v brew >/dev/null 2>&1; then
+  BREW_PREFIX=$(brew --prefix)
+  ZSH_SITE_FUNCS="$BREW_PREFIX/share/zsh/site-functions"
+  if [[ -d "$ZSH_SITE_FUNCS" ]]; then
+    # Prepend so these completions take precedence
+    fpath=("$ZSH_SITE_FUNCS" $fpath)
+  fi
+fi
