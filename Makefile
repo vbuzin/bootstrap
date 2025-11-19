@@ -11,22 +11,22 @@ STOW_OPTS        := --ignore=.DS_Store --override=.*
 msg = @echo ">>> $(1) <<<"
 
 # Phony targets
-.PHONY: all shell clean-shell brew clean-brew alacritty clean-alacritty emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux clean help
+.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux clean help
 
 # Default target
-all: shell brew alacritty emacs firefox nvim tmux
+all: shell brew ghostty emacs firefox nvim tmux
 	$(call msg,"Setup complete! Run 'make firefox-config' after Firefox initializes.")
 
 # Help target
 help:
 	@echo "Available targets:"
-	@echo "  all                : Install all components (shell, brew, alacritty, emacs, firefox, nvim, tmux)"
+	@echo "  all                : Install all components (shell, brew, ghostty, emacs, firefox, nvim, tmux)"
 	@echo "  shell              : Install and configure shell with Prezto"
 	@echo "  clean-shell        : Remove shell configuration and Prezto directory"
 	@echo "  brew               : Install or update Homebrew and bundle dependencies"
 	@echo "  clean-brew         : Remove brew configuration (Homebrew uninstallation is optional)"
-	@echo "  alacritty          : Install and configure Alacritty"
-	@echo "  clean-alacritty    : Uninstall Alacritty and remove configuration"
+	@echo "  ghostty            : Install and configure Ghostty"
+	@echo "  clean-ghostty      : Uninstall Ghostty and remove configuration"
 	@echo "  emacs              : Install and configure Emacs"
 	@echo "  clean-emacs        : Uninstall Emacs and remove configuration"
 	@echo "  firefox            : Install Firefox, initialize profile, and stow application settings"
@@ -68,6 +68,8 @@ shell: $(CONFIG_DIR) brew
 		cd $(PREZTO_DIR) && git pull && git submodule sync --recursive && git submodule update --init --recursive; \
 	fi
 	@stow --dotfiles $(STOW_OPTS) --target=$(HOME) dotfiles
+	@$(MAKE) ghostty
+	@$(MAKE) tmux
 
 clean-shell:
 	$(call msg,"Cleaning shell configuration")
@@ -77,19 +79,16 @@ clean-shell:
 		echo "Prezto directory removed"; \
 	fi
 
-# Alacritty
-alacritty: shell tmux
-	$(call msg,"Installing Alacritty")
-	@brew install --cask alacritty
-	@if [ "$$(uname)" = "Darwin" ]; then \
-		xattr -r -d com.apple.quarantine /Applications/Alacritty.app; \
-	fi
-	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) alacritty
+# Ghostty
+ghostty:
+	$(call msg,"Installing Ghostty")
+	@brew install --cask ghostty
+	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) ghostty
 
-clean-alacritty:
-	$(call msg,"Cleaning Alacritty")
-	@brew uninstall --cask --zap alacritty 2>/dev/null || true
-	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) alacritty
+clean-ghostty:
+	$(call msg,"Cleaning Ghostty")
+	@brew uninstall --cask --zap ghostty 2>/dev/null || true
+	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) ghostty
 
 # Emacs
 emacs: $(EMACS_CONFIG_DIR) shell
@@ -153,15 +152,17 @@ clean-nvim:
 	@rm -rf $(HOME)/.local/share/nvim $(HOME)/.local/state/nvim 2>/dev/null || true
 
 # Tmux
-tmux: shell
-	$(call msg,"Configuring Tmux")
+tmux:
+	$(call msg,"Installing and configuring Tmux")
+	@brew install --cask tmux
 	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) tmux
 
 clean-tmux:
 	$(call msg,"Cleaning Tmux")
+	@brew uninstall --cask --zap tmux
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) tmux
 
 # Full cleanup
 # WARNING: This will remove all installed configurations and may delete user data.
-clean: clean-alacritty clean-emacs clean-firefox clean-nvim clean-tmux clean-shell clean-brew
+clean: clean-ghostty clean-emacs clean-firefox clean-nvim clean-tmux clean-shell clean-brew
 	$(call msg,"Full cleanup complete")

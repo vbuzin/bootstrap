@@ -5,7 +5,3 @@ brew "fzf"
 brew "p7zip"
 brew "ripgrep"
 brew "stow"
-brew "tmux"
-
-cask "iterm2"
-cask "font-sf-mono-nerd-font-ligaturized"
