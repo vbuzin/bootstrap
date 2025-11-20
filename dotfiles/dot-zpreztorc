@@ -50,7 +50,7 @@ zstyle ':prezto:module:history-substring-search:color' found 'bg=239'
 zstyle ':prezto:module:osx:man' dash-keyword 'manpages'
 
 # Set the prompt theme
-zstyle ':prezto:module:prompt' theme 'powerlevel10k'
+zstyle ':prezto:module:prompt' theme 'sorin'
 
 # Show command return value in prompt
 zstyle ':prezto:module:prompt' show-return-val 'yes'

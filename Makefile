@@ -154,12 +154,12 @@ clean-nvim:
 # Tmux
 tmux:
 	$(call msg,"Installing and configuring Tmux")
-	@brew install --cask tmux
+	@brew install tmux
 	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) tmux
 
 clean-tmux:
 	$(call msg,"Cleaning Tmux")
-	@brew uninstall --cask --zap tmux
+	@brew uninstall tmux
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) tmux
 
 # Full cleanup
