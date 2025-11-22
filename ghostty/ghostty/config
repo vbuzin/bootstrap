@@ -12,7 +12,6 @@ window-padding-x = 12
 window-padding-y = 12
 window-padding-balance = true
 
-macos-icon = glass
 macos-titlebar-style = tabs
 macos-option-as-alt = true
 
