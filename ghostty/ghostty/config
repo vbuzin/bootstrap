@@ -1,12 +1,10 @@
+# -- Fonts & Text -------------------------------------------
 font-family = "SF Mono Regular"
 font-size = 13
 
-theme = "Atom One Dark"
-
-cursor-style = underline
-shell-integration-features = no-cursor
-
-title = " "
+# -- Window & UI --------------------------------------------
+background = #191a1c
+foreground = #bcbec4
 
 window-padding-x = 12
 window-padding-y = 12
@@ -14,7 +12,47 @@ window-padding-balance = true
 
 macos-titlebar-style = tabs
 macos-option-as-alt = true
+title = " "
+window-save-state = always
 
+# -- Cursor & Shell -----------------------------------------
+cursor-color = #56a8f5
+cursor-style = underline
+# Prevent shell from overriding cursor style
+shell-integration-features = no-cursor
+
+# -- Clipboard ----------------------------------------------
 copy-on-select = clipboard
 
-window-save-state = always
+# -- Palette (IntelliJ Islands ANSI Colors) -----------------
+# Black (Background/Gutter)
+palette = 0=#191a1c
+palette = 8=#2b2d30
+
+# Red (Errors)
+palette = 1=#e06c75
+palette = 9=#e06c75
+
+# Green (Strings)
+palette = 2=#6aab73
+palette = 10=#6aab73
+
+# Yellow (Warnings/Search)
+palette = 3=#cf8e6d
+palette = 11=#cf8e6d
+
+# Blue (Functions/Keywords)
+palette = 4=#56a8f5
+palette = 12=#56a8f5
+
+# Magenta (Constants/Numbers)
+palette = 5=#2aacb8
+palette = 13=#2aacb8
+
+# Cyan (Types/Tags)
+palette = 6=#56b6c2
+palette = 14=#56b6c2
+
+# White (Text)
+palette = 7=#bcbec4
+palette = 15=#ffffff

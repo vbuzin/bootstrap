@@ -4,7 +4,6 @@
 
 " -- General Settings ----------------------------------------------------------
 " Basic configurations for Vim behavior and appearance
-
 if &compatible
     set nocompatible              " Disable Vi compatibility mode
 endif
@@ -90,14 +89,17 @@ nnoremap <leader>bd <Cmd>bd<CR> " Close buffer
 nnoremap <silent> <C-l> <Cmd>nohlsearch<CR> " Clear search highlights with Ctrl-L
 
 " -- Autocommands --------------------------------------------------------------
-" Automatic commands for specific events
-
 if has("autocmd")
     " Jump to the last cursor position when reopening a file
-    autocmd BufReadPost *
-                \ if line("'\"") > 0 && line("'\"") <= line("$") |
-                \   exe "normal g'\"" |
-                \ endif
+  augroup RestoreCursor
+      autocmd!
+      " Jump to the last cursor position when reopening a file
+      " Don't do it for git commit messages (you want to start at the top there)
+      autocmd BufReadPost *
+            \ if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit' |
+            \   exe "normal! g'\"" |
+            \ endif
+    augroup END
 
     " Open help files in a full window
     autocmd FileType help wincmd o
@@ -151,69 +153,78 @@ endif
 " Enable cursor line highlighting
 set cursorline
 
-" Core syntax highlighting groups (Atom One Dark)
+" Core syntax highlighting groups (IntelliJ IDEA Islands Dark Theme)
+" Palette Sources:
+" Background: #191a1c | Foreground: #bcbec4
+" Keywords:   #cf8e6d | Strings:    #6aab73
+" Numbers:    #2aacb8 | Functions:  #56a8f5
+" Comments:   #7a7e85
+
 " Basic Colors
-hi Normal guifg=#abb2bf guibg=#282c34
+hi Normal guifg=#bcbec4 guibg=#191a1c
 
 " Syntax Highlighting Groups
-hi Boolean guifg=#d19a66
-hi Character guifg=#98c379
-hi Comment guifg=#5c6370 gui=italic
-hi Conditional guifg=#c678dd
-hi Constant guifg=#d19a66
-hi Debug guifg=#be5046
-hi Define guifg=#56b6c2
-hi Delimiter guifg=#abb2bf
-hi Error guifg=#e06c75 guibg=NONE
-hi Exception guifg=#c678dd
-hi Float guifg=#d19a66
-hi Function guifg=#61afef
-hi Identifier guifg=#abb2bf
-hi Ignore guifg=#3b4048
-hi Include guifg=#c678dd
-hi Keyword guifg=#c678dd
-hi Label guifg=#61afef
-hi Macro guifg=#61afef
-hi Number guifg=#d19a66
-hi Operator guifg=#56b6c2
-hi PreCondit guifg=#c678dd
-hi PreProc guifg=#c678dd
-hi Repeat guifg=#c678dd
-hi Special guifg=#e5c07b
-hi SpecialChar guifg=#e5c07b
-hi SpecialComment guifg=#5c6370 gui=italic
-hi Statement guifg=#c678dd
-hi StorageClass guifg=#e5c07b
-hi String guifg=#98c379
-hi Structure guifg=#e5c07b
-hi Tag guifg=#61afef
-hi Todo guifg=#282c34 guibg=#e5c07b gui=bold
-hi Type guifg=#56b6c2
-hi Typedef guifg=#56b6c2
-hi Underlined guifg=#61afef gui=underline
+hi Boolean      guifg=#cf8e6d
+hi Character    guifg=#6aab73
+hi Comment      guifg=#7a7e85 gui=italic
+hi Conditional  guifg=#cf8e6d
+hi Constant     guifg=#2aacb8
+hi Debug        guifg=#cf8e6d
+hi Define       guifg=#cf8e6d
+hi Delimiter    guifg=#bcbec4
+hi Error        guifg=#e06c75 guibg=NONE
+hi Exception    guifg=#cf8e6d
+hi Float        guifg=#2aacb8
+hi Function     guifg=#56a8f5
+hi Identifier   guifg=#bcbec4
+hi Ignore       guifg=#7a7e85
+hi Include      guifg=#cf8e6d
+hi Keyword      guifg=#cf8e6d
+hi Label        guifg=#cf8e6d
+hi Macro        guifg=#cf8e6d
+hi Number       guifg=#2aacb8
+hi Operator     guifg=#bcbec4
+hi PreCondit    guifg=#cf8e6d
+hi PreProc      guifg=#cf8e6d
+hi Repeat       guifg=#cf8e6d
+hi Special      guifg=#cf8e6d
+hi SpecialChar  guifg=#cf8e6d
+hi SpecialComment guifg=#7a7e85 gui=italic
+hi Statement    guifg=#cf8e6d
+hi StorageClass guifg=#cf8e6d
+hi String       guifg=#6aab73
+hi Structure    guifg=#cf8e6d
+hi Tag          guifg=#56a8f5
+hi Todo         guifg=#bcbec4 guibg=#2aacb8 gui=bold
+hi Type         guifg=#2aacb8
+hi Typedef      guifg=#2aacb8
+hi Underlined   guifg=#56a8f5 gui=underline
 
 " UI Elements
-hi CursorLine guibg=#21252b gui=NONE cterm=NONE
-hi CursorLineNr guifg=#98c379 guibg=#21252b cterm=NONE
-hi Directory guifg=#61afef
-hi EndOfBuffer guifg=#2c323c guibg=NONE
-hi ErrorMsg guifg=#e06c75 guibg=#282c34
-hi IncSearch guifg=#282c34 guibg=#e5c07b
-hi LineNr guifg=#3b4048 guibg=#21252b
-hi MatchParen guifg=#c678dd guibg=#2c313c
-hi ModeMsg guifg=#98c379
-hi MoreMsg guifg=#98c379
-hi NonText guifg=#3b4048 guibg=NONE
-hi Pmenu guifg=#abb2bf guibg=#21252b
-hi PmenuSel guifg=#ededed guibg=#3e4452
-hi Question guifg=#61afef
-hi Search guifg=#282c34 guibg=#d19a66
-hi StatusLine guifg=#abb2bf guibg=#21252b
-hi StatusLineNC guifg=#5c6370 guibg=#21252b
-hi Title guifg=#61afef gui=bold
-hi VertSplit guifg=#1e222a guibg=#282c34
-hi Visual guibg=#3e4452
-hi WarningMsg guifg=#d19a66 guibg=#282c34
+hi LineNr       guifg=#4b4e54 guibg=NONE ctermbg=NONE
+hi SignColumn   guibg=NONE ctermbg=NONE
+hi FoldColumn   guibg=NONE ctermbg=NONE
+
+hi CursorLine   guibg=#2b2d30 gui=NONE cterm=NONE
+
+hi CursorLineNr guifg=#bcbec4 guibg=#2b2d30 gui=NONE cterm=NONE
+
+hi VertSplit    guifg=#2b2d30 guibg=NONE gui=NONE
+hi EndOfBuffer  guifg=#191a1c guibg=NONE
+
+hi IncSearch    guifg=#191a1c guibg=#2aacb8
+hi Search       guifg=#191a1c guibg=#2aacb8
+hi Visual       guibg=#2f333d
+hi MatchParen   guifg=#cf8e6d guibg=#2b2d30 gui=bold
+
+hi Pmenu        guifg=#bcbec4 guibg=#2b2d30
+hi PmenuSel     guifg=#191a1c guibg=#56a8f5
+hi ErrorMsg     guifg=#e06c75 guibg=NONE
+hi WarningMsg   guifg=#cf8e6d guibg=NONE
+hi ModeMsg      guifg=#6aab73
+hi Title        guifg=#56a8f5 gui=bold
+hi Directory    guifg=#56a8f5
+hi NonText      guifg=#4b4e54 guibg=NONE
 
 " -- Statusline ----------------------------------------------------------------
 set laststatus=2
@@ -229,18 +240,18 @@ set statusline+=%8*\ %=\ row:%l/%L\ (%03p%%)\             " Rownumber/total (%)
 set statusline+=%9*\ col:%03c\                            " Colnr
 set statusline+=%0*\ \ %m%r%w\ %P\ \                      " Modified? Readonly? Top/bot (last segment)
 
-" Statusline highlight groups
-" Statusline highlight groups (Atom One Dark inspired)
-highlight User1 guifg=#61afef guibg=#21252b
-highlight User2 guifg=#5c6370 guibg=#21252b
-highlight User3 guifg=#5c6370 guibg=#21252b
-highlight User4 guifg=#5c6370 guibg=#21252b
-highlight User7 guifg=#abb2bf guibg=#21252b
-highlight User8 guifg=#abb2bf guibg=#21252b
-highlight User9 guifg=#abb2bf guibg=#21252b
-highlight User0 guifg=#abb2bf guibg=#21252b
+" Statusline highlight groups (IntelliJ Islands Dark inspired)
+" User1: File/Path (Blue)
+highlight User1 guifg=#56a8f5 guibg=#2b2d30
+highlight User2 guifg=#7a7e85 guibg=#2b2d30
+highlight User3 guifg=#7a7e85 guibg=#2b2d30
+highlight User4 guifg=#7a7e85 guibg=#2b2d30
+highlight User7 guifg=#bcbec4 guibg=#2b2d30
+highlight User8 guifg=#bcbec4 guibg=#2b2d30
+highlight User9 guifg=#bcbec4 guibg=#2b2d30
+highlight User0 guifg=#bcbec4 guibg=#2b2d30
 
-" Ensure transparency at all levels (fix background issue)
+" Ensure transparency/cleanup
 hi clear Normal
 hi clear StatusLine
 hi clear StatusLineNC
