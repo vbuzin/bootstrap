@@ -28,7 +28,8 @@ fi
 
 if (( $+commands[bat] )); then
   alias cat='bat --paging=never --wrap=never --style="changes"'
-  export BAT_THEME="Islands"
+  # Set to "ansi" so bat uses the Ghostty TokyoNight colors defined in the terminal
+  export BAT_THEME="ansi"
 fi
 
 if (( $+commands[eza] )); then
@@ -99,7 +100,9 @@ if (( $+commands[fzf] )); then
 
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 
-# Options: Layout and Islands Color Palette
+# Options: Layout and TokyoNight Color Palette
+# Mapped from TokyoNight Ghostty config:
+# bg=#1a1b26, fg=#c0caf5, bg+=#283457, border=#414868
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
 --layout reverse
 --border
@@ -107,11 +110,11 @@ export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
 --style full
 --preview-window "up,60%"
 --preview "bat -n --color=always {}"
---color=bg:#191a1c,fg:#bcbec4,hl:#cf8e6d
---color=bg+:#2f333d,fg+:#ffffff,hl+:#cf8e6d
---color=info:#7a7e85,prompt:#56a8f5,pointer:#56a8f5
---color=marker:#6aab73,spinner:#56a8f5,header:#56a8f5
---color=border:#2b2d30
+--color=bg:#1a1b26,fg:#c0caf5,hl:#e0af68
+--color=bg+:#283457,fg+:#c0caf5,hl+:#f7768e
+--color=info:#7aa2f7,prompt:#7dcfff,pointer:#f7768e
+--color=marker:#9ece6a,spinner:#bb9af7,header:#7aa2f7
+--color=border:#414868
 '
 fi
 

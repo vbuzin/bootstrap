@@ -1,5 +1,5 @@
 # -- Fonts & Text -------------------------------------------
-font-family = "SF Mono Regular"
+font-family = "Monaspace Argon Regular"
 font-size = 13
 
 # -- Window & UI --------------------------------------------
@@ -24,35 +24,5 @@ shell-integration-features = no-cursor
 # -- Clipboard ----------------------------------------------
 copy-on-select = clipboard
 
-# -- Palette (IntelliJ Islands ANSI Colors) -----------------
-# Black (Background/Gutter)
-palette = 0=#191a1c
-palette = 8=#2b2d30
-
-# Red (Errors)
-palette = 1=#e06c75
-palette = 9=#e06c75
-
-# Green (Strings)
-palette = 2=#6aab73
-palette = 10=#6aab73
-
-# Yellow (Warnings/Search)
-palette = 3=#cf8e6d
-palette = 11=#cf8e6d
-
-# Blue (Functions/Keywords)
-palette = 4=#56a8f5
-palette = 12=#56a8f5
-
-# Magenta (Constants/Numbers)
-palette = 5=#2aacb8
-palette = 13=#2aacb8
-
-# Cyan (Types/Tags)
-palette = 6=#56b6c2
-palette = 14=#56b6c2
-
-# White (Text)
-palette = 7=#bcbec4
-palette = 15=#ffffff
+# -- Theme --------------------------------------------------
+theme = TokyoNight Night

@@ -4,6 +4,7 @@
 
 " -- General Settings ----------------------------------------------------------
 " Basic configurations for Vim behavior and appearance
+
 if &compatible
     set nocompatible              " Disable Vi compatibility mode
 endif
@@ -89,17 +90,14 @@ nnoremap <leader>bd <Cmd>bd<CR> " Close buffer
 nnoremap <silent> <C-l> <Cmd>nohlsearch<CR> " Clear search highlights with Ctrl-L
 
 " -- Autocommands --------------------------------------------------------------
+" Automatic commands for specific events
+
 if has("autocmd")
     " Jump to the last cursor position when reopening a file
-  augroup RestoreCursor
-      autocmd!
-      " Jump to the last cursor position when reopening a file
-      " Don't do it for git commit messages (you want to start at the top there)
-      autocmd BufReadPost *
-            \ if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit' |
-            \   exe "normal! g'\"" |
-            \ endif
-    augroup END
+    autocmd BufReadPost *
+                \ if line("'\"") > 0 && line("'\"") <= line("$") |
+                \   exe "normal g'\"" |
+                \ endif
 
     " Open help files in a full window
     autocmd FileType help wincmd o
@@ -153,78 +151,69 @@ endif
 " Enable cursor line highlighting
 set cursorline
 
-" Core syntax highlighting groups (IntelliJ IDEA Islands Dark Theme)
-" Palette Sources:
-" Background: #191a1c | Foreground: #bcbec4
-" Keywords:   #cf8e6d | Strings:    #6aab73
-" Numbers:    #2aacb8 | Functions:  #56a8f5
-" Comments:   #7a7e85
-
+" Core syntax highlighting groups (Tokyo Night)
 " Basic Colors
-hi Normal guifg=#bcbec4 guibg=#191a1c
+hi Normal guifg=#c0caf5 guibg=#222435 " Foreground, Background
 
 " Syntax Highlighting Groups
-hi Boolean      guifg=#cf8e6d
-hi Character    guifg=#6aab73
-hi Comment      guifg=#7a7e85 gui=italic
-hi Conditional  guifg=#cf8e6d
-hi Constant     guifg=#2aacb8
-hi Debug        guifg=#cf8e6d
-hi Define       guifg=#cf8e6d
-hi Delimiter    guifg=#bcbec4
-hi Error        guifg=#e06c75 guibg=NONE
-hi Exception    guifg=#cf8e6d
-hi Float        guifg=#2aacb8
-hi Function     guifg=#56a8f5
-hi Identifier   guifg=#bcbec4
-hi Ignore       guifg=#7a7e85
-hi Include      guifg=#cf8e6d
-hi Keyword      guifg=#cf8e6d
-hi Label        guifg=#cf8e6d
-hi Macro        guifg=#cf8e6d
-hi Number       guifg=#2aacb8
-hi Operator     guifg=#bcbec4
-hi PreCondit    guifg=#cf8e6d
-hi PreProc      guifg=#cf8e6d
-hi Repeat       guifg=#cf8e6d
-hi Special      guifg=#cf8e6d
-hi SpecialChar  guifg=#cf8e6d
-hi SpecialComment guifg=#7a7e85 gui=italic
-hi Statement    guifg=#cf8e6d
-hi StorageClass guifg=#cf8e6d
-hi String       guifg=#6aab73
-hi Structure    guifg=#cf8e6d
-hi Tag          guifg=#56a8f5
-hi Todo         guifg=#bcbec4 guibg=#2aacb8 gui=bold
-hi Type         guifg=#2aacb8
-hi Typedef      guifg=#2aacb8
-hi Underlined   guifg=#56a8f5 gui=underline
+hi Boolean guifg=#ff9e64
+hi Character guifg=#9ece6a
+hi Comment guifg=#565f89 gui=italic
+hi Conditional guifg=#bb9af7
+hi Constant guifg=#ff9e64 " Often numbers, true, false
+hi Debug guifg=#f7768e
+hi Define guifg=#bb9af7
+hi Delimiter guifg=#c0caf5 " Default foreground for delimiters
+hi Error guifg=#f7768e guibg=NONE " Error text on default background
+hi Exception guifg=#bb9af7
+hi Float guifg=#ff9e64
+hi Function guifg=#7aa2f7
+hi Identifier guifg=#c0caf5 " Can be more specific if needed, e.g., for variables
+hi Ignore guifg=#414868 " Darker than comment for ignored text
+hi Include guifg=#bb9af7
+hi Keyword guifg=#bb9af7
+hi Label guifg=#7aa2f7 " Often function-like
+hi Macro guifg=#7aa2f7 " Can be function-like or preprocessor-like
+hi Number guifg=#ff9e64
+hi Operator guifg=#89ddff " Using a lighter blue/cyan for operators
+hi PreCondit guifg=#bb9af7
+hi PreProc guifg=#bb9af7
+hi Repeat guifg=#bb9af7
+hi Special guifg=#7dcfff " For special symbols or tokens
+hi SpecialChar guifg=#7dcfff
+hi SpecialComment guifg=#565f89 gui=italic
+hi Statement guifg=#bb9af7
+hi StorageClass guifg=#bb9af7
+hi String guifg=#9ece6a
+hi Structure guifg=#bb9af7
+hi Tag guifg=#7aa2f7 " HTML/XML tags
+hi Todo guifg=#ff9e64 gui=bold " Standout color for Todos
+hi Type guifg=#2ac3de " Cyan for types
+hi Typedef guifg=#2ac3de
+hi Underlined guifg=#7aa2f7 gui=underline
 
 " UI Elements
-hi LineNr       guifg=#4b4e54 guibg=NONE ctermbg=NONE
-hi SignColumn   guibg=NONE ctermbg=NONE
-hi FoldColumn   guibg=NONE ctermbg=NONE
-
-hi CursorLine   guibg=#2b2d30 gui=NONE cterm=NONE
-
-hi CursorLineNr guifg=#bcbec4 guibg=#2b2d30 gui=NONE cterm=NONE
-
-hi VertSplit    guifg=#2b2d30 guibg=NONE gui=NONE
-hi EndOfBuffer  guifg=#191a1c guibg=NONE
-
-hi IncSearch    guifg=#191a1c guibg=#2aacb8
-hi Search       guifg=#191a1c guibg=#2aacb8
-hi Visual       guibg=#2f333d
-hi MatchParen   guifg=#cf8e6d guibg=#2b2d30 gui=bold
-
-hi Pmenu        guifg=#bcbec4 guibg=#2b2d30
-hi PmenuSel     guifg=#191a1c guibg=#56a8f5
-hi ErrorMsg     guifg=#e06c75 guibg=NONE
-hi WarningMsg   guifg=#cf8e6d guibg=NONE
-hi ModeMsg      guifg=#6aab73
-hi Title        guifg=#56a8f5 gui=bold
-hi Directory    guifg=#56a8f5
-hi NonText      guifg=#4b4e54 guibg=NONE
+hi CursorLine guibg=#222435 gui=NONE cterm=NONE " Slightly lighter background for cursor line
+hi CursorLineNr guifg=#7aa2f7 guibg=#222435 cterm=NONE " Accent color for line number on cursor line
+hi Directory guifg=#7aa2f7
+hi EndOfBuffer guifg=#3b4048 guibg=NONE " Should be subtle, like background
+hi ErrorMsg guifg=#f7768e guibg=#222435
+hi IncSearch guifg=#222435 guibg=#ff9e64 " Inverted colors for incremental search
+hi LineNr guifg=#3b4261 guibg=NONE " Line numbers
+hi MatchParen guifg=#c0caf5 guibg=#3b526b " Visible matching parenthesis
+hi ModeMsg guifg=#9ece6a
+hi MoreMsg guifg=#9ece6a
+hi NonText guifg=#3b4048 guibg=NONE " Non-text characters (e.g., trailing spaces)
+hi Pmenu guifg=#c0caf5 guibg=#24283b " Popup menu
+hi PmenuSel guifg=#222435 guibg=#7aa2f7 " Popup menu selection
+hi Question guifg=#7aa2f7 " For prompts
+hi Search guifg=#222435 guibg=#e0af68 " Search results highlighting (Yellow/Orange background)
+hi StatusLine guifg=#c0caf5 guibg=#222435 " Status line text and background
+hi StatusLineNC guifg=#565f89 guibg=#222435 " Status line for non-current windows
+hi Title guifg=#7aa2f7 gui=bold
+hi VertSplit guifg=#3b4048 guibg=#222435 " Vertical split separator
+hi Visual guibg=#2d3e5e " Visual selection background
+hi WarningMsg guifg=#e0af68 guibg=#222435
 
 " -- Statusline ----------------------------------------------------------------
 set laststatus=2
@@ -240,18 +229,18 @@ set statusline+=%8*\ %=\ row:%l/%L\ (%03p%%)\             " Rownumber/total (%)
 set statusline+=%9*\ col:%03c\                            " Colnr
 set statusline+=%0*\ \ %m%r%w\ %P\ \                      " Modified? Readonly? Top/bot (last segment)
 
-" Statusline highlight groups (IntelliJ Islands Dark inspired)
-" User1: File/Path (Blue)
-highlight User1 guifg=#56a8f5 guibg=#2b2d30
-highlight User2 guifg=#7a7e85 guibg=#2b2d30
-highlight User3 guifg=#7a7e85 guibg=#2b2d30
-highlight User4 guifg=#7a7e85 guibg=#2b2d30
-highlight User7 guifg=#bcbec4 guibg=#2b2d30
-highlight User8 guifg=#bcbec4 guibg=#2b2d30
-highlight User9 guifg=#bcbec4 guibg=#2b2d30
-highlight User0 guifg=#bcbec4 guibg=#2b2d30
+" Statusline highlight groups
+" Statusline highlight groups (Tokyo Night inspired)
+highlight User1 guifg=#7aa2f7 guibg=#222435  " Blue on StatusLine Background
+highlight User2 guifg=#565f89 guibg=#222435  " Comment-like color on StatusLine Background
+highlight User3 guifg=#565f89 guibg=#222435  " Comment-like color on StatusLine Background
+highlight User4 guifg=#565f89 guibg=#222435  " Comment-like color on StatusLine Background
+highlight User7 guifg=#c0caf5 guibg=#222435  " Main foreground on StatusLine Background
+highlight User8 guifg=#c0caf5 guibg=#222435  " Main foreground on StatusLine Background
+highlight User9 guifg=#c0caf5 guibg=#222435  " Main foreground on StatusLine Background
+highlight User0 guifg=#c0caf5 guibg=#222435  " Main foreground on StatusLine Background
 
-" Ensure transparency/cleanup
+" Ensure transparency at all levels (fix background issue)
 hi clear Normal
 hi clear StatusLine
 hi clear StatusLineNC
