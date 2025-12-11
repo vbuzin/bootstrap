@@ -1,108 +1,29 @@
-# Source Prezto.
+# ==============================================================================
+# SECTION 1: GLOBAL ENVIRONMENT (Runs for IDEs and Terminal)
+# Keep this section fast and silent. No "echo" or interactive commands here.
+# ==============================================================================
+
+# 1. Prezto Initialization
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-# Source all .zsh files (including symlinks and hidden files) in $HOME
-if [[ -d "$HOME" ]]; then
-  setopt nullglob dotglob
-  for file in "$HOME"/*.zsh; do
-    [[ -r "$file" && (-f "$file" || -L "$file") ]] && source "$file"
-  done
-  unsetopt nullglob dotglob
+# 2. SSH Agent Forwarding for 1Password
+if [ -S "${HOME}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" ]; then
+  export SSH_AUTH_SOCK="${HOME}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 fi
 
-# History
-HISTORY_IGNORE="(ls|cd|eza|la|eat|cat)"
-setopt HIST_EXPIRE_DUPS_FIRST
-setopt HIST_IGNORE_DUPS
-setopt HIST_IGNORE_ALL_DUPS
-setopt HIST_IGNORE_SPACE
-setopt HIST_FIND_NO_DUPS
-setopt HIST_SAVE_NO_DUPS
-
-# Conditionals
-if [ -S ${HOME}/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock ]; then
-  export SSH_AUTH_SOCK=${HOME}/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+# 3. Path Configuration
+# Ensure FZF is in the path for the IDE to see it.
+if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
+  PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
 fi
 
-if (( $+commands[bat] )); then
-  alias cat='bat --paging=never --wrap=never --style="changes"'
-  # Set to "ansi" so bat uses the Ghostty TokyoNight colors defined in the terminal
-  export BAT_THEME="ansi"
-fi
-
-if (( $+commands[eza] )); then
-  alias la="eza -la --group-directories-first"
-  alias lat="eza -laT --group-directories-first"
-fi
-
-if (( $+commands[fzf] )); then
-  # Setup fzf
-  # ---------
-  if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
-    PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
-  fi
-
-  # Auto-completion
-  # ---------------
-  [[ $- == *i* ]] && source "/opt/homebrew/opt/fzf/shell/completion.zsh" 2> /dev/null
-
-  # Key bindings
-  # ------------
-  source "/opt/homebrew/opt/fzf/shell/key-bindings.zsh"
-
-  # fzf + rg
-  # ------------
-  irg() {
-    RG_PREFIX="rg --hidden --column --line-number --no-heading --color=always --smart-case "
-    INITIAL_QUERY="${*:-}"
-    IFS=: read -rA selected <<<$(
-      FZF_DEFAULT_COMMAND="$RG_PREFIX $(printf %q "$INITIAL_QUERY")" \
-        fzf --ansi \
-        --color "hl:-1:underline,hl+:-1:underline:reverse" \
-        --disabled --query "$INITIAL_QUERY" \
-        --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
-        --bind "ctrl-f:unbind(change,ctrl-f)+change-prompt(2. fzf> )+enable-search+clear-query+rebind(ctrl-r)" \
-        --bind "ctrl-r:unbind(ctrl-r)+change-prompt(1. ripgrep> )+disable-search+reload($RG_PREFIX {q} || true)+rebind(change,ctrl-f)" \
-        --bind "esc:abort" \
-        --prompt '1. Ripgrep> ' \
-        --delimiter : \
-        --header '╱ CTRL-R (Ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
-        --preview 'bat --style="numbers,changes" --color=always {1} --highlight-line {2}' \
-        --preview-window 'up,70%,border-bottom,+{2}+3/3,~3'
-      )
-      # Exit if no selection was made (e.g., ESC was pressed)
-      [ -z "${selected[*]}" ] && return 0
-      [ ${#selected[@]} ] && code -ng "${selected[@]:0:1}:${selected[@]:1:1}:${selected[@]:2:1}"
-      }
-
-  # Customisations
-  # ------------
-  # Advanced customization of fzf options via _fzf_comprun function
-  # - The first argument to the function is the name of the command.
-  # - You should make sure to pass the rest of the arguments ($@) to fzf.
-  _fzf_comprun () {
-    local command=$1
-    shift
-
-    # One liner: tree-view for dirs, bat for regular files
-    local _smart_preview='[[ -d {} ]] && eza -T {} | head -200 || \
-      bat --style="numbers,changes" --color=always {}'
-
-    case "$command" in
-      cd)            fzf --preview 'eza -T {} | head -200' "$@" ;;
-      export|unset)  fzf --preview "eval 'echo \$'{}"      "$@" ;;
-      ssh)           fzf --preview 'dig {}'                "$@" ;;
-      *)             fzf --preview "$_smart_preview"       "$@" ;;
-    esac
-  }
-
+# 4. Global Variables
+export BAT_THEME="ansi"
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 
-# Options: Layout and TokyoNight Color Palette
-# Mapped from TokyoNight Ghostty config:
-# bg=#1a1b26, fg=#c0caf5, bg+=#283457, border=#414868
+# Mapped from TokyoNight Ghostty config
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
 --layout reverse
 --border
@@ -116,18 +37,104 @@ export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
 --color=marker:#9ece6a,spinner:#bb9af7,header:#7aa2f7
 --color=border:#414868
 '
-fi
 
-if (( $+commands[nvim] )); then
-  alias {vi,vim}=nvim
-fi
-
-# Add Homebrew zsh completions (e.g., docker) to $fpath so Prezto/compinit can pick them up
+# Check for standard path first to avoid slow 'brew --prefix' execution.
 if command -v brew >/dev/null 2>&1; then
-  BREW_PREFIX=$(brew --prefix)
-  ZSH_SITE_FUNCS="$BREW_PREFIX/share/zsh/site-functions"
-  if [[ -d "$ZSH_SITE_FUNCS" ]]; then
-    # Prepend so these completions take precedence
-    fpath=("$ZSH_SITE_FUNCS" $fpath)
+  # Standard Apple Silicon Homebrew path (Fastest)
+  if [[ -d "/opt/homebrew/share/zsh/site-functions" ]]; then
+     fpath=("/opt/homebrew/share/zsh/site-functions" $fpath)
+  # Fallback: Ask brew for the prefix (Slower, but compatible with Intel/custom installs)
+  else
+     BREW_PREFIX=$(brew --prefix)
+     if [[ -d "$BREW_PREFIX/share/zsh/site-functions" ]]; then
+       fpath=("$BREW_PREFIX/share/zsh/site-functions" $fpath)
+     fi
   fi
+fi
+
+# ==============================================================================
+# SECTION 2: INTERACTIVE SHELL ONLY (Human use only)
+# Everything below is skipped by JetBrains/Automation to prevent timeouts.
+# ==============================================================================
+
+if [[ $- == *i* ]]; then
+
+  # 1. Source local .zsh files
+  if [[ -d "$HOME" ]]; then
+    setopt nullglob dotglob
+    for file in "$HOME"/*.zsh; do
+      [[ -r "$file" && (-f "$file" || -L "$file") ]] && source "$file"
+    done
+    unsetopt nullglob dotglob
+  fi
+
+  # 2. History Settings
+  HISTORY_IGNORE="(ls|cd|eza|la|eat|cat)"
+  setopt HIST_EXPIRE_DUPS_FIRST
+  setopt HIST_IGNORE_DUPS
+  setopt HIST_IGNORE_ALL_DUPS
+  setopt HIST_IGNORE_SPACE
+  setopt HIST_FIND_NO_DUPS
+  setopt HIST_SAVE_NO_DUPS
+
+  # 3. Aliases
+  if (( $+commands[bat] )); then
+    alias cat='bat --paging=never --wrap=never --style="changes"'
+  fi
+
+  if (( $+commands[eza] )); then
+    alias la="eza -la --group-directories-first"
+    alias lat="eza -laT --group-directories-first"
+  fi
+
+  if (( $+commands[nvim] )); then
+    alias {vi,vim}=nvim
+  fi
+
+  # 4. FZF Interactive Setup
+  if (( $+commands[fzf] )); then
+
+    # Auto-completion & Key bindings
+    # Sourcing these often enables key-listeners which confuse background processes.
+    [[ -f "/opt/homebrew/opt/fzf/shell/completion.zsh" ]] && source "/opt/homebrew/opt/fzf/shell/completion.zsh" 2> /dev/null
+    [[ -f "/opt/homebrew/opt/fzf/shell/key-bindings.zsh" ]] && source "/opt/homebrew/opt/fzf/shell/key-bindings.zsh"
+
+    # Custom function: irg (Interactive Ripgrep)
+    irg() {
+      RG_PREFIX="rg --hidden --column --line-number --no-heading --color=always --smart-case "
+      INITIAL_QUERY="${*:-}"
+      IFS=: read -rA selected <<<$(
+        FZF_DEFAULT_COMMAND="$RG_PREFIX $(printf %q "$INITIAL_QUERY")" \
+          fzf --ansi \
+          --color "hl:-1:underline,hl+:-1:underline:reverse" \
+          --disabled --query "$INITIAL_QUERY" \
+          --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
+          --bind "ctrl-f:unbind(change,ctrl-f)+change-prompt(2. fzf> )+enable-search+clear-query+rebind(ctrl-r)" \
+          --bind "ctrl-r:unbind(ctrl-r)+change-prompt(1. ripgrep> )+disable-search+reload($RG_PREFIX {q} || true)+rebind(change,ctrl-f)" \
+          --bind "esc:abort" \
+          --prompt '1. Ripgrep> ' \
+          --delimiter : \
+          --header '╱ CTRL-R (Ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
+          --preview 'bat --style="numbers,changes" --color=always {1} --highlight-line {2}' \
+          --preview-window 'up,70%,border-bottom,+{2}+3/3,~3'
+      )
+      [ -z "${selected[*]}" ] && return 0
+      [ ${#selected[@]} ] && code -ng "${selected[@]:0:1}:${selected[@]:1:1}:${selected[@]:2:1}"
+    }
+
+    # Custom function: _fzf_comprun
+    _fzf_comprun () {
+      local command=$1
+      shift
+      local _smart_preview='[[ -d {} ]] && eza -T {} | head -200 || bat --style="numbers,changes" --color=always {}'
+
+      case "$command" in
+        cd)            fzf --preview 'eza -T {} | head -200' "$@" ;;
+        export|unset)  fzf --preview "eval 'echo \$'{}"      "$@" ;;
+        ssh)           fzf --preview 'dig {}'                "$@" ;;
+        *)             fzf --preview "$_smart_preview"       "$@" ;;
+      esac
+    }
+  fi
+
 fi
