@@ -6,16 +6,15 @@ font-size = 13
 window-padding-x = 12
 window-padding-y = 12
 window-padding-balance = true
+window-save-state = always
 
 macos-titlebar-style = tabs
 macos-option-as-alt = true
 title = " "
-window-save-state = always
 
 # -- Cursor & Shell -----------------------------------------
 cursor-color = #56a8f5
 cursor-style = underline
-# Prevent shell from overriding cursor style
 shell-integration-features = no-cursor
 
 # -- Clipboard ----------------------------------------------
@@ -23,3 +22,4 @@ copy-on-select = clipboard
 
 # -- Theme --------------------------------------------------
 theme = TokyoNight Night
+

@@ -35,6 +35,10 @@ kmap.set("n", "g;", "g;zz", { silent = true }) -- Go to older position in change
 kmap.set("n", "g,", "g,zz", { silent = true }) -- Go to newer position in changelist
 -- END SECTION
 
+-- Move selected text up and down
+kmap.set("v", "J", ":m '>+1<CR>gv=gv") -- Move selection down
+kmap.set("v", "K", ":m '<-2<CR>gv=gv") -- Move selection up
+
 -- Managing buffers
 kmap.set("n", "<leader>bp", ":bp<cr>")
 kmap.set("n", "<leader>bn", ":bn<cr>")

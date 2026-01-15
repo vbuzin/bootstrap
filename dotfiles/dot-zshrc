@@ -19,11 +19,6 @@ if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
   PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
 fi
 
-# Add coursier bin to the PATH
-if command -v coursier >/dev/null 2>&1; then
-  PATH="${PATH:+${PATH}:}${HOME}/Library/Application Support/Coursier/bin"
-fi
-
 # 4. Global Variables
 export BAT_THEME="ansi"
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
