@@ -1,36 +1,29 @@
 # ==============================================================================
 # SECTION 1: GLOBAL ENVIRONMENT (Runs for IDEs and Terminal)
-# Keep this section fast and silent. No "echo" or interactive commands here.
 # ==============================================================================
 
-# 1. Prezto Initialization
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-fi
-
-# 2. SSH Agent Forwarding for 1Password
+# 1. SSH Agent Forwarding for 1Password
 if [ -S "${HOME}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" ]; then
   export SSH_AUTH_SOCK="${HOME}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 fi
 
-# 3. Path Configuration
+# 2. Path Configuration
 # Ensure FZF is in the path for the IDE to see it.
 if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
   PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
 fi
 
-# 4. Global Variables
+# 3. Global Variables
 export BAT_THEME="ansi"
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 
-# Mapped from TokyoNight Ghostty config
-export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+# -- FZF Global Styling (Layout & Colors ONLY) --
+export FZF_DEFAULT_OPTS='
 --layout reverse
 --border
 --info=inline
 --style full
 --preview-window "up,60%"
---preview "bat -n --color=always {}"
 --color=bg:#1a1b26,fg:#c0caf5,hl:#e0af68
 --color=bg+:#283457,fg+:#c0caf5,hl+:#f7768e
 --color=info:#7aa2f7,prompt:#7dcfff,pointer:#f7768e
@@ -38,19 +31,24 @@ export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
 --color=border:#414868
 '
 
-# Check for standard path first to avoid slow 'brew --prefix' execution.
-if command -v brew >/dev/null 2>&1; then
-  # Standard Apple Silicon Homebrew path (Fastest)
-  if [[ -d "/opt/homebrew/share/zsh/site-functions" ]]; then
-     fpath=("/opt/homebrew/share/zsh/site-functions" $fpath)
-  # Fallback: Ask brew for the prefix (Slower, but compatible with Intel/custom installs)
-  else
-     BREW_PREFIX=$(brew --prefix)
-     if [[ -d "$BREW_PREFIX/share/zsh/site-functions" ]]; then
-       fpath=("$BREW_PREFIX/share/zsh/site-functions" $fpath)
-     fi
-  fi
-fi
+# -- FZF History (Ctrl-R) --
+# "echo {}" prints the command. "bat -l sh" syntax highlights it as shell script.
+export FZF_CTRL_R_OPTS="
+  --preview 'echo {} | bat --color=always --style=plain --language=sh'
+  --preview-window down:3:wrap
+"
+
+# -- FZF File Search (Ctrl-T) --
+# This is where we actually want to preview the file content.
+export FZF_CTRL_T_OPTS="
+  --preview 'bat --color=always --style=numbers --line-range=:500 {}'
+"
+
+# -- FZF Directory Search (Alt-C) --
+# Preview the tree structure of the directory.
+export FZF_ALT_C_OPTS="
+  --preview 'eza -T --color=always {} | head -200'
+"
 
 # ==============================================================================
 # SECTION 2: INTERACTIVE SHELL ONLY (Human use only)
@@ -59,7 +57,26 @@ fi
 
 if [[ $- == *i* ]]; then
 
-  # 1. Source local .zsh files
+  # 1. Homebrew & Fpath Configuration (MOVED HERE)
+  if command -v brew >/dev/null 2>&1; then
+    # Standard Apple Silicon Homebrew path (Fastest)
+    if [[ -d "/opt/homebrew/share/zsh/site-functions" ]]; then
+       fpath=("/opt/homebrew/share/zsh/site-functions" $fpath)
+    # Fallback: Ask brew for the prefix (Slower)
+    else
+       BREW_PREFIX=$(brew --prefix)
+       if [[ -d "$BREW_PREFIX/share/zsh/site-functions" ]]; then
+         fpath=("$BREW_PREFIX/share/zsh/site-functions" $fpath)
+       fi
+    fi
+  fi
+
+  # 2. Prezto Initialization
+  if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+    source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+  fi
+
+  # 3. Source local .zsh files
   if [[ -d "$HOME" ]]; then
     setopt nullglob dotglob
     for file in "$HOME"/*.zsh; do
@@ -68,7 +85,7 @@ if [[ $- == *i* ]]; then
     unsetopt nullglob dotglob
   fi
 
-  # 2. History Settings
+  # 4. History Settings
   HISTORY_IGNORE="(ls|cd|eza|la|eat|cat)"
   setopt HIST_EXPIRE_DUPS_FIRST
   setopt HIST_IGNORE_DUPS
@@ -77,7 +94,7 @@ if [[ $- == *i* ]]; then
   setopt HIST_FIND_NO_DUPS
   setopt HIST_SAVE_NO_DUPS
 
-  # 3. Aliases
+  # 5. Aliases
   if (( $+commands[bat] )); then
     alias cat='bat --paging=never --wrap=never --style="changes"'
   fi
@@ -91,11 +108,10 @@ if [[ $- == *i* ]]; then
     alias {vi,vim}=nvim
   fi
 
-  # 4. FZF Interactive Setup
+  # 6. FZF Interactive Setup
   if (( $+commands[fzf] )); then
 
     # Auto-completion & Key bindings
-    # Sourcing these often enables key-listeners which confuse background processes.
     [[ -f "/opt/homebrew/opt/fzf/shell/completion.zsh" ]] && source "/opt/homebrew/opt/fzf/shell/completion.zsh" 2> /dev/null
     [[ -f "/opt/homebrew/opt/fzf/shell/key-bindings.zsh" ]] && source "/opt/homebrew/opt/fzf/shell/key-bindings.zsh"
 
@@ -114,12 +130,18 @@ if [[ $- == *i* ]]; then
           --bind "esc:abort" \
           --prompt '1. Ripgrep> ' \
           --delimiter : \
-          --header '╱ CTRL-R (Ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
           --preview 'bat --style="numbers,changes" --color=always {1} --highlight-line {2}' \
           --preview-window 'up,70%,border-bottom,+{2}+3/3,~3'
       )
+
       [ -z "${selected[*]}" ] && return 0
-      [ ${#selected[@]} ] && code -ng "${selected[@]:0:1}:${selected[@]:1:1}:${selected[@]:2:1}"
+
+      local file="${selected[1]}"
+      local line="${selected[2]}"
+      local col="${selected[3]}"
+
+      # Open Neovim at exact line/col
+      vi "+call cursor($line, $col)" "$file"
     }
 
     # Custom function: _fzf_comprun
@@ -136,5 +158,4 @@ if [[ $- == *i* ]]; then
       esac
     }
   fi
-
 fi

@@ -6,6 +6,7 @@ font-size = 13
 window-padding-x = 12
 window-padding-y = 12
 window-padding-balance = true
+
 window-save-state = always
 
 macos-titlebar-style = tabs
