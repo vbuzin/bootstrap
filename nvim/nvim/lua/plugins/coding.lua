@@ -10,28 +10,18 @@ return {
 
 	--[[ Treesitter for Syntax Highlighting and More ]]
 	{
-    "nvim-treesitter/nvim-treesitter",
-    branch = "main",
-    lazy = false,
-    build = ":TSUpdate",
-    config = function()
-      local ts = require("nvim-treesitter")
-      local parsers = {
-        "typescript", "javascript", "css", "html", "json", "toml", "vim", "vimdoc", "lua"
-      }
-      ts.install(parsers)
-
-      vim.api.nvim_create_autocmd("BufReadPost", {
-        callback = function()
-          local buf = vim.api.nvim_get_current_buf()
-          local ok, _ = pcall(vim.treesitter.start, buf)
-          if ok then
-            vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-          end
-        end,
-      })
-    end,
-  },
+		"nvim-treesitter/nvim-treesitter",
+		branch = "main",
+		lazy = false,
+		build = ":TSUpdate",
+		opts = {
+			ensure_installed = { "vim", "vimdoc", "lua", "toml" },
+			indent = { enable = true },
+		},
+		config = function(_, opts)
+			require("nvim-treesitter.configs").setup(opts)
+		end,
+	},
 
   --[[ Mini.ai: The Modern Text Objects (Replaces nvim-treesitter-textobjects) ]]
   {
@@ -75,60 +65,43 @@ return {
 		config = true, -- Calls require("mason").setup(opts)
 	},
 
-	--[[ Mason Tool Installer ]]
-	{
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		dependencies = { "williamboman/mason.nvim" },
-		opts = {
-			-- Ensure these tools are installed by Mason.
-			-- Names are Mason package names.
-			ensure_installed = {
-				-- LSPs
-				"typescript-language-server", -- For tsserver
-				"eslint-lsp", -- For eslint
-				"html-lsp", -- For html
-				"json-lsp", -- For jsonls (from vscode-json-languageserver)
-				"tailwindcss-language-server", -- For tailwindcss
-				"lua-language-server", -- For lua_ls
-
-				-- DAPs
-				"js-debug-adapter", -- For JavaScript/Node.js debugging
-
-				-- Formatters
-				"prettierd",
-				"stylua",
-			},
-			auto_update = false, -- Set to true if you want tools to auto-update
-			run_on_start = true, -- Install tools on Neovim startup if not already installed
-		},
-		config = true, -- Calls require("mason-tool-installer").setup(opts)
-	},
-
 	--[[ LSP Configuration ]]
 	{
 		"neovim/nvim-lspconfig",
-		event = { "BufReadPre", "BufNewFile" }, -- Activate LSP on file access
+		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
-			"williamboman/mason.nvim", -- Mason core
-			"williamboman/mason-lspconfig.nvim", -- Bridge between Mason and lspconfig
-			"hrsh7th/cmp-nvim-lsp", -- For LSP capabilities in nvim-cmp
+			"williamboman/mason.nvim",
+			"williamboman/mason-lspconfig.nvim",
+			"hrsh7th/cmp-nvim-lsp",
 		},
-		config = function()
+		opts = {
+			-- Default server configurations. These will be extended by language-specific plugins.
+			servers = {
+				lua_ls = {
+					settings = {
+						Lua = {
+							diagnostics = { globals = { "vim" } },
+							workspace = { checkThirdParty = false },
+							telemetry = { enable = false },
+						},
+					},
+				},
+			},
+		},
+		config = function(_, opts)
 			local lspconfig = require("lspconfig")
 			local cmp_nvim_lsp = require("cmp_nvim_lsp")
 			local mason_lspconfig = require("mason-lspconfig")
 
-			-- Inline diagnostics state (default off)
+			-- Inline diagnostics toggle setup (unchanged)
 			local inline_diagnostics_enabled = false
 			vim.diagnostic.config({
 				signs = true,
 				underline = true,
 				update_in_insert = false,
 				severity_sort = true,
-				virtual_text = inline_diagnostics_enabled, -- Initial state
+				virtual_text = inline_diagnostics_enabled,
 			})
-
-			-- Toggle inline diagnostics function
 			local function toggle_inline_diagnostics()
 				inline_diagnostics_enabled = not inline_diagnostics_enabled
 				vim.diagnostic.config({ virtual_text = inline_diagnostics_enabled })
@@ -138,8 +111,6 @@ return {
 					{ title = "Diagnostics" }
 				)
 			end
-
-			-- Keymap for toggling inline diagnostics
 			vim.keymap.set(
 				"n",
 				"<leader>td",
@@ -147,14 +118,12 @@ return {
 				{ noremap = true, silent = true, desc = "Toggle Inline Diagnostics" }
 			)
 
-			-- Unified on_attach function for all LSPs
+			-- Unified on_attach function (unchanged)
 			local on_attach = function(client, bufnr)
 				local common_opts = { noremap = true, silent = true, buffer = bufnr }
 				local function keymap_opts(desc)
 					return vim.tbl_deep_extend("force", vim.deepcopy(common_opts), { desc = desc })
 				end
-
-				-- Standard LSP keymaps
 				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, keymap_opts("LSP: Code Action"))
 				vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, keymap_opts("LSP: Rename"))
 				vim.keymap.set("n", "gd", vim.lsp.buf.definition, keymap_opts("LSP: Go to Definition"))
@@ -172,71 +141,27 @@ return {
 				vim.keymap.set("n", "<leader>lr", vim.lsp.buf.references, keymap_opts("LSP: Find References"))
 			end
 
-			-- LSP capabilities, enhanced by cmp_nvim_lsp
+			-- LSP capabilities (unchanged)
 			local capabilities = cmp_nvim_lsp.default_capabilities()
 			capabilities.workspace = capabilities.workspace or {}
 			capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = true }
 
-			-- Configure mason-lspconfig to setup LSP servers
-			-- It will use the tools installed by mason-tool-installer
+			-- **This is the new, simplified setup**
+			-- It enables automatic installation of LSPs and sets up servers
+			-- based on the `opts.servers` table, which is extended by `lang` modules.
 			mason_lspconfig.setup({
-				-- NOTE: `ensure_installed` and `automatic_installation` are handled by `mason-tool-installer.nvim`
-				handlers = {
-					-- Default handler for servers not explicitly configured below
-					function(server_name)
-						lspconfig[server_name].setup({
-							on_attach = on_attach,
-							capabilities = capabilities,
-						})
-					end,
-					-- Custom handler for lua_ls
-					["lua_ls"] = function()
-						lspconfig.lua_ls.setup({
-							on_attach = on_attach,
-							capabilities = capabilities,
-							settings = {
-								Lua = {
-									diagnostics = { globals = { "vim" } },
-									workspace = { checkThirdParty = false },
-									telemetry = { enable = false },
-								},
-							},
-						})
-					end,
-					["ts_ls"] = function()
-						lspconfig.tsserver.setup({
-							on_attach = on_attach,
-							capabilities = capabilities,
-							filetypes = {
-								"javascript",
-								"javascriptreact",
-								"javascript.jsx",
-								"typescript",
-								"typescriptreact",
-								"typescript.tsx",
-							},
-						})
-					end,
-					["tailwindcss"] = function()
-						lspconfig.tailwindcss.setup({
-							on_attach = on_attach,
-							capabilities = capabilities,
-							filetypes = {
-								"typescriptreact",
-								"javascriptreact",
-								"html",
-								"css",
-								"astro",
-								"vue",
-								"svelte",
-								"eruby",
-							},
-							init_options = {
-								userLanguages = { astro = "html", vue = "html", svelte = "html", eruby = "html" },
-							},
-						})
-					end,
-				},
+				automatic_installation = true,
+			})
+
+			mason_lspconfig.setup_handlers({
+				function(server_name)
+					local server_opts = vim.tbl_deep_extend("force", {
+						on_attach = on_attach,
+						capabilities = capabilities,
+					}, opts.servers[server_name] or {})
+
+					lspconfig[server_name].setup(server_opts)
+				end,
 			})
 		end,
 	},
@@ -291,13 +216,6 @@ return {
 		cmd = { "ConformInfo" }, -- Command to inspect conform.nvim setup
 		opts = {
 			formatters_by_ft = {
-				javascript = { "prettierd" },
-				javascriptreact = { "prettierd" },
-				typescript = { "prettierd" },
-				typescriptreact = { "prettierd" },
-				css = { "prettierd" },
-				html = { "prettierd" },
-				json = { "prettierd" },
 				yaml = { "prettierd" },
 				markdown = { "prettierd" },
 				graphql = { "prettierd" },
