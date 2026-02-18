@@ -26,6 +26,7 @@ return {
     ft = { "fsharp" },
     opts = {
       formatters_by_ft = {
+        -- Empty list - F# formatting is handled by LSP (FsAutoComplete/Fantomas)
         fsharp = {},
       },
     },
