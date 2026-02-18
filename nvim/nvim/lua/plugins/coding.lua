@@ -118,27 +118,21 @@ return {
 				{ noremap = true, silent = true, desc = "Toggle Inline Diagnostics" }
 			)
 
-			-- Unified on_attach function (unchanged)
-			local on_attach = function(client, bufnr)
-				local common_opts = { noremap = true, silent = true, buffer = bufnr }
-				local function keymap_opts(desc)
-					return vim.tbl_deep_extend("force", vim.deepcopy(common_opts), { desc = desc })
+			-- Unified on_attach function
+			local on_attach = function(_, bufnr)
+				local function map(mode, lhs, rhs, desc)
+					vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, buffer = bufnr, desc = desc })
 				end
-				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, keymap_opts("LSP: Code Action"))
-				vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, keymap_opts("LSP: Rename"))
-				vim.keymap.set("n", "gd", vim.lsp.buf.definition, keymap_opts("LSP: Go to Definition"))
-				vim.keymap.set("n", "gi", vim.lsp.buf.implementation, keymap_opts("LSP: Go to Implementation"))
-				vim.keymap.set("n", "K", vim.lsp.buf.hover, keymap_opts("LSP: Hover Documentation"))
-				vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, keymap_opts("LSP: Go to Type Definition"))
-				vim.keymap.set(
-					"n",
-					"<leader>ds",
-					vim.diagnostic.open_float,
-					keymap_opts("Diagnostics: Show Line Diagnostics")
-				)
-				vim.keymap.set("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, keymap_opts("Diagnostics: Go to Previous"))
-				vim.keymap.set("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, keymap_opts("Diagnostics: Go to Next"))
-				vim.keymap.set("n", "<leader>lr", vim.lsp.buf.references, keymap_opts("LSP: Find References"))
+				map("n", "<leader>ca", vim.lsp.buf.code_action, "LSP: Code Action")
+				map("n", "<leader>rn", vim.lsp.buf.rename, "LSP: Rename")
+				map("n", "gd", vim.lsp.buf.definition, "LSP: Go to Definition")
+				map("n", "gi", vim.lsp.buf.implementation, "LSP: Go to Implementation")
+				map("n", "K", vim.lsp.buf.hover, "LSP: Hover Documentation")
+				map("n", "<leader>D", vim.lsp.buf.type_definition, "LSP: Go to Type Definition")
+				map("n", "<leader>ds", vim.diagnostic.open_float, "Diagnostics: Show Line Diagnostics")
+				map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, "Diagnostics: Go to Previous")
+				map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, "Diagnostics: Go to Next")
+				map("n", "<leader>lr", vim.lsp.buf.references, "LSP: Find References")
 			end
 
 			-- LSP capabilities (unchanged)
@@ -153,16 +147,27 @@ return {
 				automatic_installation = true,
 			})
 
-			mason_lspconfig.setup_handlers({
-				function(server_name)
+			-- Get all installed servers and set them up directly
+			local installed_servers = mason_lspconfig.get_installed_servers()
+			for _, server_name in ipairs(installed_servers) do
+				local server_opts = vim.tbl_deep_extend("force", {
+					on_attach = on_attach,
+					capabilities = capabilities,
+				}, opts.servers[server_name] or {})
+				lspconfig[server_name].setup(server_opts)
+			end
+
+			-- Also set up any servers defined in opts.servers that might
+			-- not yet be installed (they'll be auto-installed on next open)
+			for server_name, server_config in pairs(opts.servers) do
+				if not vim.tbl_contains(installed_servers, server_name) then
 					local server_opts = vim.tbl_deep_extend("force", {
 						on_attach = on_attach,
 						capabilities = capabilities,
-					}, opts.servers[server_name] or {})
-
+					}, server_config)
 					lspconfig[server_name].setup(server_opts)
-				end,
-			})
+				end
+			end
 		end,
 	},
 
