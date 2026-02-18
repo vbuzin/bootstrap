@@ -4,7 +4,7 @@ return {
     ft = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
     opts = {
       servers = {
-        tsserver = {
+        ts_ls = {
           filetypes = {
             "javascript",
             "javascriptreact",

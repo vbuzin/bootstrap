@@ -11,15 +11,15 @@ return {
 	--[[ Treesitter for Syntax Highlighting and More ]]
 	{
 		"nvim-treesitter/nvim-treesitter",
-		branch = "main",
 		lazy = false,
 		build = ":TSUpdate",
-		opts = {
-			ensure_installed = { "vim", "vimdoc", "lua", "toml" },
-			indent = { enable = true },
-		},
-		config = function(_, opts)
-			require("nvim-treesitter.configs").setup(opts)
+		config = function()
+			require("nvim-treesitter").install({ "vim", "vimdoc", "lua", "toml" })
+			vim.api.nvim_create_autocmd("FileType", {
+				callback = function()
+					pcall(vim.treesitter.start)
+				end,
+			})
 		end,
 	},
 
@@ -136,8 +136,8 @@ return {
 					vim.diagnostic.open_float,
 					keymap_opts("Diagnostics: Show Line Diagnostics")
 				)
-				vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, keymap_opts("Diagnostics: Go to Previous"))
-				vim.keymap.set("n", "]d", vim.diagnostic.goto_next, keymap_opts("Diagnostics: Go to Next"))
+				vim.keymap.set("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, keymap_opts("Diagnostics: Go to Previous"))
+				vim.keymap.set("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, keymap_opts("Diagnostics: Go to Next"))
 				vim.keymap.set("n", "<leader>lr", vim.lsp.buf.references, keymap_opts("LSP: Find References"))
 			end
 
