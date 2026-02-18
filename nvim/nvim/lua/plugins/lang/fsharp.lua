@@ -3,8 +3,9 @@ return {
   -- Treesitter for F#
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, { "fsharp" })
+    ft = { "fsharp" },
+    config = function()
+      require("nvim-treesitter").install({ "fsharp" })
     end,
   },
 
@@ -19,16 +20,13 @@ return {
     },
   },
 
-  -- Formatter: FsAutoComplete provides formatting via Fantomas
+  -- Formatter: FsAutoComplete provides formatting via Fantomas through LSP
   {
     "stevearc/conform.nvim",
-    ft = { "fsharp", "fsscript", "fsx" },
+    ft = { "fsharp" },
     opts = {
-      -- Use LSP formatting for F# files
       formatters_by_ft = {
-        fsharp = { "lspf" }, -- lspf is a special conform formatter that uses the LSP
-        fsscript = { "lspf" },
-        fsx = { "lspf" },
+        fsharp = {},
       },
     },
   },

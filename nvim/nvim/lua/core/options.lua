@@ -38,3 +38,7 @@ opt.tabstop = 2
 opt.smartindent = true
 opt.expandtab = true
 
+-- Project-local configuration
+opt.exrc = true
+opt.secure = true
+
