@@ -89,7 +89,6 @@ return {
 			},
 		},
 		config = function(_, opts)
-			local lspconfig = require("lspconfig")
 			local cmp_nvim_lsp = require("cmp_nvim_lsp")
 			local mason_lspconfig = require("mason-lspconfig")
 
@@ -118,55 +117,46 @@ return {
 				{ noremap = true, silent = true, desc = "Toggle Inline Diagnostics" }
 			)
 
-			-- Unified on_attach function
-			local on_attach = function(_, bufnr)
-				local function map(mode, lhs, rhs, desc)
-					vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, buffer = bufnr, desc = desc })
-				end
-				map("n", "<leader>ca", vim.lsp.buf.code_action, "LSP: Code Action")
-				map("n", "<leader>rn", vim.lsp.buf.rename, "LSP: Rename")
-				map("n", "gd", vim.lsp.buf.definition, "LSP: Go to Definition")
-				map("n", "gi", vim.lsp.buf.implementation, "LSP: Go to Implementation")
-				map("n", "K", vim.lsp.buf.hover, "LSP: Hover Documentation")
-				map("n", "<leader>D", vim.lsp.buf.type_definition, "LSP: Go to Type Definition")
-				map("n", "<leader>ds", vim.diagnostic.open_float, "Diagnostics: Show Line Diagnostics")
-				map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, "Diagnostics: Go to Previous")
-				map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, "Diagnostics: Go to Next")
-				map("n", "<leader>lr", vim.lsp.buf.references, "LSP: Find References")
-			end
-
 			-- LSP capabilities (unchanged)
 			local capabilities = cmp_nvim_lsp.default_capabilities()
 			capabilities.workspace = capabilities.workspace or {}
 			capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = true }
 
-			-- **This is the new, simplified setup**
-			-- It enables automatic installation of LSPs and sets up servers
-			-- based on the `opts.servers` table, which is extended by `lang` modules.
+			-- Apply capabilities to all LSP servers via wildcard
+			vim.lsp.config('*', {
+				capabilities = capabilities,
+			})
+
+			-- LspAttach autocmd for keymaps (replaces on_attach)
+			vim.api.nvim_create_autocmd("LspAttach", {
+				group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
+				callback = function(event)
+					local bufnr = event.buf
+					local function map(mode, lhs, rhs, desc)
+						vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, buffer = bufnr, desc = desc })
+					end
+					map("n", "<leader>ca", vim.lsp.buf.code_action, "LSP: Code Action")
+					map("n", "<leader>rn", vim.lsp.buf.rename, "LSP: Rename")
+					map("n", "gd", vim.lsp.buf.definition, "LSP: Go to Definition")
+					map("n", "gi", vim.lsp.buf.implementation, "LSP: Go to Implementation")
+					map("n", "K", vim.lsp.buf.hover, "LSP: Hover Documentation")
+					map("n", "<leader>D", vim.lsp.buf.type_definition, "LSP: Go to Type Definition")
+					map("n", "<leader>ds", vim.diagnostic.open_float, "Diagnostics: Show Line Diagnostics")
+					map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, "Diagnostics: Go to Previous")
+					map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, "Diagnostics: Go to Next")
+					map("n", "<leader>lr", vim.lsp.buf.references, "LSP: Find References")
+				end,
+			})
+
+			-- Mason auto-installation
 			mason_lspconfig.setup({
 				automatic_installation = true,
 			})
 
-			-- Get all installed servers and set them up directly
-			local installed_servers = mason_lspconfig.get_installed_servers()
-			for _, server_name in ipairs(installed_servers) do
-				local server_opts = vim.tbl_deep_extend("force", {
-					on_attach = on_attach,
-					capabilities = capabilities,
-				}, opts.servers[server_name] or {})
-				lspconfig[server_name].setup(server_opts)
-			end
-
-			-- Also set up any servers defined in opts.servers that might
-			-- not yet be installed (they'll be auto-installed on next open)
+			-- Configure and enable each server from opts.servers
 			for server_name, server_config in pairs(opts.servers) do
-				if not vim.tbl_contains(installed_servers, server_name) then
-					local server_opts = vim.tbl_deep_extend("force", {
-						on_attach = on_attach,
-						capabilities = capabilities,
-					}, server_config)
-					lspconfig[server_name].setup(server_opts)
-				end
+				vim.lsp.config(server_name, server_config)
+				vim.lsp.enable(server_name)
 			end
 		end,
 	},
