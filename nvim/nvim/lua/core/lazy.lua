@@ -20,6 +20,7 @@ require("lazy").setup {
   spec = {
     -- import plugins
     { import = "plugins" },
+    { import = "plugins.lang" },
   },
   lockfile = fn.stdpath("data") .. "/lazy/lazy-lock.json",
 

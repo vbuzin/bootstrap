@@ -5,7 +5,13 @@ return {
     priority = 1000,
     lazy = false,
     opts = {
-      indent = { enabled = true },
+      indent = {
+        enabled = true,
+
+        indent = {
+          enabled = false
+        },
+      },
       picker = {
         exclude = {
           ".git",
@@ -46,8 +52,6 @@ return {
       { "gy",         function() Snacks.picker.lsp_type_definitions() end,                                   desc = "Goto T[y]pe Definition" },
       { "<leader>ss", function() Snacks.picker.lsp_symbols() end,                                            desc = "LSP Symbols" },
       { "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end,                                  desc = "LSP Workspace Symbols" },
-      -- TODOs
-      { "<leader>sT", function() Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } }) end, desc = "Todo/Fix/Fixme" },
     }
   },
   -- Fast navigation

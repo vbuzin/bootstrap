@@ -1,3 +1,7 @@
+if vim.fn.executable("node") ~= 1 then
+  return {} -- no plugin specs, no opts merge, ts_ls never appears
+end
+
 return {
   {
     "neovim/nvim-lspconfig",

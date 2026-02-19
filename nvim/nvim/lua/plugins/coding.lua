@@ -13,8 +13,12 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		lazy = false,
 		build = ":TSUpdate",
-		config = function()
-			require("nvim-treesitter").install({ "vim", "vimdoc", "lua", "toml" })
+		opts = {
+			ensure_installed = { "vim", "vimdoc" },
+		},
+		config = function(_, opts)
+			require("nvim-treesitter").install(opts.ensure_installed)
+
 			vim.api.nvim_create_autocmd("FileType", {
 				callback = function()
 					pcall(vim.treesitter.start)
@@ -23,35 +27,35 @@ return {
 		end,
 	},
 
-  --[[ Mini.ai: The Modern Text Objects (Replaces nvim-treesitter-textobjects) ]]
-  {
-    "echasnovski/mini.ai",
-    event = "VeryLazy",
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-    opts = function()
-      local ai = require("mini.ai")
-      return {
-        n_lines = 500,
-        custom_textobjects = {
-          o = ai.gen_spec.treesitter({ -- code block
-            a = { "@block.outer", "@conditional.outer", "@loop.outer" },
-            i = { "@block.inner", "@conditional.inner", "@loop.inner" },
-          }),
-          f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
-          c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
-          t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" }, -- tags
-        },
-      }
-    end,
-    config = function(_, opts)
-      require("mini.ai").setup(opts)
-    end,
-  },
+	--[[ Mini.ai: The Modern Text Objects (Replaces nvim-treesitter-textobjects) ]]
+	{
+		"echasnovski/mini.ai",
+		event = "VeryLazy",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		opts = function()
+			local ai = require("mini.ai")
+			return {
+				n_lines = 500,
+				custom_textobjects = {
+					o = ai.gen_spec.treesitter({ -- code block
+						a = { "@block.outer", "@conditional.outer", "@loop.outer" },
+						i = { "@block.inner", "@conditional.inner", "@loop.inner" },
+					}),
+					f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
+					c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
+					t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" }, -- tags
+				},
+			}
+		end,
+		config = function(_, opts)
+			require("mini.ai").setup(opts)
+		end,
+	},
 
 	--[[ Mason Core ]]
 	{
 		"williamboman/mason.nvim",
-		cmd = "Mason", -- Load when :Mason command is run
+		event = "VeryLazy",
 		opts = {
 			ui = {
 				border = "rounded",
@@ -63,6 +67,21 @@ return {
 			},
 		},
 		config = true, -- Calls require("mason").setup(opts)
+	},
+	--[[ Mason Tool Installer (formatters/linters/debuggers) ]]
+	{
+		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		event = "VeryLazy",
+		dependencies = { "williamboman/mason.nvim" },
+		opts = {
+			ensure_installed = {},
+			run_on_start = true,
+			start_delay = 3000,
+			debounce_hours = 12,
+		},
+		config = function(_, opts)
+			require("mason-tool-installer").setup(opts)
+		end,
 	},
 
 	--[[ LSP Configuration ]]
@@ -76,17 +95,7 @@ return {
 		},
 		opts = {
 			-- Default server configurations. These will be extended by language-specific plugins.
-			servers = {
-				lua_ls = {
-					settings = {
-						Lua = {
-							diagnostics = { globals = { "vim" } },
-							workspace = { checkThirdParty = false },
-							telemetry = { enable = false },
-						},
-					},
-				},
-			},
+			servers = {},
 		},
 		config = function(_, opts)
 			local cmp_nvim_lsp = require("cmp_nvim_lsp")
@@ -123,7 +132,7 @@ return {
 			capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = true }
 
 			-- Apply capabilities to all LSP servers via wildcard
-			vim.lsp.config('*', {
+			vim.lsp.config("*", {
 				capabilities = capabilities,
 			})
 
@@ -142,14 +151,19 @@ return {
 					map("n", "K", vim.lsp.buf.hover, "LSP: Hover Documentation")
 					map("n", "<leader>D", vim.lsp.buf.type_definition, "LSP: Go to Type Definition")
 					map("n", "<leader>ds", vim.diagnostic.open_float, "Diagnostics: Show Line Diagnostics")
-					map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, "Diagnostics: Go to Previous")
-					map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, "Diagnostics: Go to Next")
+					map("n", "[d", function()
+						vim.diagnostic.jump({ count = -1 })
+					end, "Diagnostics: Go to Previous")
+					map("n", "]d", function()
+						vim.diagnostic.jump({ count = 1 })
+					end, "Diagnostics: Go to Next")
 					map("n", "<leader>lr", vim.lsp.buf.references, "LSP: Find References")
 				end,
 			})
 
 			-- Mason auto-installation
 			mason_lspconfig.setup({
+				ensure_installed = vim.tbl_keys(opts.servers),
 				automatic_installation = true,
 			})
 
@@ -164,9 +178,66 @@ return {
 	--[[ Debug Adapter Protocol (DAP) Setup ]]
 	{
 		"mfussenegger/nvim-dap",
-		event = "VeryLazy", -- Load only when needed for debugging
 		dependencies = {
 			"jay-babu/mason-nvim-dap.nvim", -- Integrates DAP with Mason
+		},
+		keys = {
+			{
+				"<F5>",
+				function()
+					require("dap").continue()
+				end,
+				desc = "Debug: Start/Continue",
+			},
+			{
+				"<F10>",
+				function()
+					require("dap").step_over()
+				end,
+				desc = "Debug: Step Over",
+			},
+			{
+				"<F11>",
+				function()
+					require("dap").step_into()
+				end,
+				desc = "Debug: Step Into",
+			},
+			{
+				"<F12>",
+				function()
+					require("dap").step_out()
+				end,
+				desc = "Debug: Step Out",
+			},
+			{
+				"<leader>db",
+				function()
+					require("dap").toggle_breakpoint()
+				end,
+				desc = "Debug: Toggle Breakpoint",
+			},
+			{
+				"<leader>dB",
+				function()
+					require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
+				end,
+				desc = "Debug: Set Conditional Breakpoint",
+			},
+			{
+				"<leader>dr",
+				function()
+					require("dap").repl.open()
+				end,
+				desc = "Debug: Open REPL",
+			},
+			{
+				"<leader>dl",
+				function()
+					require("dap").run_last()
+				end,
+				desc = "Debug: Run Last",
+			},
 		},
 		config = function()
 			vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "Error", linehl = "", numhl = "" })
@@ -214,7 +285,6 @@ return {
 				yaml = { "prettierd" },
 				markdown = { "prettierd" },
 				graphql = { "prettierd" },
-				lua = { "stylua" },
 			},
 			format_on_save = {
 				timeout_ms = 1000, -- Max time for formatting on save

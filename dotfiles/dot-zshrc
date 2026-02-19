@@ -50,6 +50,10 @@ export FZF_ALT_C_OPTS="
   --preview 'eza -T --color=always {} | head -200'
 "
 
+# 3. Other
+# -- Disable dotnet telemetry
+export DOTNET_CLI_TELEMETRY_OPTOUT=true
+
 # ==============================================================================
 # SECTION 2: INTERACTIVE SHELL ONLY (Human use only)
 # Everything below is skipped by JetBrains/Automation to prevent timeouts.
@@ -140,8 +144,14 @@ if [[ $- == *i* ]]; then
       local line="${selected[2]}"
       local col="${selected[3]}"
 
-      # Open Neovim at exact line/col
-      vi "+call cursor($line, $col)" "$file"
+      # Open vi/nvim at exact line/col
+      local editor="vi"
+      if command -v nvim >/dev/null 2>&1; then
+        editor="nvim"
+      fi
+
+      # Execute the chosen editor at the exact line/col
+      $editor "+call cursor($line, $col)" "$file"
     }
 
     # Custom function: _fzf_comprun

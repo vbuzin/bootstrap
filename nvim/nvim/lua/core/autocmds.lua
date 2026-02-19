@@ -4,7 +4,17 @@ local fn = vim.fn
 -- buffer handlers
 local buf_handlers_group = vim.api.nvim_create_augroup("BufHandlers", { clear = true })
 
-autocmd("BufWritePre", { group = buf_handlers_group, pattern = "*", command = [[%s/\s\+$//e]] })
+-- Remove trailing whitespace
+autocmd("BufWritePre", {
+	group = buf_handlers_group,
+	pattern = "*",
+	callback = function()
+		local save = vim.fn.winsaveview()
+		vim.cmd([[%s/\s\+$//e]])
+		vim.fn.winrestview(save)
+	end,
+})
+
 autocmd("BufReadPost", {
 	group = buf_handlers_group,
 	pattern = "*",
