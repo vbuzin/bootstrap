@@ -53,7 +53,7 @@
 (set-frame-parameter nil 'internal-border-width 10)
 
 ;; Font Configuration
-(set-face-attribute 'default nil :family "SF Mono" :height 130)
+(set-face-attribute 'default nil :family "Monaspace Argon" :height 130)
 (copy-face 'default 'fixed-pitch)
 (copy-face 'default 'fixed-pitch-serif)
 (copy-face 'default 'variable-pitch)

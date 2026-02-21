@@ -11,10 +11,14 @@
         ("melpa"   . "https://melpa.org/packages/"))
       package-archive-priorities
       '(("gnu"     . 10)
-        ("nongnu"  .  5)
-        ("melpa"   .  0)))
+        ("melpa"   .  7)
+        ("nongnu"  .  5)))
 
-;; use-package is built-in since Emacs 29 — no bootstrap needed
+(package-initialize)
+
+(unless package-archive-contents
+  (package-refresh-contents))
+
 (setq use-package-always-defer t
       use-package-always-ensure t
       use-package-enable-imenu-support t)
@@ -25,7 +29,8 @@
 ;; Minibuffer Completion (Vertico + Consult + Marginalia + Orderless)
 ;; -----------------------------------------------------------------------------
 (use-package vertico
-  :init (vertico-mode)
+  :demand t
+  :config (vertico-mode)
   :custom
   (vertico-count 12)
   (vertico-cycle t))
@@ -50,9 +55,11 @@
   (setq consult-narrow-key "<"))
 
 (use-package marginalia
-  :init (marginalia-mode))
+  :demand t
+  :config (marginalia-mode))
 
 (use-package orderless
+  :demand t                          ; ← needs to be active for vertico
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
@@ -62,7 +69,15 @@
 ;; In-buffer Completion (Corfu + Cape) — replaces company-mode
 ;; -----------------------------------------------------------------------------
 (use-package corfu
-  :init (global-corfu-mode)
+  :demand t                          ; ← override global defer
+  :config                            ; ← moved (global-corfu-mode) into :config
+  (global-corfu-mode)
+  (defun my/corfu-enable-in-minibuffer ()
+    "Enable Corfu in the minibuffer if completion is expected."
+    (when (local-variable-p 'completion-at-point-functions)
+      (setq-local corfu-auto nil)
+      (corfu-mode 1)))
+  (add-hook 'minibuffer-setup-hook #'my/corfu-enable-in-minibuffer)
   :custom
   (corfu-auto t)
   (corfu-auto-delay 0.15)
@@ -72,17 +87,11 @@
   (corfu-on-exact-match nil)
   :bind (:map corfu-map
          ("s-/" . corfu-complete)
-         ("RET" . nil))
-  :config
-  (defun my/corfu-enable-in-minibuffer ()
-    "Enable Corfu in the minibuffer if completion is expected."
-    (when (local-variable-p 'completion-at-point-functions)
-      (setq-local corfu-auto nil)
-      (corfu-mode 1)))
-  (add-hook 'minibuffer-setup-hook #'my/corfu-enable-in-minibuffer))
+         ("RET" . nil)))
 
 (use-package cape
-  :init
+  :demand t                          ; ← needs to register capfs early
+  :config
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file))
 
@@ -103,8 +112,8 @@
 ;; Modeline
 ;; -----------------------------------------------------------------------------
 (use-package doom-modeline
-  :init (doom-modeline-mode t)
-  :config
+  :demand t                          ; ← override global defer
+  :config (doom-modeline-mode t)     ; ← moved from :init to :config
   (setq doom-modeline-height 24
         doom-modeline-hud t
         doom-modeline-icon nil
@@ -113,8 +122,9 @@
 ;; Themes
 ;; -----------------------------------------------------------------------------
 (use-package doom-themes
-  :init (load-theme 'doom-one t)
-  :config
+  :demand t                          ; ← override global defer
+  :config                            ; ← moved (load-theme) from :init to :config
+  (load-theme 'doom-one t)
   (custom-set-faces
    `(help-key-binding ((t :box nil)))
    `(fringe ((t (:inherit default :foreground ,(face-attribute 'default :foreground)))))
