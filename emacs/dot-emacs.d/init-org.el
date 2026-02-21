@@ -10,9 +10,9 @@
                                (lambda (f) (not (string-match-p "/_ " f)))))
 
 ;; global keys
-(global-set-key (kbd "\C-c o a") 'org-agenda)
-(global-set-key (kbd "\C-c o c") 'org-capture)
-(global-set-key (kbd "\C-c o l") 'org-store-link)
+(keymap-global-set "C-c o a" #'org-agenda)
+(keymap-global-set "C-c o c" #'org-capture)
+(keymap-global-set "C-c o l" #'org-store-link)
 
 ;; locations
 (setq org-directory (expand-file-name "~/Documents/OM/"))
@@ -22,7 +22,9 @@
       org-attach-directory (concat org-directory "/_ data/")
       org-archive-location (concat org-directory "/_ archive/%s_arch::"))
 
-(setq org-agenda-files (my/agenda-and-refile-targets))
+(with-eval-after-load 'org-agenda
+  (setq org-agenda-files (my/agenda-and-refile-targets)))
+
 (setq org-refile-use-outline-path 'full-file-path
       org-outline-path-complete-in-steps nil
       org-refile-allow-creating-parent-nodes 'confirm
@@ -48,7 +50,8 @@
       org-enforce-todo-checkbox-dependencies t
       org-enforce-todo-dependencies t
       org-fontify-done-headline t
-      org-indent-mode t
+      org-log-done 'time
+      org-log-into-drawer t
       org-show-following-heading t
       org-special-ctrl-a/e t
       org-special-ctrl-k t

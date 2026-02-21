@@ -22,16 +22,59 @@ Unfills (sets `fill-column` to `point-max`) on subsequent immediate call."
       (setq fill-column current-fill-column)) ; Ensure standard fill-column
     (call-interactively #'fill-paragraph)))
 
+(defun my/duplicate-line-or-region ()
+  "Duplicate the current line or active region."
+  (interactive)
+  (if (region-active-p)
+      (let ((text (buffer-substring (region-beginning) (region-end))))
+        (goto-char (region-end))
+        (insert text))
+    (let ((line (buffer-substring (line-beginning-position) (line-end-position))))
+      (end-of-line)
+      (newline)
+      (insert line))))
+
+;;; Toggle prefix — C-c t
+;; =============================================================================
+(defvar-keymap my/toggle-map
+  :doc "Toggle minor modes."
+  "l" #'display-line-numbers-mode
+  "w" #'whitespace-mode
+  "v" #'visual-line-mode
+  "h" #'hl-line-mode
+  "f" #'visual-fill-column-mode
+  "t" #'tab-bar-mode)
+(keymap-global-set "C-c t" my/toggle-map)
+
 ;;; Global Keybindings
 ;; =============================================================================
-(global-set-key (kbd "RET") #'newline-and-indent)   ;; Auto-indent on RET
-(global-set-key (kbd "s-0") #'text-scale-adjust)    ;; Adjust text scale (font size)
-
-;; Super-k to close current window and kill its buffer
-(global-set-key (kbd "s-k") #'my/close-and-kill-this-pane)
+;; Rule: bindings live with their package (:bind in use-package).
+;; This file only owns: custom functions, remaps, Super/window bindings
+;; for built-in commands with no package home.
 
 ;; Remaps
-(global-set-key [remap list-buffers] #'ibuffer)          ;; Use ibuffer instead of list-buffers
-(global-set-key [remap fill-paragraph] #'my/fill-or-unfill) ;; Use custom fill/unfill
+(define-key global-map [remap list-buffers]   #'ibuffer)
+(define-key global-map [remap fill-paragraph] #'my/fill-or-unfill)
+
+;; Return key
+(keymap-global-set "RET" #'newline-and-indent)
+
+;; Editing (custom functions / built-ins)
+(keymap-global-set "s-s" #'save-buffer)
+(keymap-global-set "s-z" #'undo-only)
+(keymap-global-set "s-Z" #'undo-redo)
+(keymap-global-set "s-d" #'my/duplicate-line-or-region)
+(keymap-global-set "s-/" #'comment-or-uncomment-region)
+
+;; Buffers & files (built-ins only; consult bindings are in init-pkgs.el)
+(keymap-global-set "s-B" #'ibuffer)
+(keymap-global-set "s-F" #'find-file)
+(keymap-global-set "s-k" #'my/close-and-kill-this-pane)
+
+;; Windows
+(keymap-global-set "s-0" #'delete-window)
+(keymap-global-set "s-1" #'delete-other-windows)
+(keymap-global-set "s-2" #'split-window-below)
+(keymap-global-set "s-3" #'split-window-right)
 
 ;;; end of init-keys.el

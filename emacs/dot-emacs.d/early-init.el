@@ -29,7 +29,6 @@
 (setq frame-inhibit-implied-resize t
       frame-title-format " "
       icon-title-format nil
-      inhibit-splash-screen t
       inhibit-startup-screen t
       initial-scratch-message nil
       pop-up-frames nil
@@ -48,7 +47,8 @@
           (width  . 88)
           (height . 54)
           (ns-appearance . dark)
-          (ns-transparent-titlebar . t))))
+          (ns-transparent-titlebar . t)
+          (vertical-scroll-bars . nil))))
 
 (set-frame-parameter nil 'internal-border-width 10)
 
@@ -59,6 +59,6 @@
 (copy-face 'default 'variable-pitch)
 
 ;; Default Fill Column
-(setq-default fill-column 80)
+(setq-default fill-column 100)
 
 ;;; end of early-init.el

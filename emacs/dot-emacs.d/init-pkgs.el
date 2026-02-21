@@ -4,6 +4,7 @@
 ;; =============================================================================
 (setq package-user-dir (expand-file-name "packages" user-emacs-directory))
 (require 'package)
+(require 'use-package-ensure)
 
 (setq package-archives
       '(("gnu"     . "https://elpa.gnu.org/packages/")
@@ -37,20 +38,23 @@
 
 (use-package consult
   :bind
-  (("s-; b" . consult-buffer)
-   ("s-; c" . consult-mode-command)
-   ("s-; f" . consult-fd)
-   ("s-; g" . consult-ripgrep)
-   ("s-; i" . consult-imenu)
-   ("s-; I" . consult-imenu-multi)
-   ("s-; l" . consult-line)
-   ("s-; L" . consult-line-multi)
-   ("s-; o" . consult-outline)
-   ("s-; m" . consult-mark)
-   ("s-; M" . consult-global-mark)
-   ("s-; r" . consult-register-store)
-   ("s-; y" . consult-yank-pop)
-   ("s-; e" . consult-flymake))
+  (([remap switch-to-buffer]   . consult-buffer)
+   ([remap recentf-open-files] . consult-recent-file)
+   ([remap yank-pop]           . consult-yank-pop)
+   ([remap apropos-command]    . consult-apropos)
+   ("s-b" . consult-buffer)
+   ("s-r" . consult-recent-file)
+   ("s-l" . consult-line)
+   ("s-L" . consult-line-multi)
+   ("s-g" . consult-ripgrep)
+   ;; Search/navigate prefix (C-c s)
+   ("C-c s i" . consult-imenu)
+   ("C-c s I" . consult-imenu-multi)
+   ("C-c s o" . consult-outline)
+   ("C-c s m" . consult-mark)
+   ("C-c s M" . consult-global-mark)
+   ("C-c s e" . consult-flymake)
+   ("C-c s y" . consult-yank-pop))
   :config
   (setq consult-narrow-key "<"))
 
@@ -59,7 +63,7 @@
   :config (marginalia-mode))
 
 (use-package orderless
-  :demand t                          ; ← needs to be active for vertico
+  :demand t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
@@ -69,8 +73,8 @@
 ;; In-buffer Completion (Corfu + Cape) — replaces company-mode
 ;; -----------------------------------------------------------------------------
 (use-package corfu
-  :demand t                          ; ← override global defer
-  :config                            ; ← moved (global-corfu-mode) into :config
+  :demand t
+  :config
   (global-corfu-mode)
   (defun my/corfu-enable-in-minibuffer ()
     "Enable Corfu in the minibuffer if completion is expected."
@@ -89,11 +93,27 @@
          ("s-/" . corfu-complete)
          ("RET" . nil)))
 
+(use-package completion-preview
+  :ensure nil
+  :hook ((prog-mode text-mode) . completion-preview-mode)
+  :bind (:map completion-preview-active-mode-map
+              ("M-<tab>" . completion-preview-insert)
+              ("M-n"     . completion-preview-next-candidate)
+              ("M-p"     . completion-preview-prev-candidate)))
+
 (use-package cape
   :demand t                          ; ← needs to register capfs early
   :config
-  (add-hook 'completion-at-point-functions #'cape-dabbrev)
-  (add-hook 'completion-at-point-functions #'cape-file))
+  ;; Add Cape backends buffer-locally so they don't pollute every buffer type.
+  (defun my/cape-prog-setup ()
+    (add-hook 'completion-at-point-functions #'cape-dabbrev nil t)
+    (add-hook 'completion-at-point-functions #'cape-file    nil t)
+    (add-hook 'completion-at-point-functions #'cape-keyword nil t))
+  (defun my/cape-text-setup ()
+    (add-hook 'completion-at-point-functions #'cape-dabbrev nil t)
+    (add-hook 'completion-at-point-functions #'cape-dict    nil t))
+  (add-hook 'prog-mode-hook #'my/cape-prog-setup)
+  (add-hook 'text-mode-hook #'my/cape-text-setup))
 
 ;; Dired
 ;; -----------------------------------------------------------------------------
@@ -109,11 +129,30 @@
         ls-lisp-use-insert-directory-program nil
         wdired-allow-to-change-permissions t))
 
+;; ibuffer — grouped buffer list
+;; -----------------------------------------------------------------------------
+(use-package ibuffer
+  :ensure nil
+  :hook (ibuffer-mode . (lambda ()
+                          (ibuffer-switch-to-saved-filter-groups "default")))
+  :config
+  (setq ibuffer-saved-filter-groups
+        '(("default"
+           ("Org"   (mode . org-mode))
+           ("F#"    (mode . fsharp-mode))
+           ("Dired" (mode . dired-mode))
+           ("Magit" (derived-mode . magit-mode))
+           ("Help"  (or (mode . help-mode) (mode . Info-mode)))
+           ("Emacs" (or (name . "^\\*scratch\\*$")
+                        (name . "^\\*Messages\\*$")
+                        (name . "^\\*"))))))
+  (setq ibuffer-show-empty-filter-groups nil))
+
 ;; Modeline
 ;; -----------------------------------------------------------------------------
 (use-package doom-modeline
-  :demand t                          ; ← override global defer
-  :config (doom-modeline-mode t)     ; ← moved from :init to :config
+  :demand t
+  :config (doom-modeline-mode t)
   (setq doom-modeline-height 24
         doom-modeline-hud t
         doom-modeline-icon nil
@@ -124,7 +163,7 @@
 (use-package doom-themes
   :demand t                          ; ← override global defer
   :config                            ; ← moved (load-theme) from :init to :config
-  (load-theme 'doom-one t)
+  (load-theme 'doom-tokyo-night t)
   (custom-set-faces
    `(help-key-binding ((t :box nil)))
    `(fringe ((t (:inherit default :foreground ,(face-attribute 'default :foreground)))))
@@ -135,10 +174,12 @@
 ;; Utility Packages
 ;; -----------------------------------------------------------------------------
 (use-package avy
-  :bind ("s-`" . avy-goto-char-2))
+  :bind (("s-`" . avy-goto-char-2)
+         ("s-j" . avy-goto-line)))
 
 (use-package expand-region
-  :bind ("s-=" . er/expand-region))
+  :bind (("s-=" . er/expand-region)
+         ("s-M-=" . er/contract-region)))
 
 (use-package fringe-current-line
   :demand t
@@ -170,20 +211,6 @@
   (require 'vlf-setup)
   (setq vlf-application 'dont-ask))
 
-;; Duplicate line — simple built-in replacement for duplicate-thing
-(defun my/duplicate-line-or-region ()
-  "Duplicate the current line or active region."
-  (interactive)
-  (if (region-active-p)
-      (let ((text (buffer-substring (region-beginning) (region-end))))
-        (goto-char (region-end))
-        (insert text))
-    (let ((line (buffer-substring (line-beginning-position) (line-end-position))))
-      (end-of-line)
-      (newline)
-      (insert line))))
-(global-set-key (kbd "s-d") #'my/duplicate-line-or-region)
-
 ;;; Development
 ;; =============================================================================
 
@@ -196,21 +223,21 @@
          ("C-c l a" . eglot-code-actions)
          ("C-c l r" . eglot-rename)
          ("C-c l f" . eglot-format-buffer)
-         ("C-c l d" . eldoc)
+         ("C-c l d" . eldoc-doc-buffer)
          ("C-c l i" . eglot-find-implementation)
          ("C-c l t" . eglot-find-typeDefinition))
   :custom
   (eglot-autoshutdown t)
+  (eglot-events-buffer-config '(:size 0 :format full))
   (eglot-events-buffer-size 0)
   (eglot-send-changes-idle-time 0.5)
   (eglot-extend-to-xref t)
   :config
-  ;; F# — fsautocomplete
-  (add-to-list 'eglot-server-programs
-               '(fsharp-mode . ("fsautocomplete" "--adaptive-lsp-server-enabled")))
-
   ;; Performance: don't log jsonrpc events
   (fset #'jsonrpc--log-event #'ignore)
+
+  (add-to-list 'eglot-server-programs
+               '(fsharp-mode . ("fsautocomplete" "--adaptive-lsp-server-enabled")))
 
   ;; Format F# on save
   (defun my/eglot-format-on-save ()
@@ -223,10 +250,18 @@
 ;; -----------------------------------------------------------------------------
 (use-package flymake
   :ensure nil
-  :hook (prog-mode . flymake-mode)
+  :init
+  (defun my/maybe-enable-flymake ()
+    "Enable Flymake in programming buffers, except *scratch*."
+    (unless (and (derived-mode-p 'lisp-interaction-mode)
+                 (string= (buffer-name) "*scratch*"))
+      (flymake-mode 1)))
+
+  :hook (prog-mode . my/maybe-enable-flymake)
+
   :bind (:map flymake-mode-map
-         ("M-n" . flymake-goto-next-error)
-         ("M-p" . flymake-goto-prev-error))
+              ("M-n" . flymake-goto-next-error)
+              ("M-p" . flymake-goto-prev-error))
   :custom
   (flymake-no-changes-timeout 0.5))
 
@@ -256,39 +291,19 @@
   (add-hook 'fsharp-mode-hook #'subword-mode)
   (add-hook 'fsharp-mode-hook #'eldoc-mode))
 
-;; Lisp — Sly for Common Lisp, Paredit for structural editing
-;; -----------------------------------------------------------------------------
-(use-package sly
-  :commands sly
-  :config
-  (setq sly-lisp-implementations
-        '((sbcl ("sbcl" "--dynamic-space-size" "4096"))
-          (ccl  ("ccl64")))
-        sly-default-lisp 'sbcl
-        sly-net-coding-system 'utf-8-unix)
-  (setq sly-complete-symbol-function 'sly-flex-completions))
-
-(use-package paredit
-  :hook ((emacs-lisp-mode . paredit-mode)
-         (lisp-mode       . paredit-mode)
-         (sly-mrepl-mode  . paredit-mode)
-         (scheme-mode     . paredit-mode))
-  :bind (:map paredit-mode-map
-         ("M-s" . nil)))
-
-;; Eldoc — built-in, just tune it
-(setq eldoc-echo-area-use-multiline-p nil
-      eldoc-idle-delay 0.25)
+(use-package eglot-fsharp
+  :after (eglot fsharp-mode)
+  :demand t)
 
 ;; Magit
 ;; -----------------------------------------------------------------------------
 (use-package magit
   :bind
-  (("C-c ms" . magit-status)
-   ("C-c ml" . magit-log-all)
-   ("C-c mb" . magit-blame-addition)
-   ("C-c md" . magit-dispatch)
-   ("C-c mf" . magit-file-dispatch))
+  (("C-c g s" . magit-status)
+   ("C-c g l" . magit-log-all)
+   ("C-c g b" . magit-blame-addition)
+   ("C-c g d" . magit-dispatch)
+   ("C-c g f" . magit-file-dispatch))
   :config
   (magit-auto-revert-mode t)
   (setq magit-diff-refine-hunk 'all))
@@ -297,6 +312,7 @@
 ;; -----------------------------------------------------------------------------
 (use-package project
   :ensure nil
+  :bind ("s-p" . project-find-file)
   :config
   (add-to-list 'project-vc-extra-root-markers ".project-root"))
 

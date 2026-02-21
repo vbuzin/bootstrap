@@ -43,9 +43,12 @@
 (with-current-buffer "*scratch*" (emacs-lock-mode 'kill))
 (with-current-buffer "*Messages*" (emacs-lock-mode 'kill))
 
+;; I trust my config
+(add-to-list 'trusted-content
+             (file-name-as-directory user-emacs-directory))
+
 ;; Window navigation with Super + arrows
-(when (fboundp 'windmove-default-keybindings)
-  (windmove-default-keybindings 'super))
+(windmove-default-keybindings 'super)
 
 ;; Cursor and Line Spacing
 (setq-default cursor-type 'hbar)
@@ -76,7 +79,7 @@
       which-key-side-window-location 'right)
 
 ;; Enhanced Scrolling
-(when (and (display-graphic-p) (fboundp 'pixel-scroll-precision-mode))
+(when (display-graphic-p)
   (pixel-scroll-precision-mode t))
 
 (setq scroll-conservatively 100000
@@ -92,16 +95,32 @@
 
 ;; Enable useful global minor modes
 (column-number-mode t)
+(context-menu-mode t)
 (delete-selection-mode t)
-(electric-indent-mode t)
 (electric-pair-mode t)
-(global-font-lock-mode t)
+(global-auto-revert-mode t)
 (global-prettify-symbols-mode t)
+(repeat-mode t)   ; after a multi-key sequence, repeat with last key alone
 (save-place-mode t)
-(show-paren-mode t)
 (size-indication-mode t)
 (which-function-mode t)
 (which-key-mode t)
+
+;; show-paren — enhanced config (mode is on by default since Emacs 28)
+(setq show-paren-delay 0
+      show-paren-when-point-inside-paren t
+      show-paren-context-when-offscreen 'overlay)
+
+;; Minibuffer
+(setq enable-recursive-minibuffers t
+      read-extended-command-predicate #'command-completion-default-include-p
+      minibuffer-prompt-properties
+      '(read-only t cursor-intangible t face minibuffer-prompt))
+(minibuffer-depth-indicate-mode t)
+
+;; xref
+(setq xref-prompt-for-identifier nil   ; use symbol at point without asking
+      xref-search-program 'ripgrep)
 
 ;; Built-in isearch match count (replaces anzu)
 (setq isearch-lazy-count t
@@ -141,6 +160,7 @@
 
 ;; Recent files
 (recentf-mode t)
+(setq recentf-max-saved-items 40)
 
 ;; Save recentf list when a client frame is closed
 (add-hook 'delete-frame-functions
