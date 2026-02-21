@@ -2,11 +2,17 @@
 
 ;;; Speeding up Startup
 ;; =============================================================================
-(setq package-enable-at-startup nil) ;; Initialize packages manually later
+(setq package-enable-at-startup nil)
 
-;; More meaningful GC threshold
-(setq gc-cons-threshold (* 100 1024 1024)
-      read-process-output-max (* 1024 1024))
+;; Raise GC threshold during init, restore after
+(setq gc-cons-threshold most-positive-fixnum
+      gc-cons-percentage 0.6)
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold (* 16 1024 1024)
+                  gc-cons-percentage 0.1)))
+
+(setq read-process-output-max (* 4 1024 1024))
 
 ;; Defer file handler processing during startup
 (let ((orig-file-name-handler-alist file-name-handler-alist))
@@ -16,26 +22,26 @@
 
 ;;; Minimalistic UI Tweaks
 ;; =============================================================================
-(scroll-bar-mode -1)    ;; Disable scroll bars
-(tool-bar-mode   -1)    ;; Disable tool bar
-(tooltip-mode    -1)    ;; Disable tooltips
+(scroll-bar-mode -1)
+(tool-bar-mode   -1)
+(tooltip-mode    -1)
 
-(setq frame-inhibit-implied-resize t      ;; Prevent Emacs from auto-resizing frames
-      frame-title-format " "              ;; Minimal frame title
-      icon-title-format nil               ;; No icon title
-      inhibit-splash-screen t             ;; Disable splash screen
-      inhibit-startup-screen t            ;; Disable startup screen (GNU screen)
-      initial-scratch-message nil         ;; No message in *scratch* buffer
-      pop-up-frames nil                   ;; Prevent new frames for pop-ups (use windows instead)
-      use-dialog-box nil                  ;; Use text-based dialogs instead of GUI
-      use-short-answers t)                ;; Use 'y' or 'n' instead of 'yes' or 'no'
+(setq frame-inhibit-implied-resize t
+      frame-title-format " "
+      icon-title-format nil
+      inhibit-splash-screen t
+      inhibit-startup-screen t
+      initial-scratch-message nil
+      pop-up-frames nil
+      use-dialog-box nil
+      use-short-answers t)
 
 (defun display-startup-echo-area-message () nil)
 
 ;; macOS Specific UI Settings
 (when (eq system-type 'darwin)
-  (setq ns-use-proxy-icon nil          ;; Don't use proxy icon in title bar on macOS
-        ns-pop-up-frames nil           ;; Matches pop-up-frames behavior for macOS
+  (setq ns-use-proxy-icon nil
+        ns-pop-up-frames nil
         default-frame-alist
         '((top    . 34)
           (left   . 702)
@@ -44,16 +50,15 @@
           (ns-appearance . dark)
           (ns-transparent-titlebar . t))))
 
-(set-frame-parameter nil 'internal-border-width 10) ;; Add some padding
+(set-frame-parameter nil 'internal-border-width 10)
 
 ;; Font Configuration
-;; Consider a fallback font if "SF Mono" isn't universally available.
 (set-face-attribute 'default nil :family "SF Mono" :height 130)
 (copy-face 'default 'fixed-pitch)
 (copy-face 'default 'fixed-pitch-serif)
 (copy-face 'default 'variable-pitch)
 
 ;; Default Fill Column
-(setq-default fill-column 80)             ;; Keep fill-column at 80 for buffers that use it
+(setq-default fill-column 80)
 
 ;;; end of early-init.el

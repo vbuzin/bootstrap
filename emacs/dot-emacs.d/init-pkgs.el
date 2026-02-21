@@ -2,107 +2,119 @@
 
 ;;; Package System Configuration
 ;; =============================================================================
-;; Set directory for packages
 (setq package-user-dir (expand-file-name "packages" user-emacs-directory))
 (require 'package)
 
-;; Define package archives
 (setq package-archives
       '(("gnu"     . "https://elpa.gnu.org/packages/")
+        ("nongnu"  . "https://elpa.nongnu.org/nongnu/")
         ("melpa"   . "https://melpa.org/packages/"))
       package-archive-priorities
-      '(("melpa"   . 10)
-        ("gnu"     . 0)))
+      '(("gnu"     . 10)
+        ("nongnu"  .  5)
+        ("melpa"   .  0)))
 
-;; Initialize the package system
-(package-initialize)
-
-;; Bootstrap `use-package`
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents) ;; Update package contents before installing
-  (package-install 'use-package))
-
-;; Configure `use-package` defaults
-(setq use-package-always-defer t         ;; Defer loading of packages
-      use-package-always-ensure t        ;; Ensure packages are installed
-      use-package-enable-imenu-support t) ;; Enable imenu support for use-package blocks
-
-(eval-when-compile (require 'use-package)) ;; Ensure use-package macros are available at compile-time
-(eval-when-compile (require 'bind-key))   ;; Often used by use-package for :bind
+;; use-package is built-in since Emacs 29 — no bootstrap needed
+(setq use-package-always-defer t
+      use-package-always-ensure t
+      use-package-enable-imenu-support t)
 
 ;;; Core Packages
 ;; =============================================================================
 
-;; Completion System (Vertico, Consult, Marginalia, Orderless)
+;; Minibuffer Completion (Vertico + Consult + Marginalia + Orderless)
 ;; -----------------------------------------------------------------------------
 (use-package vertico
-  :init
-  (vertico-mode) ;; Enable Vertico globally
+  :init (vertico-mode)
   :custom
-  (vertico-count 12) ;; Show more candidates
-  (vertico-cycle t)) ;; Enable cycling for `vertico-next/previous'
+  (vertico-count 12)
+  (vertico-cycle t))
 
 (use-package consult
-  :init
-  (setq completion-in-region-function #'consult-completion-in-region)
   :bind
-  ("s-; b" . consult-buffer)
-  ("s-; c" . consult-mode-command)
-  ("s-; f" . consult-fd)
-  ("s-; g" . consult-ripgrep)
-  ("s-; i" . consult-imenu)
-  ("s-; I" . consult-imenu-multi)
-  ("s-; l" . consult-line)
-  ("s-; L" . consult-line-multi)
-  ("s-; o" . consult-outline)
-  ("s-; m" . consult-mark)
-  ("s-; M" . consult-global-mark)
-  ("s-; r" . consult-register-store)
-  ("s-; y" . consult-yank-pop)
+  (("s-; b" . consult-buffer)
+   ("s-; c" . consult-mode-command)
+   ("s-; f" . consult-fd)
+   ("s-; g" . consult-ripgrep)
+   ("s-; i" . consult-imenu)
+   ("s-; I" . consult-imenu-multi)
+   ("s-; l" . consult-line)
+   ("s-; L" . consult-line-multi)
+   ("s-; o" . consult-outline)
+   ("s-; m" . consult-mark)
+   ("s-; M" . consult-global-mark)
+   ("s-; r" . consult-register-store)
+   ("s-; y" . consult-yank-pop)
+   ("s-; e" . consult-flymake))
   :config
   (setq consult-narrow-key "<"))
 
 (use-package marginalia
-  :init
-  (marginalia-mode)) ;; Enable annotations in the minibuffer
+  :init (marginalia-mode))
 
 (use-package orderless
   :custom
-  (completion-styles '(orderless basic)) ;; Use orderless completion style
+  (completion-styles '(orderless basic))
   (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
+  (completion-category-overrides '((file (styles partial-completion))
+                                   (eglot (styles orderless basic)))))
 
-;; Dired (Directory Editor)
+;; In-buffer Completion (Corfu + Cape) — replaces company-mode
+;; -----------------------------------------------------------------------------
+(use-package corfu
+  :init (global-corfu-mode)
+  :custom
+  (corfu-auto t)
+  (corfu-auto-delay 0.15)
+  (corfu-auto-prefix 2)
+  (corfu-cycle t)
+  (corfu-preselect 'prompt)
+  (corfu-on-exact-match nil)
+  :bind (:map corfu-map
+         ("s-/" . corfu-complete)
+         ("RET" . nil))
+  :config
+  (defun my/corfu-enable-in-minibuffer ()
+    "Enable Corfu in the minibuffer if completion is expected."
+    (when (local-variable-p 'completion-at-point-functions)
+      (setq-local corfu-auto nil)
+      (corfu-mode 1)))
+  (add-hook 'minibuffer-setup-hook #'my/corfu-enable-in-minibuffer))
+
+(use-package cape
+  :init
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file))
+
+;; Dired
 ;; -----------------------------------------------------------------------------
 (use-package dired
-  :ensure nil ;; Built-in package
-  :hook
-  (dired-mode . (lambda () (require 'dired-x)))
+  :ensure nil
+  :hook (dired-mode . (lambda () (require 'dired-x)))
   :config
-    (setq dired-dwim-target t               ;; Do What I Mean for target window
-          dired-reuse-buffer t              ;; Reuse dired buffer for visited directories
-          dired-recursive-copies 'top       ;; Ask before recursive copies
-          dired-recursive-deletes 'top      ;; Ask before recursive deletes
-          ls-lisp-dirs-first t              ;; Directories first, then the rest
-          ls-lisp-use-insert-directory-program nil
-          wdired-allow-to-change-permissions t)) ;; Allow to change file permission bits
+  (setq dired-dwim-target t
+        dired-reuse-buffer t
+        dired-recursive-copies 'top
+        dired-recursive-deletes 'top
+        ls-lisp-dirs-first t
+        ls-lisp-use-insert-directory-program nil
+        wdired-allow-to-change-permissions t))
 
 ;; Modeline
 ;; -----------------------------------------------------------------------------
 (use-package doom-modeline
-  :init (doom-modeline-mode t) ;; Enable Doom modeline globally
+  :init (doom-modeline-mode t)
   :config
-  (setq doom-modeline-height 24        ;; Set modeline height
-        doom-modeline-hud t            ;; Enable Heads Up Display features
-        doom-modeline-icon nil         ;; Disable icons in modeline (personal preference)
-        doom-modeline-support-imenu t)) ;; Enable imenu support
+  (setq doom-modeline-height 24
+        doom-modeline-hud t
+        doom-modeline-icon nil
+        doom-modeline-support-imenu t))
 
 ;; Themes
 ;; -----------------------------------------------------------------------------
 (use-package doom-themes
-  :init (load-theme 'doom-one t) ;; Load 'doom-one' theme on startup
+  :init (load-theme 'doom-one t)
   :config
-  ;; Custom face adjustments for consistency with the theme
   (custom-set-faces
    `(help-key-binding ((t :box nil)))
    `(fringe ((t (:inherit default :foreground ,(face-attribute 'default :foreground)))))
@@ -112,125 +124,175 @@
 
 ;; Utility Packages
 ;; -----------------------------------------------------------------------------
-(use-package anzu
-  :init
-  (global-anzu-mode t)
-  :bind
-  (([remap query-replace] . anzu-query-replace)
-   ([remap query-replace-regexp] . anzu-query-replace-regexp)))
-
 (use-package avy
-  :bind
-  ("s-`" . avy-goto-char-2))
-
-(use-package duplicate-thing
-  :bind ("s-d" . duplicate-thing)) ;; Duplicate line or region
+  :bind ("s-`" . avy-goto-char-2))
 
 (use-package expand-region
-  :bind ("s-=" . er/expand-region)) ;; Intelligently expand selection
+  :bind ("s-=" . er/expand-region))
 
 (use-package fringe-current-line
-  :demand t ;; Load eagerly as it's a global mode
-  :config
-  (global-fringe-current-line-mode t)) ;; Highlight current line in the fringe
+  :demand t
+  :config (global-fringe-current-line-mode t))
 
 (use-package move-text
-  :bind (("M-s-<up>" . move-text-up)     ;; Move text block up
-         ("M-s-<down>" . move-text-down)) ;; Move text block down
+  :bind (("M-s-<up>"   . move-text-up)
+         ("M-s-<down>" . move-text-down))
   :config
-  ;; Automatically indent text after moving
   (dolist (command '(move-text-up move-text-down))
     (advice-add command :after
                 (lambda (&rest _)
-                  (let ((deactivate deactivate-mark)) ; Preserve mark deactivation state
+                  (let ((deactivate deactivate-mark))
                     (if (region-active-p)
                         (indent-region (region-beginning) (region-end))
                       (indent-region (line-beginning-position) (line-end-position)))
                     (setq deactivate-mark deactivate))))))
 
 (use-package shrink-whitespace
-  :bind ("C-c ." . shrink-whitespace)) ;; Intelligently delete whitespace
+  :bind ("C-c ." . shrink-whitespace))
 
 (use-package visual-fill-column
-  :hook
-  (org-mode . visual-fill-column-mode)
+  :hook (org-mode . visual-fill-column-mode)
   :config
   (setq visual-fill-column-width 80))
 
-(use-package vlf ;; View Large Files
+(use-package vlf
   :config
   (require 'vlf-setup)
-  (setq vlf-application 'dont-ask)) ;; Automatically use VLF for large files
+  (setq vlf-application 'dont-ask))
 
-(use-package undo-tree
-  :init
-  (global-undo-tree-mode t)
-  :config
-  (setq undo-tree-history-directory-alist `(("." . ,my:emacs-tmp-dir))))
+;; Duplicate line — simple built-in replacement for duplicate-thing
+(defun my/duplicate-line-or-region ()
+  "Duplicate the current line or active region."
+  (interactive)
+  (if (region-active-p)
+      (let ((text (buffer-substring (region-beginning) (region-end))))
+        (goto-char (region-end))
+        (insert text))
+    (let ((line (buffer-substring (line-beginning-position) (line-end-position))))
+      (end-of-line)
+      (newline)
+      (insert line))))
+(global-set-key (kbd "s-d") #'my/duplicate-line-or-region)
 
-;; Coding
+;;; Development
+;; =============================================================================
+
+;; Eglot (built-in LSP client) — replaces lsp-mode
 ;; -----------------------------------------------------------------------------
-(use-package company
-  :hook (prog-mode . company-mode)
-  :bind (("s-/" . company-complete)
-         :map company-active-map
-         ([tab] . nil))
+(use-package eglot
+  :ensure nil
+  :hook ((fsharp-mode . eglot-ensure))
+  :bind (:map eglot-mode-map
+         ("C-c l a" . eglot-code-actions)
+         ("C-c l r" . eglot-rename)
+         ("C-c l f" . eglot-format-buffer)
+         ("C-c l d" . eldoc)
+         ("C-c l i" . eglot-find-implementation)
+         ("C-c l t" . eglot-find-typeDefinition))
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-events-buffer-size 0)
+  (eglot-send-changes-idle-time 0.5)
+  (eglot-extend-to-xref t)
   :config
-  (setq company-require-match nil)
-  (setq company-show-numbers t)
-  (setq company-tooltip-align-annotations t))
+  ;; F# — fsautocomplete
+  (add-to-list 'eglot-server-programs
+               '(fsharp-mode . ("fsautocomplete" "--adaptive-lsp-server-enabled")))
 
-(use-package flycheck
-  :hook (prog-mode . flycheck-mode)
+  ;; Performance: don't log jsonrpc events
+  (fset #'jsonrpc--log-event #'ignore)
+
+  ;; Format F# on save
+  (defun my/eglot-format-on-save ()
+    "Format buffer via eglot before saving, if eglot is active."
+    (when (bound-and-true-p eglot--managed-mode)
+      (eglot-format-buffer)))
+  (add-hook 'before-save-hook #'my/eglot-format-on-save))
+
+;; Flymake (built-in) — replaces flycheck; eglot feeds diagnostics into it
+;; -----------------------------------------------------------------------------
+(use-package flymake
+  :ensure nil
+  :hook (prog-mode . flymake-mode)
+  :bind (:map flymake-mode-map
+         ("M-n" . flymake-goto-next-error)
+         ("M-p" . flymake-goto-prev-error))
+  :custom
+  (flymake-no-changes-timeout 0.5))
+
+;; F# — top-notch configuration
+;; -----------------------------------------------------------------------------
+(use-package fsharp-mode
+  :mode ("\\.fs[iylx]?\\'" . fsharp-mode)
   :config
-  (setq flycheck-display-errors-function
-        #'flycheck-display-error-messages-unless-error-list)
-  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+  (setq inferior-fsharp-program nil)
 
-(use-package lsp-mode
-  :commands lsp
-  :hook
-  (lsp-mode . lsp-enable-which-key-integration)
+  (defun my/fsharp-prettify ()
+    "Set up prettify-symbols for F#."
+    (setq-local prettify-symbols-alist
+                '(("->"  . ?→)
+                  ("=>"  . ?⇒)
+                  ("|>"  . ?▷)
+                  ("<|"  . ?◁)
+                  (">>"  . ?≫)
+                  ("<<"  . ?≪)
+                  ("<>"  . ?≠)
+                  (">="  . ?≥)
+                  ("<="  . ?≤)
+                  ("fun" . ?λ)))
+    (prettify-symbols-mode 1))
+  (add-hook 'fsharp-mode-hook #'my/fsharp-prettify)
+
+  (add-hook 'fsharp-mode-hook #'subword-mode)
+  (add-hook 'fsharp-mode-hook #'eldoc-mode))
+
+;; Lisp — Sly for Common Lisp, Paredit for structural editing
+;; -----------------------------------------------------------------------------
+(use-package sly
+  :commands sly
   :config
-  ;; eslint
-  (setq lsp-eslint-auto-fix-on-save t
-        lsp-eslint-format t
-        lsp-eslint-validate '("javascript" "javascriptreact" "typescript" "typescriptreact")
-        lsp-format-buffer-on-save t
-        ;; disable ts-ls formatting
-        lsp-javascript-format-enable nil
-        lsp-typescript-format-enable nil)
+  (setq sly-lisp-implementations
+        '((sbcl ("sbcl" "--dynamic-space-size" "4096"))
+          (ccl  ("ccl64")))
+        sly-default-lisp 'sbcl
+        sly-net-coding-system 'utf-8-unix)
+  (setq sly-complete-symbol-function 'sly-flex-completions))
 
-  (setq lsp-headerline-breadcrumb-enable nil))
+(use-package paredit
+  :hook ((emacs-lisp-mode . paredit-mode)
+         (lisp-mode       . paredit-mode)
+         (sly-mrepl-mode  . paredit-mode)
+         (scheme-mode     . paredit-mode))
+  :bind (:map paredit-mode-map
+         ("M-s" . nil)))
 
-(use-package lsp-tailwindcss
-  :after lsp-mode
-  :init (setq lsp-tailwindcss-add-on-mode t))
+;; Eldoc — built-in, just tune it
+(setq eldoc-echo-area-use-multiline-p nil
+      eldoc-idle-delay 0.25)
 
+;; Magit
+;; -----------------------------------------------------------------------------
 (use-package magit
   :bind
   (("C-c ms" . magit-status)
    ("C-c ml" . magit-log-all)
    ("C-c mb" . magit-blame-addition)
    ("C-c md" . magit-dispatch)
-   ("C-c mf" . magit-file-popup))
+   ("C-c mf" . magit-file-dispatch))
   :config
-  (use-package transient
-    :pin melpa)
-
   (magit-auto-revert-mode t)
   (setq magit-diff-refine-hunk 'all))
 
+;; Project
+;; -----------------------------------------------------------------------------
 (use-package project
   :ensure nil
   :config
   (add-to-list 'project-vc-extra-root-markers ".project-root"))
 
-(use-package treesit-auto
-  :demand t
-  :custom
-  (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
+;; Tree-sitter (built-in) — only for what we actually use
+;; -----------------------------------------------------------------------------
+(when (treesit-available-p)
+  (setq treesit-font-lock-level 4))
+
 ;;; end of init-pkgs.el
