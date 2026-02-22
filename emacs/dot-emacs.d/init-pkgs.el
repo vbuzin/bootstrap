@@ -223,7 +223,7 @@
          ("C-c l a" . eglot-code-actions)
          ("C-c l r" . eglot-rename)
          ("C-c l f" . eglot-format-buffer)
-         ("C-c l d" . eldoc-doc-buffer)
+         ("C-c l d" . eldoc-print-current-symbol-info)
          ("C-c l i" . eglot-find-implementation)
          ("C-c l t" . eglot-find-typeDefinition))
   :custom
@@ -244,7 +244,31 @@
     "Format buffer via eglot before saving, if eglot is active."
     (when (bound-and-true-p eglot--managed-mode)
       (eglot-format-buffer)))
-  (add-hook 'before-save-hook #'my/eglot-format-on-save))
+  (add-hook 'before-save-hook #'my/eglot-format-on-save)
+
+  (defun my/eglot-fsharp-cleanup-doc (orig-fun &rest args)
+    "Simplify F# docs by removing VS Code links and markdown code markers."
+    (let ((contents (nth 0 args)))
+      (let* ((is-plist (listp contents))
+             (str (if is-plist (plist-get contents :value) contents)))
+        (when (stringp str)
+          ;; 1. Remove the VS Code 'command:' links
+          (setq str (replace-regexp-in-string "<a href=['\"]command:fsharp.showDocumentation\\?.*?['\"]>.*?</a>" "" str))
+
+          ;; 2. Remove ```fsharp and ``` but KEEP the content
+          (setq str (replace-regexp-in-string "```\\(?:fsharp\\)?" "" str))
+          (setq str (replace-regexp-in-string "```" "" str))
+
+          ;; 3. Clean up extra newlines for a tighter look
+          (setq str (replace-regexp-in-string "\n\n+" "\n\n" str))
+
+          ;; 4. Re-package
+          (if is-plist
+              (setq contents (list :kind "plaintext" :value str))
+            (setq contents str)))
+        (apply orig-fun (cons contents (cdr args))))))
+
+  (advice-add 'eglot--format-markup :around #'my/eglot-fsharp-cleanup-doc))
 
 ;; Flymake (built-in) — replaces flycheck; eglot feeds diagnostics into it
 ;; -----------------------------------------------------------------------------
@@ -316,9 +340,22 @@
   :config
   (add-to-list 'project-vc-extra-root-markers ".project-root"))
 
-;; Tree-sitter (built-in) — only for what we actually use
+;;; Tree-sitter — reproducible F# support (core Emacs, zero extra deps for install)
 ;; -----------------------------------------------------------------------------
-(when (treesit-available-p)
-  (setq treesit-font-lock-level 4))
+(use-package treesit-auto
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (let ((fsharp-recipe
+         (make-treesit-auto-recipe
+          :lang 'fsharp
+          :ts-mode 'fsharp-ts-mode
+          :remap 'fsharp-mode
+          :url "https://github.com/ionide/tree-sitter-fsharp"
+          :revision "main"
+          :source-dir "src")))
+    (add-to-list 'treesit-auto-recipe-list fsharp-recipe))
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 
 ;;; end of init-pkgs.el

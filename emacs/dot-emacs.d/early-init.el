@@ -42,11 +42,7 @@
   (setq ns-use-proxy-icon nil
         ns-pop-up-frames nil
         default-frame-alist
-        '((top    . 34)
-          (left   . 702)
-          (width  . 88)
-          (height . 54)
-          (ns-appearance . dark)
+        '((ns-appearance . dark)
           (ns-transparent-titlebar . t)
           (vertical-scroll-bars . nil))))
 

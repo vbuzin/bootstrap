@@ -70,6 +70,7 @@
       mode-line-percent-position '(-3 "%o")
       reb-re-syntax 'string
       require-final-newline t
+      ring-bell-function 'ignore
       save-interprogram-paste-before-kill t
       set-mark-command-repeat-pop t
       shell-file-name "zsh"
@@ -167,6 +168,39 @@
           (lambda (frame)
             (when (and (daemonp) (frame-parameter frame 'client))
               (recentf-save-list))))
+
+;;; Restore last size/position
+;; ── Remember ONLY last frame size + position + fullscreen (macOS GUI) ──
+(when (display-graphic-p)
+  (setq frame-resize-pixelwise t)   ; pixel-perfect on Retina
+
+  (defvar my:frame-geometry-file
+    (expand-file-name "restore-last-frame.el" user-emacs-directory))
+
+  (defun my/save-frame-geometry ()
+    "Save current frame geometry on exit (only size/position/fullscreen)."
+    (let ((f (selected-frame)))
+      (with-temp-file my:frame-geometry-file
+        (insert (format
+                 "(setq initial-frame-alist '((left . %s)\n\
+(top . %s)\n\
+(width . %d)\n\
+(height . %d)\n\
+(fullscreen . %S)))\n"
+                 (frame-parameter f 'left)
+                 (frame-parameter f 'top)
+                 (frame-parameter f 'width)
+                 (frame-parameter f 'height)
+                 (frame-parameter f 'fullscreen))))))
+
+  (defun my/load-frame-geometry ()
+    "Load saved geometry at startup."
+    (when (file-exists-p my:frame-geometry-file)
+      (load my:frame-geometry-file 'noerror 'nomessage)))
+
+  ;; Load at start, save on clean exit
+  (add-hook 'after-init-hook #'my/load-frame-geometry)
+  (add-hook 'kill-emacs-hook #'my/save-frame-geometry))
 
 ;;; Loading Other Configuration Files
 ;; =============================================================================
