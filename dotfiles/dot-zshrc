@@ -146,12 +146,15 @@ if [[ $- == *i* ]]; then
 
       # Open vi/nvim at exact line/col
       local editor="vi"
-      if command -v nvim >/dev/null 2>&1; then
-        editor="nvim"
+      if command -v zed >/dev/null 2>&1; then
+        editor="zed"
       fi
 
       # Execute the chosen editor at the exact line/col
-      $editor "+call cursor($line, $col)" "$file"
+      case "$editor" in
+        zed) $editor "$file:$line:$col" ;;
+        *) $editor "+call cursor($line, $col)" "$file" ;;
+      esac
     }
 
     # Custom function: _fzf_comprun
