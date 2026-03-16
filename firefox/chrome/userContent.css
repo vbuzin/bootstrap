@@ -10,23 +10,23 @@ url("about:processes"),
 url("about:profiles"),
 url("about:support"),
 url("about:privatebrowsing") {
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --my-background-color: #1c1c1e !important;
-      --my-focus-color: #00bfff !important;
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --my-background-color: #1c1c1e !important;
+            --my-focus-color: #00bfff !important;
 
-      --focus-outline-color:: var(--my-focus-color) !important;
-      --color-accent-primary: var(--my-focus-color) !important;
+            --focus-outline-color: var(--my-focus-color) !important;
+            --color-accent-primary: var(--my-focus-color) !important;
 
-      --in-content-page-background: var(--my-background-color) !important;
-      --background-color-canvas: var(--my-background-color) !important;
+            --in-content-page-background: var(--my-background-color) !important;
+            --background-color-canvas: var(--my-background-color) !important;
 
-      background-color: var(--my-background-color) !important;
-      accent-color: var(--my-focus-color) !important;
+            background-color: var(--my-background-color) !important;
+            accent-color: var(--my-focus-color) !important;
+        }
+
+        html.private .container {
+            display: none !important;
+        }
     }
-
-    html.private .container {
-      display: none !important;
-    }
-  }
 }

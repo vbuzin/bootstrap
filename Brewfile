@@ -11,7 +11,7 @@ cask "brave-browser"
 cask "docker-desktop"
 cask "font-monaspace"
 cask "mullvad-vpn"
-cask "visual-studio-code"
+cask "zed"
 
 mas "1Blocker", id: 1365531024
 mas "1Password for Safari", id: 1569813296

@@ -1,64 +1,80 @@
 #personal-bookmarks .bookmark-item:not([container]) .toolbarbutton-icon {
-  display: none !important;
+    display: none !important;
 }
 
 #nav-bar-customization-target #vertical-spacer,
 #page-action-buttons #picture-in-picture-button,
 #page-action-buttons #pageAction-urlbar-_testpilot-containers {
-  display: none !important;
+    display: none !important;
 }
 
 #tabbrowser-tabs {
-  &:is([expanded]),
-  :is([orient="horizontal"]) {
-    .tabbrowser-tab:not([pinned]) .tab-close-button {
-      display: none !important;
-    }
+    &[expanded],
+    &[orient="horizontal"] {
+        .tabbrowser-tab:not([pinned]) .tab-close-button {
+            display: none !important;
+        }
 
-    .tabbrowser-tab:not([pinned]):hover .tab-close-button {
-      display: inline-flex !important;
+        .tabbrowser-tab:not([pinned]):hover .tab-close-button {
+            display: inline-flex !important;
+        }
     }
-  }
 }
 
 #tabbrowser-tabbox {
-  box-shadow: none !important;
+    box-shadow: none !important;
 }
 
 browser[type="content-primary"],
 browser[type="content"],
 .browserContainer {
-  background-color: #1c1c1e !important;
+    background-color: #1c1c1e !important;
 }
 
 #tab-background {
-  background-color: #1c1c1e !important;
+    background-color: #1c1c1e !important;
 }
 
 /* Add extra margins for collapsed groups */
 #tabbrowser-tabs[orient="vertical"]
-  tab-group[collapsed]
-  .tab-group-label-container {
-  margin-bottom: var(--space-small);
-  margin-top: var(--space-small);
+    tab-group[collapsed]
+    .tab-group-label-container {
+    margin-bottom: var(--space-small);
+    margin-top: var(--space-small);
 }
 
 /* Container tabs */
 
 /* Make the container indicator 1px thick */
 .tabbrowser-tab[usercontextid] .tab-context-line {
-  inline-size: 1px !important; /* vertical tabs: stripe thickness */
+    inline-size: 1px !important; /* vertical tabs: stripe thickness */
 }
 
 #tabbrowser-tabs[orient="vertical"]
-  .tabbrowser-tab[selected][usercontextid]
-  .tab-background {
-  outline: 1px solid var(--identity-tab-color) !important;
+    .tabbrowser-tab[selected][usercontextid]
+    .tab-background {
+    outline: 1px solid var(--identity-tab-color) !important;
 }
 
 #tabbrowser-tabs[orient="vertical"]
-  .tabbrowser-tab[selected][usercontextid]
-  .tab-background
-  > .tab-context-line {
-  display: none !important;
+    .tabbrowser-tab[selected][usercontextid]
+    .tab-background
+    > .tab-context-line {
+    display: none !important;
+}
+
+/* Remove the floating/outlined content card next to the sidebar */
+.browserContainer {
+    box-shadow: none !important;
+    outline: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+}
+
+/* Be explicit when the sidebar is shown */
+:root:not([inDOMFullscreen])
+    #tabbrowser-tabbox[sidebar-shown]
+    .browserContainer {
+    border-start-start-radius: 0 !important;
+    border-start-end-radius: 0 !important;
 }

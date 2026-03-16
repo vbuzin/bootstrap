@@ -7,11 +7,17 @@ window-padding-x = 12
 window-padding-y = 12
 window-padding-balance = true
 
-window-save-state = always
+window-save-state = never
 
 macos-titlebar-style = tabs
 macos-option-as-alt = true
 title = " "
+
+quick-terminal-position = center
+quick-terminal-size = 1000px,800px
+keybind = global:cmd+backquote=toggle_quick_terminal
+initial-window = false
+macos-hidden = always
 
 # -- Cursor & Shell -----------------------------------------
 cursor-color = #56a8f5
@@ -22,5 +28,5 @@ shell-integration-features = no-cursor
 copy-on-select = clipboard
 
 # -- Theme --------------------------------------------------
-theme = TokyoNight Night
+theme = GitHub Dark High Contrast
 
