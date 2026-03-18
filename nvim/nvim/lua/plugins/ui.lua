@@ -1,12 +1,16 @@
 return {
 	{ "nvim-tree/nvim-web-devicons" },
 	{
-		"folke/tokyonight.nvim",
+		"olimorris/onedarkpro.nvim",
 		lazy = false,
 		priority = 1000,
-		opts = {},
 		config = function()
-			vim.cmd("colorscheme tokyonight-night")
+			require("onedarkpro").setup({
+				colors = {
+					onedark = { bg = "#080909" },
+				},
+			})
+			vim.cmd("colorscheme onedark")
 		end,
 	},
 	{

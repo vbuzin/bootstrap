@@ -24,11 +24,11 @@ export FZF_DEFAULT_OPTS='
 --info=inline
 --style full
 --preview-window "up,60%"
---color=bg:#1a1b26,fg:#c0caf5,hl:#e0af68
---color=bg+:#283457,fg+:#c0caf5,hl+:#f7768e
---color=info:#7aa2f7,prompt:#7dcfff,pointer:#f7768e
---color=marker:#9ece6a,spinner:#bb9af7,header:#7aa2f7
---color=border:#414868
+--color=bg:#080909,fg:#abb2bf,hl:#4aa5f0
+--color=bg+:#2c313a,fg+:#d7dae0,hl+:#4dc4ff
+--color=info:#e5c07b,prompt:#61afef,pointer:#ff616e
+--color=marker:#8cc265,spinner:#c162de,header:#7F838C
+--color=border:#212121
 '
 
 # -- FZF History (Ctrl-R) --
