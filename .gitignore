@@ -1,13 +1,48 @@
+# OS generated files
 .DS_Store
+.DS_Store?
+
+# Editors
+.vscode/
 .yas-compiled-snippets.el
+*~
+
+# Package managers
 Brewfile.lock.json
-.vscode
+**/node_modules/
+**/bun.lock*
+**/*.lock
+package-lock.json
+pnpm-lock.yaml
 
-!/emacs/script.sh
-!/emacs/org.emacs.daemon.plist
-!/emacs/dot-emacs.d/*.el
-!/emacs/dot-emacs.d/snippets
-/emacs/**/*
-/emacs/dot-emacs.d/init-custom.el
+# Emacs caches and generated files (when config is symlinked from ~)
+emacs/dot-emacs.d/eln-cache/**
+emacs/dot-emacs.d/auto-save-list/**
+emacs/dot-emacs.d/backups/**
+emacs/dot-emacs.d/recentf
+emacs/dot-emacs.d/url/**
+emacs/dot-emacs.d/transient/**
+emacs/dot-emacs.d/semanticdb/**
+emacs/dot-emacs.d/tramp/**
+emacs/dot-emacs.d/server/**
+emacs/dot-emacs.d/**/.#*
+emacs/dot-emacs.d/init-custom.el
+emacs/.DS_Store
 
-/nvim/nvim/plugin
+# Opencode / AI coding tool generated and installed files
+opencode/opencode/node_modules/**
+opencode/opencode/bun.lock
+opencode/opencode/package.json
+opencode/opencode/tui.jsonc
+opencode/opencode/.gitignore
+opencode/opencode/**/.DS_Store
+opencode/.DS_Store
+
+# Nvim
+nvim/**/.DS_Store
+nvim/nvim/plugin/**
+
+# General
+*.log
+**/cache/
+

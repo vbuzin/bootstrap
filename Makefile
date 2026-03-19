@@ -11,10 +11,10 @@ STOW_OPTS        := --ignore=.DS_Store --override=.*
 msg = @echo ">>> $(1) <<<"
 
 # Phony targets
-.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux clean help
+.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode c emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux clean help
 
 # Default target
-all: shell brew ghostty emacs firefox nvim tmux
+all: shell brew ghostty tmux
 	$(call msg,"Setup complete! Run 'make firefox-config' after Firefox initializes.")
 
 # Help target
@@ -90,6 +90,17 @@ clean-ghostty:
 	@brew uninstall --cask --zap ghostty 2>/dev/null || true
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) ghostty
 
+# Opencode
+opencode:
+	$(call msg,"Installing Opencode")
+	@brew install anomalyco/tap/opencode
+	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) opencode
+
+clean-opencode:
+	$(call msg,"Cleaning Opencode")
+	@brew uninstall opencode
+	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) opencode
+
 # Emacs
 emacs: $(EMACS_CONFIG_DIR) shell
 	$(call msg,"Installing Emacs")
@@ -164,5 +175,5 @@ clean-tmux:
 
 # Full cleanup
 # WARNING: This will remove all installed configurations and may delete user data.
-clean: clean-ghostty clean-emacs clean-firefox clean-nvim clean-tmux clean-shell clean-brew
+clean: clean-ghostty clean-opencode clean-emacs clean-firefox clean-nvim clean-tmux clean-shell clean-brew
 	$(call msg,"Full cleanup complete")
