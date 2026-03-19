@@ -4,7 +4,6 @@
 
 # Editors
 .vscode/
-.yas-compiled-snippets.el
 *~
 
 # Package managers
@@ -27,22 +26,17 @@ emacs/dot-emacs.d/tramp/**
 emacs/dot-emacs.d/server/**
 emacs/dot-emacs.d/**/.#*
 emacs/dot-emacs.d/init-custom.el
-emacs/.DS_Store
+.yas-compiled-snippets.el
 
 # Opencode / AI coding tool generated and installed files
 opencode/opencode/node_modules/**
 opencode/opencode/bun.lock
 opencode/opencode/package.json
-opencode/opencode/tui.jsonc
 opencode/opencode/.gitignore
-opencode/opencode/**/.DS_Store
-opencode/.DS_Store
 
 # Nvim
-nvim/**/.DS_Store
 nvim/nvim/plugin/**
 
 # General
 *.log
 **/cache/
-

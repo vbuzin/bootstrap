@@ -27,6 +27,8 @@ help:
 	@echo "  clean-brew         : Remove brew configuration (Homebrew uninstallation is optional)"
 	@echo "  ghostty            : Install and configure Ghostty"
 	@echo "  clean-ghostty      : Uninstall Ghostty and remove configuration"
+	@echo "  opencode           : Install and configure Opencode"
+	@echo "  clean-opencode     : Uninstall Opencode and remove configuration"
 	@echo "  emacs              : Install and configure Emacs"
 	@echo "  clean-emacs        : Uninstall Emacs and remove configuration"
 	@echo "  firefox            : Install Firefox, initialize profile, and stow application settings"
@@ -98,6 +100,10 @@ opencode:
 
 clean-opencode:
 	$(call msg,"Cleaning Opencode")
+	@rm -rf $(CONFIG_DIR)/opencode/.gitignore
+	@rm -rf $(CONFIG_DIR)/opencode/bun.lock
+	@rm -rf $(CONFIG_DIR)/opencode/package.json
+	@rm -rf $(CONFIG_DIR)/opencode/node_modules 2>/dev/null || true
 	@brew uninstall opencode
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) opencode
 
