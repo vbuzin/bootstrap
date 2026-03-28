@@ -1,0 +1,161 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+palette = 'one_dark_pro_max'
+add_newline = true
+
+# -- Layout Configuration -----------------------------------------------------
+# No background fills — foreground colour only. Each segment uses a semantic
+# accent from the One Dark Pro Max palette. This reads as terminal-native
+# rather than a GUI statusbar transplanted into a text environment.
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$c\
+$rust\
+$golang\
+$nodejs\
+$dotnet\
+$php\
+$java\
+$kotlin\
+$haskell\
+$python\
+$docker_context\
+$conda\
+$fill\
+$cmd_duration\
+$time\
+$line_break\
+$character"""
+
+continuation_prompt = '▶▶ '
+
+# -- Module Settings ----------------------------------------------------------
+
+[fill]
+symbol = " "
+
+[line_break]
+disabled = false
+
+[character]
+disabled = false
+success_symbol = '[❯](fg:text)'
+error_symbol = '[❯](fg:red)'
+vimcmd_symbol = '[❮](fg:green)'
+
+# Directory in blue — the most prominent element, so it earns a real colour.
+[directory]
+style = "fg:blue"
+format = "[$path ](fg:blue)"
+truncation_length = 1
+fish_style_pwd_dir_length = 2
+use_logical_path = true
+
+# -- Git Section --
+# Branch in green; status markers in yellow so dirty state is immediately readable.
+
+[git_branch]
+symbol = ""
+style = "fg:green"
+format = '[[ $symbol $branch ](fg:green)]($style)'
+
+[git_status]
+style = "fg:yellow"
+format = '[[($all_status$ahead_behind )](fg:yellow)]($style)'
+
+# -- Languages --
+# All in dim — these are contextual annotations, not primary information.
+# The abbreviations carry enough meaning without needing colour emphasis.
+
+[c]
+symbol = "C"
+style = "fg:dim"
+format = '[[ $symbol( $version) ](fg:dim)]($style)'
+
+[rust]
+symbol = "RS"
+style = "fg:dim"
+format = '[[ $symbol( $version) ](fg:dim)]($style)'
+
+[golang]
+symbol = "GO"
+style = "fg:dim"
+format = '[[ $symbol( $version) ](fg:dim)]($style)'
+
+[nodejs]
+symbol = "JS"
+style = "fg:dim"
+format = '[[ $symbol( $version) ](fg:dim)]($style)'
+
+# $tfm shows the target framework moniker (e.g. net9.0) when detectable.
+# Activates on .fsproj, .csproj, .sln, global.json, and *.fs files.
+[dotnet]
+symbol = ".NET"
+style = "fg:dim"
+format = '[[ $symbol( $version)( $tfm) ](fg:dim)]($style)'
+
+[php]
+symbol = "PHP"
+style = "fg:dim"
+format = '[[ $symbol( $version) ](fg:dim)]($style)'
+
+[java]
+symbol = "JV"
+style = "fg:dim"
+format = '[[ $symbol( $version) ](fg:dim)]($style)'
+
+[kotlin]
+symbol = "KT"
+style = "fg:dim"
+format = '[[ $symbol( $version) ](fg:dim)]($style)'
+
+[haskell]
+symbol = "HS"
+style = "fg:dim"
+format = '[[ $symbol( $version) ](fg:dim)]($style)'
+
+[python]
+symbol = "PY"
+style = "fg:dim"
+format = '[[ $symbol( $version)(\(#$virtualenv\)) ](fg:dim)]($style)'
+
+[docker_context]
+symbol = "Docker"
+style = "fg:dim"
+format = '[[ $symbol( $context) ](fg:dim)]($style)'
+
+[conda]
+symbol = "conda"
+style = "fg:dim"
+format = '[[ $symbol $environment ](fg:dim)]($style)'
+
+# -- Right Side Info --
+# Both in dim — peripheral information that should not compete with the left side.
+
+[time]
+disabled = false
+time_format = "%R"
+style = "fg:dim"
+format = '[ $time ](fg:dim)'
+
+[cmd_duration]
+show_milliseconds = false
+format = "[ $duration ](fg:dim)"
+style = "fg:dim"
+disabled = false
+min_time_to_notify = 45000
+
+# -- Palette Definition -------------------------------------------------------
+# Source: One Dark Pro Max (matches Ghostty terminal theme and dot-vimrc).
+
+[palettes.one_dark_pro_max]
+base   = "#080909"   # Terminal background
+text   = "#abb2bf"   # Foreground (Normal guifg)
+dim    = "#7F838C"   # Comment colour — secondary info (languages, time, duration)
+blue   = "#61afef"   # Function colour — directory path
+green  = "#8cc265"   # String colour — git branch
+yellow = "#e5c07b"   # WarningMsg — git dirty markers
+red    = "#ff616e"   # Bright red — error prompt symbol

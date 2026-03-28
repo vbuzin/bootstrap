@@ -10,50 +10,12 @@ fi
 export OP_BIOMETRIC_UNLOCK_ENABLED=true
 
 # 2. Path Configuration
-# Ensure FZF is in the path for the IDE to see it.
+# Ensure FZF is in the path so IDEs can see it.
 if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
   PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
 fi
 
-# 3. Global Variables
-export BAT_THEME="ansi"
-export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
-
-# -- FZF Global Styling (Layout & Colors ONLY) --
-export FZF_DEFAULT_OPTS='
---layout reverse
---border
---info=inline
---style full
---preview-window "up,60%"
---color=bg:#080909,fg:#abb2bf,hl:#4aa5f0
---color=bg+:#2c313a,fg+:#d7dae0,hl+:#4dc4ff
---color=info:#e5c07b,prompt:#61afef,pointer:#ff616e
---color=marker:#8cc265,spinner:#c162de,header:#7F838C
---color=border:#212121
-'
-
-# -- FZF History (Ctrl-R) --
-# "echo {}" prints the command. "bat -l sh" syntax highlights it as shell script.
-export FZF_CTRL_R_OPTS="
-  --preview 'echo {} | bat --color=always --style=plain --language=sh'
-  --preview-window down:3:wrap
-"
-
-# -- FZF File Search (Ctrl-T) --
-# This is where we actually want to preview the file content.
-export FZF_CTRL_T_OPTS="
-  --preview 'bat --color=always --style=numbers --line-range=:500 {}'
-"
-
-# -- FZF Directory Search (Alt-C) --
-# Preview the tree structure of the directory.
-export FZF_ALT_C_OPTS="
-  --preview 'eza -T --color=always {} | head -200'
-"
-
 # 3. Other
-# -- Disable dotnet telemetry
 export DOTNET_CLI_TELEMETRY_OPTOUT=true
 
 # ==============================================================================
@@ -63,114 +25,20 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=true
 
 if [[ $- == *i* ]]; then
 
-  # 1. Homebrew & Fpath Configuration (MOVED HERE)
+  # 1. Homebrew fpath — must be set before compinit runs in init.zsh
   if command -v brew >/dev/null 2>&1; then
-    # Standard Apple Silicon Homebrew path (Fastest)
     if [[ -d "/opt/homebrew/share/zsh/site-functions" ]]; then
-       fpath=("/opt/homebrew/share/zsh/site-functions" $fpath)
-    # Fallback: Ask brew for the prefix (Slower)
+      fpath=("/opt/homebrew/share/zsh/site-functions" $fpath)
     else
-       BREW_PREFIX=$(brew --prefix)
-       if [[ -d "$BREW_PREFIX/share/zsh/site-functions" ]]; then
-         fpath=("$BREW_PREFIX/share/zsh/site-functions" $fpath)
-       fi
+      BREW_PREFIX=$(brew --prefix)
+      [[ -d "$BREW_PREFIX/share/zsh/site-functions" ]] && \
+        fpath=("$BREW_PREFIX/share/zsh/site-functions" $fpath)
     fi
   fi
 
-  # 2. Prezto Initialization
-  if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-    source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-  fi
+  # 2. Modular shell config — exports, options, completion, aliases,
+  #    functions, fzf bindings, plugins, starship, direnv.
+  #    See ~/.config/zsh-extra/init.zsh for the full load order.
+  source "$HOME/.config/zsh-extra/init.zsh"
 
-  # 3. Source local .zsh files
-  if [[ -d "$HOME" ]]; then
-    setopt nullglob dotglob
-    for file in "$HOME"/*.zsh; do
-      [[ -r "$file" && (-f "$file" || -L "$file") ]] && source "$file"
-    done
-    unsetopt nullglob dotglob
-  fi
-
-  # 4. History Settings
-  HISTORY_IGNORE="(ls|cd|eza|la|eat|cat)"
-  setopt HIST_EXPIRE_DUPS_FIRST
-  setopt HIST_IGNORE_DUPS
-  setopt HIST_IGNORE_ALL_DUPS
-  setopt HIST_IGNORE_SPACE
-  setopt HIST_FIND_NO_DUPS
-  setopt HIST_SAVE_NO_DUPS
-
-  # 5. Aliases
-  if (( $+commands[bat] )); then
-    alias cat='bat --paging=never --wrap=never --style="changes"'
-  fi
-
-  if (( $+commands[eza] )); then
-    alias la="eza -la --group-directories-first"
-    alias lat="eza -laT --group-directories-first"
-  fi
-
-  if (( $+commands[nvim] )); then
-    alias {vi,vim}=nvim
-  fi
-
-  # 6. FZF Interactive Setup
-  if (( $+commands[fzf] )); then
-
-    # Auto-completion & Key bindings
-    [[ -f "/opt/homebrew/opt/fzf/shell/completion.zsh" ]] && source "/opt/homebrew/opt/fzf/shell/completion.zsh" 2> /dev/null
-    [[ -f "/opt/homebrew/opt/fzf/shell/key-bindings.zsh" ]] && source "/opt/homebrew/opt/fzf/shell/key-bindings.zsh"
-
-    # Custom function: irg (Interactive Ripgrep)
-    irg() {
-      RG_PREFIX="rg --hidden --column --line-number --no-heading --color=always --smart-case "
-      INITIAL_QUERY="${*:-}"
-      IFS=: read -rA selected <<<$(
-        FZF_DEFAULT_COMMAND="$RG_PREFIX $(printf %q "$INITIAL_QUERY")" \
-          fzf --ansi \
-          --color "hl:-1:underline,hl+:-1:underline:reverse" \
-          --disabled --query "$INITIAL_QUERY" \
-          --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
-          --bind "ctrl-f:unbind(change,ctrl-f)+change-prompt(2. fzf> )+enable-search+clear-query+rebind(ctrl-r)" \
-          --bind "ctrl-r:unbind(ctrl-r)+change-prompt(1. ripgrep> )+disable-search+reload($RG_PREFIX {q} || true)+rebind(change,ctrl-f)" \
-          --bind "esc:abort" \
-          --prompt '1. Ripgrep> ' \
-          --delimiter : \
-          --preview 'bat --style="numbers,changes" --color=always {1} --highlight-line {2}' \
-          --preview-window 'up,70%,border-bottom,+{2}+3/3,~3'
-      )
-
-      [ -z "${selected[*]}" ] && return 0
-
-      local file="${selected[1]}"
-      local line="${selected[2]}"
-      local col="${selected[3]}"
-
-      # Open vi/nvim at exact line/col
-      local editor="vi"
-      if command -v zed >/dev/null 2>&1; then
-        editor="zed"
-      fi
-
-      # Execute the chosen editor at the exact line/col
-      case "$editor" in
-        zed) $editor "$file:$line:$col" ;;
-        *) $editor "+call cursor($line, $col)" "$file" ;;
-      esac
-    }
-
-    # Custom function: _fzf_comprun
-    _fzf_comprun () {
-      local command=$1
-      shift
-      local _smart_preview='[[ -d {} ]] && eza -T {} | head -200 || bat --style="numbers,changes" --color=always {}'
-
-      case "$command" in
-        cd)            fzf --preview 'eza -T {} | head -200' "$@" ;;
-        export|unset)  fzf --preview "eval 'echo \$'{}"      "$@" ;;
-        ssh)           fzf --preview 'dig {}'                "$@" ;;
-        *)             fzf --preview "$_smart_preview"       "$@" ;;
-      esac
-    }
-  fi
 fi

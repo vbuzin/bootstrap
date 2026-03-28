@@ -3,7 +3,6 @@ PATH             := $(PATH):/opt/homebrew/bin
 SHELL            := env PATH=$(PATH) /bin/bash
 CONFIG_DIR       := $(HOME)/.config
 EMACS_CONFIG_DIR := $(HOME)/.emacs.d
-PREZTO_DIR       := $(HOME)/.zprezto
 BREWFILE         := $(CURDIR)/Brewfile
 STOW_OPTS        := --ignore=.DS_Store --override=.*
 
@@ -11,7 +10,7 @@ STOW_OPTS        := --ignore=.DS_Store --override=.*
 msg = @echo ">>> $(1) <<<"
 
 # Phony targets
-.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode c emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux clean help
+.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux clean help
 
 # Default target
 all: shell brew ghostty tmux
@@ -20,11 +19,11 @@ all: shell brew ghostty tmux
 # Help target
 help:
 	@echo "Available targets:"
-	@echo "  all                : Install all components (shell, brew, ghostty, emacs, firefox, nvim, tmux)"
-	@echo "  shell              : Install and configure shell with Prezto"
-	@echo "  clean-shell        : Remove shell configuration and Prezto directory"
+	@echo "  all                : Install all components (shell, brew, ghostty, tmux)"
+	@echo "  shell              : Install and configure shell (starship + plugins)"
+	@echo "  clean-shell        : Remove shell configuration"
 	@echo "  brew               : Install or update Homebrew and bundle dependencies"
-	@echo "  clean-brew         : Remove brew configuration (Homebrew uninstallation is optional)"
+	@echo "  clean-brew         : Remove brew configuration"
 	@echo "  ghostty            : Install and configure Ghostty"
 	@echo "  clean-ghostty      : Uninstall Ghostty and remove configuration"
 	@echo "  opencode           : Install and configure Opencode"
@@ -61,25 +60,20 @@ clean-brew:
 	@stow -D --dotfiles $(STOW_OPTS) --target=$(HOME) brew
 	@echo "Note: To fully uninstall Homebrew and its dependencies, run '/bin/bash -c \"$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)\"'"
 
-# Shell setup (Prezto)
+# Shell setup (starship + zsh-autosuggestions + zsh-syntax-highlighting)
 shell: $(CONFIG_DIR) brew
-	$(call msg,"Setting up shell with Prezto")
-	@if [ ! -d $(PREZTO_DIR) ]; then \
-		git clone --depth 1 --recursive https://github.com/sorin-ionescu/prezto.git $(PREZTO_DIR) || exit 1; \
-	else \
-		cd $(PREZTO_DIR) && git pull && git submodule sync --recursive && git submodule update --init --recursive; \
-	fi
+	$(call msg,"Setting up shell with Starship")
 	@stow --dotfiles $(STOW_OPTS) --target=$(HOME) dotfiles
+	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) zsh
+	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) starship
 	@$(MAKE) ghostty
 	@$(MAKE) tmux
 
 clean-shell:
 	$(call msg,"Cleaning shell configuration")
 	@stow -D --dotfiles $(STOW_OPTS) --target=$(HOME) dotfiles
-	@if [ -d $(PREZTO_DIR) ]; then \
-		rm -rf $(PREZTO_DIR); \
-		echo "Prezto directory removed"; \
-	fi
+	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) zsh
+	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) starship
 
 # Ghostty
 ghostty:
