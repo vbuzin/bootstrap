@@ -1,10 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "default_agent": "orchestrator",
-  "agent": {
-    "plan": { "disable": true },
-    "build": { "disable": true },
-  },
+
+  // Plan is the plan-side primary agent — conversation, exploration,
+  // planning. Tab switches to Build when ready to execute.
+  "default_agent": "plan",
+
   "compaction": {
     "auto": true,
     "prune": true,
