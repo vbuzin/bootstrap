@@ -5,27 +5,33 @@
 # syntax-highlighting (must be last).
 
 # Homebrew environment — sets PATH, MANPATH, INFOPATH for non-login shells
-[[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+[[ -x $(brew --prefix)/bin/brew ]] && eval "$($(brew --prefix)/bin/brew shellenv)"
 
 ZSH_EXTRA_DIR="$HOME/.config/zsh-extra"
 
 if [[ -d "$ZSH_EXTRA_DIR" ]]; then
   source "$ZSH_EXTRA_DIR/exports.zsh"      # Env vars, FZF opts, history paths
   source "$ZSH_EXTRA_DIR/options.zsh"      # setopt flags
+  source "$ZSH_EXTRA_DIR/functions.zsh"
   source "$ZSH_EXTRA_DIR/completion.zsh"   # zstyles + compinit
   source "$ZSH_EXTRA_DIR/aliases.zsh"
-  source "$ZSH_EXTRA_DIR/functions.zsh"
 fi
 
-# FZF key bindings and completion widget (must come after compinit)
-[[ -f "/opt/homebrew/opt/fzf/shell/completion.zsh" ]] && \
-  source "/opt/homebrew/opt/fzf/shell/completion.zsh" 2>/dev/null
-[[ -f "/opt/homebrew/opt/fzf/shell/key-bindings.zsh" ]] && \
-  source "/opt/homebrew/opt/fzf/shell/key-bindings.zsh"
+# FZF key bindings and completion widget
+[[ -f "$(brew --prefix)/opt/fzf/shell/completion.zsh" ]] && \
+  source "$(brew --prefix)/opt/fzf/shell/completion.zsh" 2>/dev/null
+
+[[ -f "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh" ]] && \
+  source "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh"
+
+# fzf-tab
+if [[ -f "$(brew --prefix)/share/fzf-tab/fzf-tab.zsh" ]]; then
+  source "$(brew --prefix)/share/fzf-tab/fzf-tab.zsh"
+fi
 
 # zsh-autosuggestions
-if [[ -f "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-  source "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+if [[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=245'
 fi
 
@@ -39,6 +45,10 @@ if command -v direnv >/dev/null 2>&1; then
   eval "$(direnv hook zsh)"
 fi
 
+# cycle through history with command matching
+[[ -f "$(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh" ]] && \
+  source "$(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+
 # zsh-syntax-highlighting — must be sourced LAST in the init chain
-[[ -f "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
-  source "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+[[ -f "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
+  source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

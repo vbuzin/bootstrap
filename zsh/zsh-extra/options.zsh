@@ -2,6 +2,9 @@
 # History behaviour is configured here; the HIST* variables live in exports.zsh.
 
 bindkey -e   # emacs key bindings (Ctrl-A, Ctrl-E, Ctrl-K, Alt-F/B, etc.)
+# zsh history substring search with arrow keys
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
 
 setopt GLOB_COMPLETE           # Tab-complete globs rather than expanding them immediately
 setopt HIST_IGNORE_ALL_DUPS    # Remove all earlier duplicates when a command is added
