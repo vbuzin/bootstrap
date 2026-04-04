@@ -1,7 +1,7 @@
 ---
 description: Grok — conversation, exploration, planning. Tab to Build when ready to execute.
 mode: primary
-model: xai/grok-4.20-beta-latest-reasoning
+model: xai/grok-4.20-0309-reasoning
 temperature: 0.78
 permissions:
   write: ask

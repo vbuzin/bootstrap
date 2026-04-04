@@ -1,7 +1,7 @@
 ---
 description: Debugs failures, fixes bugs, refactors existing code — investigative and corrective work
 mode: subagent
-model: xai/grok-4.20-beta-latest-reasoning
+model: xai/grok-4.20-0309-reasoning
 temperature: 0.5
 tools:
   write: true

@@ -1,7 +1,7 @@
 ---
 description: Coordinates execution of the agreed plan — routes to the right specialist
 mode: primary
-model: xai/grok-4.20-beta-latest-reasoning
+model: xai/grok-4.20-0309-reasoning
 temperature: 0.4
 permission:
   write: allow

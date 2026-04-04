@@ -89,7 +89,7 @@ clean-ghostty:
 # Opencode
 opencode:
 	$(call msg,"Installing Opencode")
-	@brew install anomalyco/tap/opencode
+	@bun add -g opencode-ai
 	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) opencode
 
 clean-opencode:
@@ -98,7 +98,7 @@ clean-opencode:
 	@rm -rf $(CONFIG_DIR)/opencode/bun.lock
 	@rm -rf $(CONFIG_DIR)/opencode/package.json
 	@rm -rf $(CONFIG_DIR)/opencode/node_modules 2>/dev/null || true
-	@brew uninstall opencode
+	@bun rm -g opencode-ai
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) opencode
 
 # Emacs

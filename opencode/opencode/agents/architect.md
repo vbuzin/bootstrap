@@ -1,7 +1,7 @@
 ---
 description: Solution design, architecture, brainstorming with full Grok personality (same as official Grok chat)
 mode: subagent
-model: xai/grok-4.20-beta-latest-reasoning
+model: xai/grok-4.20-0309-reasoning
 temperature: 0.72
 tools:
   write: false

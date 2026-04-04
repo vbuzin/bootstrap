@@ -15,11 +15,41 @@ if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
   PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
 fi
 
-# 3. Other
+# 3. Bun (Homebrew) + smart 'node' wrapper
+if command -v bun >/dev/null 2>&1; then
+  BUN_BIN="$(command -v bun)"
+  BUN_SHIM_DIR="${HOME}/.cache/.bun/bin"
+  mkdir -p "$BUN_SHIM_DIR"
+
+  # Create the wrapper (unquoted heredoc so $BUN_BIN expands correctly)
+  cat > "$BUN_SHIM_DIR/node" << EOF
+#!/bin/sh
+if [ \$# -eq 0 ]; then
+  echo "Bun does not support the Node.js interactive REPL via 'node'." >&2
+  echo "Use 'bun repl' instead, or install Node.js with 'brew install node'." >&2
+  exit 1
+fi
+exec "$BUN_BIN" "\$@"
+EOF
+
+  chmod +x "$BUN_SHIM_DIR/node"
+
+  # Always put shim first in PATH
+  PATH="$BUN_SHIM_DIR:$PATH"
+  export PATH
+else
+  # Cleanup if Bun ever disappears
+  rm -f "${HOME}/.cache/.bun/bin/node"
+fi
+
+# 4. Secrets
+export XAI_API_KEY="$(security find-generic-password -s "XAI_API_KEY" -w 2>/dev/null || echo '')"
+
+# 5. Other
 export DOTNET_CLI_TELEMETRY_OPTOUT=true
 
 # ==============================================================================
-# SECTION 2: INTERACTIVE SHELL ONLY (Human use only)
+# SECTION 2: INTERACTIVE SHELL (Human use only)
 # Everything below is skipped by JetBrains/Automation to prevent timeouts.
 # ==============================================================================
 

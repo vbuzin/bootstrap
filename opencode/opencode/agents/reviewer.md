@@ -1,7 +1,7 @@
 ---
 description: Security/performance/code-quality/best practices review with Grok personality
 mode: subagent
-model: xai/grok-4.20-beta-latest-reasoning
+model: xai/grok-4.20-0309-reasoning
 temperature: 0.65
 tools:
   write: false

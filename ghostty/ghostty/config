@@ -49,3 +49,5 @@ palette = 13=#de73ff
 palette = 14=#4cd1e0
 palette = 15=#e6e6e6
 
+# -- Tmux ----------------------------------------------------
+command = direct:/opt/homebrew/bin/tmux new-session -A -s main
