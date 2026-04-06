@@ -153,12 +153,12 @@ clean-firefox:
 # Neovim
 nvim: shell
 	$(call msg,"Installing Neovim")
-	@brew install neovim
+	@brew install neovim tree-sitter-cli
 	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) nvim
 
 clean-nvim:
 	$(call msg,"Cleaning Neovim")
-	@brew uninstall neovim 2>/dev/null || true
+	@brew uninstall neovim tree-sitter-cli 2>/dev/null || true
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) nvim
 	@rm -rf $(HOME)/.local/share/nvim $(HOME)/.local/state/nvim 2>/dev/null || true
 

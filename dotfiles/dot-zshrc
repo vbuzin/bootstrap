@@ -15,13 +15,13 @@ if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
   PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
 fi
 
-# 3. Bun (Homebrew) + smart 'node' wrapper
+# 3. Bun (Homebrew) + smart 'node' and 'npm' wrappers
 if command -v bun >/dev/null 2>&1; then
   BUN_BIN="$(command -v bun)"
   BUN_SHIM_DIR="${HOME}/.cache/.bun/bin"
   mkdir -p "$BUN_SHIM_DIR"
 
-  # Create the wrapper (unquoted heredoc so $BUN_BIN expands correctly)
+  # node shim (existing, unchanged)
   cat > "$BUN_SHIM_DIR/node" << EOF
 #!/bin/sh
 if [ \$# -eq 0 ]; then
@@ -32,14 +32,32 @@ fi
 exec "$BUN_BIN" "\$@"
 EOF
 
-  chmod +x "$BUN_SHIM_DIR/node"
+  # npm shim — translate npm commands to bun equivalents
+  cat > "$BUN_SHIM_DIR/npm" << EOF
+#!/bin/sh
+case "\$1" in
+  ci)
+    # npm ci = install from lockfile, no modifications allowed
+    shift
+    exec "$BUN_BIN" install --frozen-lockfile "\$@"
+    ;;
+  publish|login|logout|whoami|adduser|pack)
+    echo "npm '\$1' is not supported via the bun shim." >&2
+    echo "Install Node.js with 'brew install node' for registry operations." >&2
+    exit 1
+    ;;
+  *)
+    exec "$BUN_BIN" "\$@"
+    ;;
+esac
+EOF
 
-  # Always put shim first in PATH
+  chmod +x "$BUN_SHIM_DIR/node" "$BUN_SHIM_DIR/npm"
+
   PATH="$BUN_SHIM_DIR:$PATH"
   export PATH
 else
-  # Cleanup if Bun ever disappears
-  rm -f "${HOME}/.cache/.bun/bin/node"
+  rm -f "${HOME}/.cache/.bun/bin/node" "${HOME}/.cache/.bun/bin/npm"
 fi
 
 # 4. Secrets

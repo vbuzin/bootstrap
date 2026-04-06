@@ -6,10 +6,10 @@ kmap.set("n", "<leader>ch", ":nohlsearch<CR>", { desc = "Clear search highlights
 
 -- SECTION: Key mappings to center view after navigation
 -- Search Result Navigation
-kmap.set("n", "n", "nzz", { silent = true })   -- Next search result
-kmap.set("n", "N", "Nzz", { silent = true })   -- Previous search result
-kmap.set("n", "*", "*zz", { silent = true })   -- Search for word under cursor (forward)
-kmap.set("n", "#", "#zz", { silent = true })   -- Search for word under cursor (backward)
+kmap.set("n", "n", "nzz", { silent = true }) -- Next search result
+kmap.set("n", "N", "Nzz", { silent = true }) -- Previous search result
+kmap.set("n", "*", "*zz", { silent = true }) -- Search for word under cursor (forward)
+kmap.set("n", "#", "#zz", { silent = true }) -- Search for word under cursor (backward)
 kmap.set("n", "g*", "g*zz", { silent = true }) -- Like *, but without word boundaries
 
 -- Jumplist Navigation (Popping Jumps)
@@ -48,6 +48,14 @@ kmap.set("n", "<leader>bd", ":bd<cr>")
 kmap.set("n", "j", "gj")
 kmap.set("n", "k", "gk")
 
+-- Expand/shrink selection
+kmap.set({ "x", "o" }, "+", function()
+	require("vim.treesitter._select").select_parent(vim.v.count1)
+end, { desc = "TS: expand selection" })
+
+kmap.set({ "x", "o" }, "-", function()
+	require("vim.treesitter._select").select_child(vim.v.count1)
+end, { desc = "TS: shrink selection" })
+
 -- Quick-save
 kmap.set("n", "<leader>w", "<cmd>w<cr>")
-

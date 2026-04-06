@@ -24,6 +24,9 @@ autoload -Uz compinit
 mkdir -p "$XDG_CACHE_HOME/zsh"
 compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
 
+# recognise the alias
+compdef _editor=vi
+
 # AUTO_CD — type a directory name to cd into it without the cd command
 setopt AUTO_CD
 

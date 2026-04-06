@@ -6,3 +6,6 @@ alias la="eza -la --group-directories-first --git"
 
 # -- Utilities --
 alias cat="bat --paging=never --wrap=never --style='changes'"
+
+# -- Editor
+alias vi="_editor"

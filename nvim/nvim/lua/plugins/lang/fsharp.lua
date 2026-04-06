@@ -15,42 +15,43 @@ return {
 					vim.opt_local.tabstop = 4
 					vim.opt_local.shiftwidth = 4
 					vim.opt_local.softtabstop = 4
+					vim.opt_local.updatetime = 300
 				end,
 			})
 		end,
 		opts = {
 			servers = {
 				fsautocomplete = {
-					root_markers = { ".sln", ".fsproj", ".fsx", ".slnx", ".git" },
-            init_options = {
-              AutomaticWorkspaceInit = true,
-            },
-          settings = {
-            FSharp = {
-              EnableReferenceCodeLens = true,
-              ExternalAutocomplete = false,
-              InterfaceStubGeneration = true,
-              InterfaceStubGenerationMethodBody = 'failwith "Not Implemented"',
-              InterfaceStubGenerationObjectIdentifier = "this",
-              Linter = true,
-              RecordStubGeneration = true,
-              RecordStubGenerationBody = 'failwith "Not Implemented"',
-              ResolveNamespaces = true,
-              SimplifyNameAnalyzer = true,
-              UnionCaseStubGeneration = true,
-              UnionCaseStubGenerationBody = 'failwith "Not Implemented"',
-              UnusedDeclarationsAnalyzer = true,
-              UnusedOpensAnalyzer = true,
-              UseSdkScripts = true,
-              keywordsAutocomplete = true,
+					root_markers = { ".sln", ".fsproj", ".fsx", ".slnx" },
+					init_options = {
+						AutomaticWorkspaceInit = true,
+					},
+					settings = {
+						FSharp = {
+							EnableReferenceCodeLens = true,
+							ExternalAutocomplete = false,
+							InterfaceStubGeneration = true,
+							InterfaceStubGenerationMethodBody = 'failwith "Not Implemented"',
+							InterfaceStubGenerationObjectIdentifier = "this",
+							Linter = true,
+							RecordStubGeneration = true,
+							RecordStubGenerationBody = 'failwith "Not Implemented"',
+							ResolveNamespaces = true,
+							SimplifyNameAnalyzer = true,
+							UnionCaseStubGeneration = true,
+							UnionCaseStubGenerationBody = 'failwith "Not Implemented"',
+							UnusedDeclarationsAnalyzer = true,
+							UnusedOpensAnalyzer = true,
+							UseSdkScripts = true,
+							keywordsAutocomplete = true,
 
-              inlayHints = {
-                enabled = true,
-                parameterNames = true,
-                typeAnnotations = true,
-              },
-            },
-          },
+							inlayHints = {
+								enabled = true,
+								parameterNames = true,
+								typeAnnotations = false,
+							},
+						},
+					},
 				},
 			},
 		},
@@ -62,6 +63,7 @@ return {
 		opts = function(_, opts)
 			opts.ensure_installed = opts.ensure_installed or {}
 			vim.list_extend(opts.ensure_installed, { "fsharp" })
+
 			return opts
 		end,
 	},
