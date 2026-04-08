@@ -17,7 +17,7 @@ return {
 			ensure_installed = { "vim", "vimdoc" },
 		},
 		config = function(_, opts)
-			require("nvim-treesitter").install(opts.ensure_installed)
+			require("nvim-treesitter").setup(opts)
 
 			vim.api.nvim_create_autocmd("FileType", {
 				callback = function()
@@ -27,6 +27,19 @@ return {
 		end,
 	},
 
+	--[[ Treesitter Context: Pin scope header while scrolling ]]
+	{
+		"nvim-treesitter/nvim-treesitter-context",
+		event = { "BufReadPre", "BufNewFile" },
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		opts = {
+			max_lines = 3,          -- max lines the context window can be
+			min_window_height = 20, -- don't show in very short windows
+			trim_scope = "outer",   -- trim outermost context when over limit
+		},
+		config = true,
+	},
+
 	--[[ Mini.ai: The Modern Text Objects (Replaces nvim-treesitter-textobjects) ]]
 	{
 		"echasnovski/mini.ai",
@@ -34,16 +47,36 @@ return {
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		opts = function()
 			local ai = require("mini.ai")
+
+			-- Dynamic wrapper: never errors if grammar or textobjects query is missing
+			local function safe_treesitter(spec)
+				return function(type, line, opts)
+					local ok, result = pcall(ai.gen_spec.treesitter(spec), type, line, opts)
+					return ok and result or {}
+				end
+			end
+
 			return {
 				n_lines = 500,
 				custom_textobjects = {
-					o = ai.gen_spec.treesitter({ -- code block
+					-- tags work everywhere (regex, no treesitter)
+					t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" },
+
+					-- treesitter ones now safe on *any* filetype
+					o = safe_treesitter({
 						a = { "@block.outer", "@conditional.outer", "@loop.outer" },
 						i = { "@block.inner", "@conditional.inner", "@loop.inner" },
 					}),
-					f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
-					c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
-					t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" }, -- tags
+
+					f = safe_treesitter({
+						a = "@function.outer",
+						i = "@function.inner",
+					}),
+
+					c = safe_treesitter({
+						a = "@class.outer",
+						i = "@class.inner",
+					}),
 				},
 			}
 		end,
@@ -292,11 +325,6 @@ return {
 		event = { "BufWritePre" }, -- Format on save (before writing)
 		cmd = { "ConformInfo" }, -- Command to inspect conform.nvim setup
 		opts = {
-			formatters_by_ft = {
-				yaml = { "prettierd" },
-				markdown = { "prettierd" },
-				graphql = { "prettierd" },
-			},
 			format_on_save = {
 				timeout_ms = 1000, -- Max time for formatting on save
 				lsp_fallback = false, -- Do not fallback to LSP for formatting

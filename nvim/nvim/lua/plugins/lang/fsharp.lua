@@ -26,6 +26,15 @@ return {
 					init_options = {
 						AutomaticWorkspaceInit = true,
 					},
+					on_init = function(client)
+						-- fsautocomplete emits a large semantic token set for complex F# files
+						-- (generic constraints, large record types with function-typed fields).
+						-- Neovim's semantic token handler calls vim.str_utfindex() once per token
+						-- in an O(tokens × file_size) loop, spinning nvim at 100% CPU.
+						-- Nullify the provider here — before any buffer attaches — so Neovim
+						-- never registers the capability. All other LSP features remain active.
+						client.server_capabilities.semanticTokensProvider = nil
+					end,
 					settings = {
 						FSharp = {
 							EnableReferenceCodeLens = true,
@@ -57,13 +66,12 @@ return {
 		},
 	},
 
-	-- Install F# treesitter parser alongside the base parsers
+	-- F# treesitter parser for syntax highlighting (semantic tokens disabled — see on_init)
 	{
 		"nvim-treesitter/nvim-treesitter",
 		opts = function(_, opts)
 			opts.ensure_installed = opts.ensure_installed or {}
 			vim.list_extend(opts.ensure_installed, { "fsharp" })
-
 			return opts
 		end,
 	},

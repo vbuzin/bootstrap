@@ -12,6 +12,8 @@ format = """
 $directory\
 $git_branch\
 $git_status\
+$git_metrics\
+$git_state\
 $c\
 $rust\
 $golang\
@@ -55,16 +57,25 @@ fish_style_pwd_dir_length = 2
 use_logical_path = true
 
 # -- Git Section --
-# Branch in green; status markers in yellow so dirty state is immediately readable.
-
 [git_branch]
-symbol = ""
+symbol = " "          # common Nerd Font branch icon ( also works great)
 style = "fg:green"
-format = '[[ $symbol $branch ](fg:green)]($style)'
+format = '[[$symbol$branch ](fg:green)]($style)'
 
 [git_status]
 style = "fg:yellow"
-format = '[[($all_status$ahead_behind )](fg:yellow)]($style)'
+format = '[[($all_status$ahead_behind) ](fg:yellow)]($style)'
+
+[git_metrics]
+disabled = false
+only_nonzero_diffs = true
+format = '([+$added]($added_style) [-$deleted]($deleted_style))'
+added_style = "fg:dim"
+deleted_style = "fg:dim"
+
+[git_state]
+disabled = false
+style = "fg:yellow"
 
 # -- Languages --
 # All in dim — these are contextual annotations, not primary information.

@@ -37,6 +37,9 @@ opencode/opencode/.gitignore
 # Nvim
 nvim/nvim/plugin/**
 
+# Zed
+zed/zed/prompts/
+
 # General
 *.log
 **/cache/

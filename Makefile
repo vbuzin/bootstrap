@@ -10,7 +10,7 @@ STOW_OPTS        := --ignore=.DS_Store --override=.*
 msg = @echo ">>> $(1) <<<"
 
 # Phony targets
-.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux clean help
+.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux zed clean-zed clean help
 
 # Default target
 all: shell brew ghostty tmux
@@ -37,6 +37,8 @@ help:
 	@echo "  clean-nvim         : Uninstall Neovim and remove configuration"
 	@echo "  tmux               : Configure Tmux"
 	@echo "  clean-tmux         : Remove Tmux configuration"
+	@echo "  zed                : Install and configure Zed"
+	@echo "  clean-zed          : Uninstall Zed and remove configuration"
 	@echo "  clean              : Remove all installed configurations (use with caution)"
 	@echo "  help               : Show this help message"
 
@@ -161,6 +163,17 @@ clean-nvim:
 	@brew uninstall neovim tree-sitter-cli 2>/dev/null || true
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) nvim
 	@rm -rf $(HOME)/.local/share/nvim $(HOME)/.local/state/nvim 2>/dev/null || true
+
+# Zed
+zed: brew
+	$(call msg,"Installing Zed")
+	@brew install --cask zed
+	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) zed
+
+clean-zed:
+	$(call msg,"Cleaning Zed")
+	@brew uninstall --cask --zap zed 2>/dev/null || true
+	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) zed
 
 # Tmux
 tmux:
