@@ -33,9 +33,9 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		opts = {
-			max_lines = 3,          -- max lines the context window can be
+			max_lines = 3, -- max lines the context window can be
 			min_window_height = 20, -- don't show in very short windows
-			trim_scope = "outer",   -- trim outermost context when over limit
+			trim_scope = "outer", -- trim outermost context when over limit
 		},
 		config = true,
 	},
@@ -192,7 +192,9 @@ return {
 					map("n", "<leader>rn", vim.lsp.buf.rename, "LSP: Rename")
 					map("n", "gd", vim.lsp.buf.definition, "LSP: Go to Definition")
 					map("n", "gi", vim.lsp.buf.implementation, "LSP: Go to Implementation")
-					map("n", "K", vim.lsp.buf.hover, "LSP: Hover Documentation")
+					map("n", "K", function()
+						vim.lsp.buf.hover({ border = "single" })
+					end, "LSP: Hover Documentation")
 					map("n", "<leader>D", vim.lsp.buf.type_definition, "LSP: Go to Type Definition")
 					map("n", "<leader>ds", vim.diagnostic.open_float, "Diagnostics: Show Line Diagnostics")
 					map("n", "[d", function()

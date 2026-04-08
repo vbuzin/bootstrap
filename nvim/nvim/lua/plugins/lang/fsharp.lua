@@ -53,6 +53,7 @@ return {
 							UnusedOpensAnalyzer = true,
 							UseSdkScripts = true,
 							keywordsAutocomplete = true,
+							TooltipShowDocumentationLink = false,
 
 							inlayHints = {
 								enabled = true,

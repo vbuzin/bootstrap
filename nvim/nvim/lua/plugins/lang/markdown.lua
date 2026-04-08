@@ -10,7 +10,7 @@ return {
 					-- sensible defaults for Markdown editing
 					vim.opt_local.wrap = true
 					vim.opt_local.linebreak = true
-					vim.opt_local.spell = true
+					vim.opt_local.spell = false
 				end,
 			})
 		end,
@@ -41,8 +41,8 @@ return {
 			return opts
 		end,
 	},
-  -- Mason: install formatter
-  {
+	-- Mason: install formatter
+	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		opts = function(_, opts)
 			opts.ensure_installed = opts.ensure_installed or {}
@@ -52,8 +52,8 @@ return {
 	},
 	-- render-markdown.nvim with a few useful tweaks
 	{
-		'MeanderingProgrammer/render-markdown.nvim',
-		dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+		"MeanderingProgrammer/render-markdown.nvim",
+		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
 		ft = { "markdown" },
 		opts = {
 			-- completions work nicely with marksman

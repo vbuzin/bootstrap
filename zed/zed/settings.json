@@ -7,6 +7,7 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "text_rendering_mode": "platform_default",
   "relative_line_numbers": "disabled",
   "vim_mode": false,
   "agent": {

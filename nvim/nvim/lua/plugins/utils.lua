@@ -39,6 +39,7 @@ return {
       { "<leader>sd", function() Snacks.picker.diagnostics() end,            desc = "Diagnostics" },
       { "<leader>sh", function() Snacks.picker.help() end,                   desc = "Help Pages" },
       { "<leader>sj", function() Snacks.picker.jumps() end,                  desc = "Jumps" },
+      { "<leader>sk", function() Snacks.picker.keymaps() end,                desc = "Keymaps" },
       { "<leader>sl", function() Snacks.picker.loclist() end,                desc = "Location List" },
       { "<leader>sm", function() Snacks.picker.marks() end,                  desc = "Marks" },
       { "<leader>sq", function() Snacks.picker.qflist() end,                 desc = "Quickfix List" },
@@ -50,26 +51,25 @@ return {
       { "gD",         function() Snacks.picker.lsp_declarations() end,       desc = "Goto Declaration" },
       { "gr",         function() Snacks.picker.lsp_references() end,         nowait = true, desc = "References" },
       { "gI",         function() Snacks.picker.lsp_implementations() end,    desc = "Goto Implementation" },
-      { "gy",         function() Snacks.picker.lsp_type_definitions() end,   desc = "Goto T[y]pe Definition" },
+      { "gy",         function() Snacks.picker.lsp_type_definitions() end,   desc = "Goto Type Definition" },
       { "<leader>ss", function() Snacks.picker.lsp_symbols() end,            desc = "LSP Symbols" },
       { "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end,  desc = "LSP Workspace Symbols" },
-    }
-,
+    },
 	},
-	-- Fast navigation
+  --stylua: ignore start
 	{
 		"folke/flash.nvim",
 		event = "VeryLazy",
 		opts = {},
 		keys = {
-			{ "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash", },
-			{ "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter", },
-			{ "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash", },
+			{ "s", mode = { "n", "x", "o" }, function() require("flash").jump() end,         desc = "Flash", },
+			{ "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end,   desc = "Flash Treesitter", },
+			{ "r", mode = "o", function() require("flash").remote() end,                     desc = "Remote Flash", },
 			{ "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search", },
-			{ "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search", },
+			{ "<c-s>", mode = { "c" }, function() require("flash").toggle() end,             desc = "Toggle Flash Search", },
 		},
 	},
-
+  --stylua: ignore start
 	{
 		"folke/which-key.nvim",
 		event = "VeryLazy",
@@ -80,8 +80,7 @@ return {
 			{ "<leader>?", function() require("which-key").show({ global = false }) end, desc = "Buffer local keymaps", },
 		},
 	},
-	--stylua: ignore end
-  -- Surround
+	-- Surround
 	{
 		"kylechui/nvim-surround",
 		event = "VeryLazy",
