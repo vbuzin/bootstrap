@@ -9,6 +9,10 @@ _editor() {
   fi
 }
 
+_secret() {
+  security find-generic-password -s "$1" -w 2>/dev/null
+}
+
 # -- Interactive Ripgrep (irg) --
 irg() {
   RG_PREFIX="rg --hidden --column --line-number --no-heading --color=always --smart-case "

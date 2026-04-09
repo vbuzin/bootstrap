@@ -29,6 +29,7 @@ opt.undofile = true
 opt.updatetime = 50
 opt.wildmode = "list:longest"
 opt.wildoptions = "pum"
+opt.winborder = "rounded"
 opt.wrap = false
 
 -- Indentation
