@@ -43,3 +43,4 @@ zed/zed/prompts/
 # General
 *.log
 **/cache/
+.claude/

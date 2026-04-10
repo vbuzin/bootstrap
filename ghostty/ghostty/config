@@ -14,7 +14,8 @@ macos-option-as-alt = true
 title = " "
 
 quick-terminal-position = center
-quick-terminal-size = 1120px,860px
+quick-terminal-size = 1240px,880px
+quick-terminal-autohide = false
 keybind = global:cmd+backquote=toggle_quick_terminal
 initial-window = false
 macos-hidden = always

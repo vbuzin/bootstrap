@@ -55,12 +55,10 @@ brew:
 		/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || { echo "Homebrew install failed"; exit 1; }; \
 	fi
 	@brew bundle --file=$(BREWFILE) || { echo "Brew bundle failed"; exit 1; }
-	@stow --dotfiles $(STOW_OPTS) --target=$(HOME) brew
 
 clean-brew:
 	$(call msg,"Cleaning Brew configuration")
-	@stow -D --dotfiles $(STOW_OPTS) --target=$(HOME) brew
-	@echo "Note: To fully uninstall Homebrew and its dependencies, run '/bin/bash -c \"$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)\"'"
+	@/bin/bash -c \"$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)\"
 
 # Shell setup (starship + zsh-autosuggestions + zsh-syntax-highlighting)
 shell: $(CONFIG_DIR) brew

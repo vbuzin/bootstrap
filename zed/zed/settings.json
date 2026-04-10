@@ -7,11 +7,12 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "icon_theme": "Zed (Default)",
   "languages": {
     "Markdown": {
       "remove_trailing_whitespace_on_save": true,
-      "format_on_save": "on"
-    }
+      "format_on_save": "on",
+    },
   },
   "text_rendering_mode": "platform_default",
   "agent": {
@@ -69,12 +70,13 @@
     "restore_unsaved_buffers": true,
   },
   "terminal": {
+    "copy_on_select": true,
     "cursor_shape": "underline",
     "font_weight": 300,
   },
   "use_system_prompts": false,
   "use_system_path_prompts": false,
-  "ui_font_size": 14.0,
+  "ui_font_size": 15.0,
   "buffer_font_size": 13.0,
   "theme": "One Dark Pro Max",
 }

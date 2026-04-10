@@ -61,8 +61,7 @@ else
 fi
 
 # 4. Secrets
-export XAI_API_KEY=$(_secret XAI_API_KEY)
-export ANTHROPIC_API_KEY=$(_secret ANTHROPIC_API_KEY)
+export XAI_API_KEY="$(security find-generic-password -s "XAI_API_KEY" -w 2>/dev/null || echo '')"
 
 # 5. Other
 export DOTNET_CLI_TELEMETRY_OPTOUT=true
