@@ -1,20 +1,40 @@
-<p align="center">Slava’s bootstrap repo</p>
+<p align="center">Slava's bootstrap repo</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-macos-lightgrey.svg"/>
 </p>
 
 ---
-This project is a personal configuration repository. It includes configuration files and scripts for various tools and applications such as:
 
-- Terminal emulators (Alacritty, iTerm2)
-- Shell configuration (Zsh with Prezto)
-- Text editors (Neovim, Emacs, Vim)
-- Version control (Git)
-- Package management (Homebrew)
-- Other utilities (fzf, bat, tmux)
+My personal macOS dev environment. Clone it, run `make`, and a fresh machine is ready to go.
 
-The project uses GNU Stow to manage dotfiles and includes a Makefile to automate the installation and configuration process. The ultimate purpose is to simplify the initial setup of my machines.
+It uses [GNU Stow](https://www.gnu.org/software/stow/) to symlink configs into the right places and a Makefile to wire everything together.
+
+## What's inside
+
+- **Shell** — Zsh with a modular config (no framework), [Starship](https://starship.rs) prompt, fzf, bat, eza, direnv
+- **Terminal** — [Ghostty](https://ghostty.org), iTerm2 as fallback, Tmux for multiplexing
+- **Editors** — Neovim (Lua config, lazy.nvim, LSP for Go, Python, Rust, TypeScript, F#), Emacs, Vim
+- **Packages** — Homebrew + Brewfile (CLI tools, casks, App Store apps via mas)
+- **Browsers** — Firefox with custom CSS, Brave
+- **Theme** — One Dark Pro Max, consistently applied across terminal, prompt, editor, and tmux
+
+## Usage
+
+```sh
+# Full setup (shell + brew + ghostty + tmux)
+make
+
+# Individual components
+make nvim
+make emacs
+make firefox
+
+# Tear down a component
+make clean-firefox
+```
+
+Each target handles installing dependencies, symlinking configs, and any tool-specific setup (e.g. Firefox profile initialization).
 
 <p align="center">Copyright &copy; 2019-present Slava Buzin</p>
 

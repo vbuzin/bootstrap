@@ -153,7 +153,7 @@ return {
 			end
 			vim.keymap.set(
 				"n",
-				"<leader>td",
+				"<leader>xt",
 				toggle_inline_diagnostics,
 				{ noremap = true, silent = true, desc = "Toggle Inline Diagnostics" }
 			)
@@ -187,13 +187,11 @@ return {
 					local function map(mode, lhs, rhs, desc)
 						vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, buffer = bufnr, desc = desc })
 					end
-					map("n", "<leader>ca", vim.lsp.buf.code_action, "LSP: Code Action")
-					map("n", "<leader>rn", vim.lsp.buf.rename, "LSP: Rename")
-					map("n", "gd", vim.lsp.buf.definition, "LSP: Go to Definition")
-					map("n", "gi", vim.lsp.buf.implementation, "LSP: Go to Implementation")
+					map("n", "<leader>la", vim.lsp.buf.code_action, "LSP: Code Action")
+					map("n", "<leader>ln", vim.lsp.buf.rename, "LSP: Rename")
 					map("n", "K", vim.lsp.buf.hover, "LSP: Hover Documentation")
-					map("n", "<leader>D", vim.lsp.buf.type_definition, "LSP: Go to Type Definition")
-					map("n", "<leader>ds", vim.diagnostic.open_float, "Diagnostics: Show Line Diagnostics")
+					map("n", "<leader>lt", vim.lsp.buf.type_definition, "LSP: Go to Type Definition")
+					map("n", "<leader>xd", vim.diagnostic.open_float, "Diagnostics: Show Line Diagnostics")
 					map("n", "[d", function()
 						vim.diagnostic.jump({ count = -1 })
 					end, "Diagnostics: Go to Previous")
@@ -233,7 +231,21 @@ return {
 				desc = "Debug: Start/Continue",
 			},
 			{
+				"<leader>dc",
+				function()
+					require("dap").continue()
+				end,
+				desc = "Debug: Start/Continue",
+			},
+			{
 				"<F10>",
+				function()
+					require("dap").step_over()
+				end,
+				desc = "Debug: Step Over",
+			},
+			{
+				"<leader>do",
 				function()
 					require("dap").step_over()
 				end,
@@ -247,7 +259,21 @@ return {
 				desc = "Debug: Step Into",
 			},
 			{
+				"<leader>di",
+				function()
+					require("dap").step_into()
+				end,
+				desc = "Debug: Step Into",
+			},
+			{
 				"<F12>",
+				function()
+					require("dap").step_out()
+				end,
+				desc = "Debug: Step Out",
+			},
+			{
+				"<leader>du",
 				function()
 					require("dap").step_out()
 				end,

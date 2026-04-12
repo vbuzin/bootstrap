@@ -2,7 +2,7 @@ local kmap, g = vim.keymap, vim.g
 
 g.mapleader = " "
 
-kmap.set("n", "<leader>ch", ":nohlsearch<CR>", { desc = "Clear search highlights" })
+kmap.set("n", "<C-l>", "<cmd>nohlsearch<CR><cmd>redraw<CR>", { desc = "Clear highlights + redraw" })
 
 -- SECTION: Key mappings to center view after navigation
 -- Search Result Navigation

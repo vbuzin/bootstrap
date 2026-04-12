@@ -51,7 +51,7 @@ vimcmd_symbol = '[❮](fg:green)'
 # Directory in blue — the most prominent element, so it earns a real colour.
 [directory]
 style = "fg:blue"
-format = "[$path ](fg:blue)"
+format = "[$path](fg:blue)"
 truncation_length = 1
 fish_style_pwd_dir_length = 2
 use_logical_path = true
@@ -60,7 +60,7 @@ use_logical_path = true
 [git_branch]
 symbol = " "          # common Nerd Font branch icon ( also works great)
 style = "fg:green"
-format = '[[$symbol$branch ](fg:green)]($style)'
+format = '[ [$symbol$branch ](fg:green)]($style)'
 
 [git_status]
 style = "fg:yellow"

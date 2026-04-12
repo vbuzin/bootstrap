@@ -20,6 +20,9 @@ return {
 					"build",
 					"target",
 				},
+				layout = {
+					preset = "ivy",
+				},
 			},
 		},
 --stylua: ignore start
@@ -75,6 +78,15 @@ return {
 		event = "VeryLazy",
 		opts = {
 			delay = 800,
+			spec = {
+				{ "<leader>l", group = "lsp" },
+				{ "<leader>d", group = "debug" },
+				{ "<leader>r", group = "run" },
+				{ "<leader>b", group = "buffer" },
+				{ "<leader>f", group = "files" },
+				{ "<leader>s", group = "search" },
+				{ "<leader>x", group = "diagnostics" },
+			},
 		},
 		keys = {
 			{ "<leader>?", function() require("which-key").show({ global = false }) end, desc = "Buffer local keymaps", },

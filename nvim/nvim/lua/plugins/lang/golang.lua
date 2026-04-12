@@ -82,13 +82,14 @@ return {
 		end,
 		keys = {
 			{
-				"<leader>dgt",
+				"<leader>dt",
 				function()
 					require("dap-go").debug_test()
 				end,
 				ft = "go",
-				desc = "Debug: Go Test",
+				desc = "Debug: Test",
 			},
 		},
 	},
+
 }
