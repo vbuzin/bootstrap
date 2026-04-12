@@ -1,0 +1,667 @@
+% Neovim Cheatsheet — personal bootstrap setup
+% Two colour modes:
+%   screen (default)  — dark One Dark background, compile as-is
+%   print             — white background, compile with: \def\printmode{1}
+%
+% Build:  see docs/compile.sh  (wraps Docker + pdflatex)
+
+\documentclass[9pt,a4paper,landscape]{extarticle}
+
+\usepackage[landscape,a4paper,
+            top=5mm,bottom=4mm,left=5mm,right=5mm]{geometry}
+\usepackage{multicol}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{array}
+% (tabularx removed: its body-scanner breaks inside \newenvironment wrappers)
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{enumitem}
+
+% ── Colour scheme ────────────────────────────────────────────────────────────
+\ifdefined\printmode
+  \colorlet{pagebg}{white}
+  \definecolor{hdrbg}{RGB}{215,220,230}
+  \definecolor{hdrfg}{RGB}{25,30,45}
+  \definecolor{keyclr}{RGB}{15,55,145}
+  \definecolor{bodyclr}{RGB}{10,10,15}
+  \definecolor{noteclr}{RGB}{60,70,90}
+  \definecolor{ruleclr}{RGB}{175,180,192}
+  \definecolor{titlebg}{RGB}{35,40,55}
+  \definecolor{titlefg}{RGB}{240,242,248}
+\else
+  \definecolor{pagebg}{RGB}{40,44,52}
+  \definecolor{hdrbg}{RGB}{60,66,82}
+  \definecolor{hdrfg}{RGB}{228,234,244}
+  \definecolor{keyclr}{RGB}{97,175,239}
+  \definecolor{bodyclr}{RGB}{171,178,191}
+  \definecolor{noteclr}{RGB}{130,155,180}
+  \definecolor{ruleclr}{RGB}{72,82,98}
+  \definecolor{titlebg}{RGB}{30,34,42}
+  \definecolor{titlefg}{RGB}{228,234,244}
+\fi
+
+\pagecolor{pagebg}
+\color{bodyclr}
+
+% ── Layout ───────────────────────────────────────────────────────────────────
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\columnsep}{3.5mm}
+\setlength{\columnseprule}{0.3pt}
+\setlength{\multicolsep}{1pt}
+\renewcommand{\columnseprulecolor}{\color{ruleclr}}
+% \baselinestretch controls \baselineskip inside p{} parboxes (via \selectfont
+% when the column preamble's \footnotesize is applied).  This is the correct
+% lever for reducing p{} row heights; \arraystretch alone has no effect there.
+\renewcommand{\baselinestretch}{0.82}
+\renewcommand{\arraystretch}{0.80}
+
+% ── Helpers ──────────────────────────────────────────────────────────────────
+
+% Monospace bold key  (\k is a reserved LaTeX accent — use \kbd)
+\newcommand{\kbd}[1]{{\ttfamily\bfseries\footnotesize\color{keyclr}#1}}
+
+% Section header — full-width coloured bar
+\newcommand{\sect}[1]{%
+  \vspace{0.5pt}%
+  {\setlength{\fboxsep}{1pt}%
+   \noindent\colorbox{hdrbg}{\parbox{\dimexpr\columnwidth-2pt\relax}{%
+     \color{hdrfg}\bfseries\sffamily\small\strut\,#1}}}%
+  \par\vspace{0pt}}
+
+% Extra vertical space between rows (0 = content-height only, tune up if space allows)
+\newlength{\kdsep}\setlength{\kdsep}{0pt}
+
+% \kd{keys}{description}  —  one row in a kt table
+\newcommand{\kd}[2]{\kbd{#1} & #2 \\[\kdsep]}
+
+% Key table: both columns p{} so they share the same vtop reference —
+% first-line baselines always align regardless of cell height.
+\newenvironment{kt}{%
+  \setlength{\tabcolsep}{0pt}%
+  \begin{tabular}{@{}>{\footnotesize\raggedright\arraybackslash}p{17mm}@{\hspace{2pt}}>{\footnotesize\color{bodyclr}\raggedright\arraybackslash}p{\dimexpr\columnwidth-17mm-2pt\relax}@{}}%
+}{%
+  \end{tabular}\par}
+
+% Italic note below a section
+\newcommand{\snote}[1]{{\scriptsize\color{noteclr}\textit{#1}}\par}
+
+\pagestyle{empty}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\begin{document}
+% ═══════════════════════════════════════════════════════════════════════════
+
+% ── Title bar ────────────────────────────────────────────────────────────────
+{\setlength{\fboxsep}{4pt}%
+ \noindent\colorbox{titlebg}{\parbox{\dimexpr\textwidth-8pt\relax}{%
+   \centering\color{titlefg}%
+   {\large\bfseries\sffamily Neovim Cheatsheet}\enspace
+   {\small\color{hdrfg}%
+    SPC\,leader\enspace\textbullet\enspace
+    Snacks\,Ivy\enspace\textbullet\enspace
+    Flash\enspace\textbullet\enspace
+    LSP\,+\,DAP\enspace\textbullet\enspace
+    mini.ai\enspace\textbullet\enspace
+    One\,Dark\enspace\textbullet\enspace
+    Rust\,/\,Go\,/\,Python\,/\,TS\,/\,F\#\,/\,Lua}}}}
+\vspace{1pt}
+
+\begin{multicols}{5}
+
+% ═══════════════════════════════════════
+\sect{ERGONOMIC STRATEGIES}
+\begin{kt}
+\kd{SPC\,leader}{thumb on Space; home row never moves}
+\kd{zz\,on\,jumps}{cursor re-centers; eyes stay mid-screen}
+\kd{Flash\,s+2ch}{jump anywhere visible; replaces f/t/;/,}
+\kd{unnamedplus}{y/p = system clipboard; no \kbd{"+"} prefix}
+\kd{j/k=gj/gk}{visual-line motion; natural for wrapped code}
+\kd{:w\,auto-fmt}{conform.nvim runs on save; no manual step}
+\kd{800ms\,/\,SPC?}{which-key hints; query prefix groups live}
+\kd{Snacks\,Ivy}{picker at bottom; \kbd{SPC\,sR} resumes last}
+\kd{+/-\,visual}{treesitter node expand / shrink in place}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{CORE MOTION}
+\begin{kt}
+\kd{h\,j\,k\,l}{left / down / up / right}
+\kd{w\,/\,b\,/\,e}{word fwd / back / end}
+\kd{W\,/\,B\,/\,E}{WORD fwd / back / end}
+\kd{ge\,/\,gE}{back to prev word / WORD end}
+\kd{0\,/\,\textasciicircum\,/\,\$}{line start / first non-blank / end}
+\kd{gg\,/\,G}{file top / bottom}
+\kd{\{\,/\,\}}{prev / next blank line}
+\kd{\%}{jump matching bracket or delimiter}
+\kd{H\,/\,M\,/\,L}{screen top / mid / bottom}
+\kd{C-u\,/\,C-d}{scroll half-page up / down}
+\kd{C-f\,/\,C-b}{scroll full page fwd / back}
+\kd{zz\,/\,zt\,/\,zb}{cursor: center / top / bottom of screen}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{ON-LINE CHAR MOTION}
+\begin{kt}
+\kd{f\{c\}}{jump to next occurrence of char c}
+\kd{F\{c\}}{jump to prev occurrence of char c}
+\kd{t\{c\}}{jump before next char c}
+\kd{T\{c\}}{jump before prev char c}
+\kd{;\,/\,,}{repeat last f/t fwd / reverse}
+\end{kt}
+\snote{Flash \kbd{s} covers multi-line hops; f/t stay useful within one line.}
+
+% ═══════════════════════════════════════
+\sect{FLASH.NVIM\enspace{\scriptsize n\,/\,v\,/\,o}}
+\begin{kt}
+\kd{s}{Flash jump — 2 chars then pick label}
+\kd{S}{Flash Treesitter — jump to syntax node}
+\kd{r}{Remote flash (operator-pending only)}
+\kd{R}{Treesitter search (op / visual)}
+\kd{C-s}{Toggle Flash inside /\,? search}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{CENTERED JUMP LIST\enspace{\scriptsize all +zz}}
+\begin{kt}
+\kd{n\,/\,N}{next / prev search result}
+\kd{*\,/\,\#}{word fwd / back (whole-word match)}
+\kd{g*\,/\,g\#}{word fwd / back (partial match)}
+\kd{C-o\,/\,C-i}{older / newer jump position}
+\kd{''\,/\,``}{last jump: line / precise position}
+\kd{'.\,/\,`.}{last change: line / precise position}
+\kd{`[\,/\,`]}{prev change/yank: start / end}
+\kd{['\,/\,]'}{prev change line: start / end}
+\kd{C-]}{jump to tag definition}
+\kd{C-t}{pop tag stack (back)}
+\kd{g;\,/\,g,}{older / newer changelist position}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{BRACKET \& SCOPE NAV}
+\begin{kt}
+\kd{[(\,/\,[\{}{prev unmatched \kbd{(} / \kbd{\{}}
+\kd{])\,/\,]\}}{next unmatched \kbd{)} / \kbd{\}}}
+\kd{[m\,/\,]m}{prev / next method start}
+\kd{[M\,/\,]M}{prev / next method end}
+\kd{gn\,/\,gN}{select next / prev search match}
+\kd{cgn\,/\,dgn}{change / delete next match (dot-repeatable)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{MARKS}
+\begin{kt}
+\kd{m\{a-z\}}{set lowercase mark in current file}
+\kd{m\{A-Z\}}{set global mark (across files)}
+\kd{`\{a-z\}}{jump to mark — precise position}
+\kd{'\{a-z\}}{jump to mark — start of line}
+\kd{SPC\,sm}{marks picker (Snacks)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{REGISTERS REFERENCE}
+\begin{kt}
+\kd{""}{unnamed: last delete / yank / change}
+\kd{"0}{last explicit yank (\kbd{y} command)}
+\kd{"1-"9}{last 9 deletes, newest = 1}
+\kd{"-}{last small delete (\textless{}1 line)}
+\kd{".}{last inserted text}
+\kd{":}{last executed ex command}
+\kd{"/}{last search pattern}
+\kd{"+}{system clipboard (read and write)}
+\kd{"\%}{current filename}
+\kd{"=}{expression register (prompt on use)}
+\end{kt}
+\snote{Access any register: \kbd{"\{r\}y} to yank, \kbd{"\{r\}p} to paste.}
+
+% ═══════════════════════════════════════
+\sect{REGISTER TRICKS}
+\begin{kt}
+\kd{"\_d\{m\}}{delete to black hole — no clobber}
+\kd{"0p}{paste last yank (not last delete)}
+\kd{C-r\,0}{insert mode: paste last-yank inline}
+\kd{C-r\,\{r\}}{insert mode: paste any register}
+\kd{:reg}{list all register contents}
+\end{kt}
+\snote{Yank first, delete freely. \kbd{"0p} always pastes the original yank.}
+
+% ═══════════════════════════════════════
+\sect{VISUAL \& SELECTION}
+\begin{kt}
+\kd{v\,/\,V\,/\,C-v}{char / line / block visual}
+\kd{J\,/\,K}{move selection down / up (visual)}
+\kd{<\,/\,>}{indent left / right}
+\kd{gv}{re-select last visual region}
+\kd{o}{toggle to other end of selection}
+\kd{O}{toggle to other corner (block visual)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{VISUAL BLOCK\enspace{\scriptsize C-v operations}}
+\begin{kt}
+\kd{I\{t\}\,Esc}{insert \{t\} before every selected line}
+\kd{A\{t\}\,Esc}{append \{t\} after every selected line}
+\kd{\$\,A\{t\}\,Esc}{append past end of varying-length lines}
+\kd{c\{t\}\,Esc}{replace block with \{t\} on all lines}
+\kd{r\{c\}}{replace every char in block with c}
+\kd{\textasciitilde}{toggle case of all chars in block}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{TREESITTER SELECTION\enspace{\scriptsize v / op}}
+\begin{kt}
+\kd{+}{expand to parent syntax node}
+\kd{-}{shrink to child syntax node}
+\kd{gS}{Flash Treesitter in visual (alt to S)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{INSERT MODE\enspace{\scriptsize keys while inserting}}
+\begin{kt}
+\kd{C-h}{delete char before cursor (backspace)}
+\kd{C-w}{delete word before cursor}
+\kd{C-u}{delete to start of line}
+\kd{C-t\,/\,C-d}{indent / de-indent current line}
+\kd{C-r\,\{r\}}{paste from register r inline}
+\kd{C-o}{one normal cmd, then back to insert}
+\kd{C-c}{exit insert (no abbreviation trigger)}
+\kd{Esc\,/\,C-{[}}{return to normal mode}
+\end{kt}
+\snote{In insert, \kbd{C-x\,C-f} = filename completion; \kbd{C-x\,C-l} = whole-line.}
+
+% ═══════════════════════════════════════
+\sect{COMMAND-LINE MODE\enspace{\scriptsize after : / ? /}}
+\begin{kt}
+\kd{C-f}{open history in editable buffer}
+\kd{C-r\,C-w}{paste word under cursor}
+\kd{C-r\,"}{paste unnamed register}
+\kd{C-r\,/}{paste last search pattern}
+\kd{C-b\,/\,C-e}{cursor to line start / end}
+\kd{C-p\,/\,C-n}{history prev / next}
+\kd{Tab}{cycle completions (wildmode)}
+\kd{Esc}{cancel, return to normal}
+\end{kt}
+\snote{\kbd{q:} / \kbd{q/} open history as an editable normal-mode window.}
+
+% ═══════════════════════════════════════
+\sect{NORMAL MODE QOL}
+\begin{kt}
+\kd{.}{repeat last change (most powerful)}
+\kd{@:}{repeat last ex command}
+\kd{q:\,/\,q/}{command / search history window}
+\kd{C-a\,/\,C-x}{increment / decrement number}
+\kd{r\{c\}}{replace char under cursor}
+\kd{R}{enter replace mode (overwrite)}
+\kd{x\,/\,X}{delete char at / before cursor}
+\kd{gi}{go to last insert position and enter insert}
+\kd{gv}{re-select last visual region}
+\kd{ga}{show ASCII / Unicode of char}
+\kd{gf}{open file name under cursor}
+\kd{gx}{open URL or path externally}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{CASE \& FORMAT OPERATORS}
+\begin{kt}
+\kd{\textasciitilde}{toggle case of char under cursor}
+\kd{g\textasciitilde\,\{m\}}{toggle case by motion}
+\kd{gu\,\{m\}}{lowercase by motion}
+\kd{gU\,\{m\}}{uppercase by motion}
+\kd{gq\,\{m\}}{reflow / wrap text to textwidth}
+\kd{J\,/\,gJ}{join line below (with / no space)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{UNDO / REDO\enspace{\scriptsize undofile = true (persistent)}}
+\begin{kt}
+\kd{u\,/\,C-r}{undo / redo}
+\kd{U}{undo all changes on current line}
+\kd{g-\,/\,g+}{undo / redo by time state}
+\kd{:earlier\,\{t\}}{back by time (e.g.\ \kbd{5m} \kbd{3h})}
+\kd{:later\,\{t\}}{forward by time}
+\kd{SPC\,su}{undo history picker (Snacks)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{MACROS \& RECORDING}
+\begin{kt}
+\kd{q\{a-z\}}{start recording into register}
+\kd{q\{A-Z\}}{append recording to register}
+\kd{q}{stop recording}
+\kd{@\{a-z\}}{replay macro from register}
+\kd{@@}{replay last-used macro}
+\kd{N@\{a-z\}}{replay N times (count prefix)}
+\kd{:\@\{a-z\}}{replay macro from cmd line}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{FOLDS}
+\begin{kt}
+\kd{za\,/\,zA}{toggle fold / toggle recursively}
+\kd{zc\,/\,zo}{close / open fold}
+\kd{zC\,/\,zO}{close / open all nested folds}
+\kd{zR\,/\,zM}{open all / close all folds}
+\kd{zf\{m\}}{create manual fold by motion}
+\kd{zd\,/\,zD}{delete fold / delete all folds}
+\kd{{[}z\,/\,{]}z}{move to fold start / fold end}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{SPELL CHECKING\enspace{\scriptsize requires :set spell}}
+\begin{kt}
+\kd{{]}s\,/\,{[}s}{next / prev misspelled word}
+\kd{z=}{suggest spelling corrections}
+\kd{zg}{add word to spellfile (good)}
+\kd{zw}{mark word as wrong}
+\kd{zug\,/\,zuw}{undo zg / undo zw}
+\kd{:set spell}{enable spell checking}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{LSP — NAVIGATION}
+\begin{kt}
+\kd{K}{hover documentation}
+\kd{gd}{goto definition (Snacks picker)}
+\kd{gD}{goto declaration}
+\kd{gr}{find references (Snacks picker)}
+\kd{gI}{goto implementation}
+\kd{gy}{goto type definition}
+\kd{SPC\,la}{code action}
+\kd{SPC\,ln}{rename symbol}
+\kd{SPC\,lr}{LSP references (buffer list)}
+\kd{SPC\,lt}{type definition}
+\kd{SPC\,ss}{LSP symbols — buffer}
+\kd{SPC\,sS}{LSP workspace symbols}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{DIAGNOSTICS}
+\begin{kt}
+\kd{{[}d\,/\,{]}d}{prev / next diagnostic}
+\kd{SPC\,xd}{show line diagnostic (float)}
+\kd{SPC\,xt}{toggle inline virtual text}
+\kd{SPC\,sd}{diagnostics picker (all files)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{COMPLETION\enspace{\scriptsize nvim-cmp, insert mode}}
+\begin{kt}
+\kd{C-Space}{trigger completion menu}
+\kd{C-n\,/\,C-p}{next / prev completion item}
+\kd{CR}{confirm selection}
+\kd{C-e}{close / abort completion}
+\kd{C-b\,/\,C-f}{scroll docs up / down}
+\kd{Tab\,/\,S-Tab}{next / prev snippet placeholder}
+\end{kt}
+\snote{Ghost-text preview appears inline (Neovim 0.10+). Completion sources: LSP + LuaSnip.}
+
+% ═══════════════════════════════════════
+\sect{OPERATORS\enspace{\scriptsize + motion or text object}}
+\begin{tabular}{@{}p{10mm}@{\,}p{16mm}@{\hspace{4pt}}p{10mm}@{\,}p{12mm}@{}}
+{\footnotesize\kbd{c}} & {\scriptsize change} & {\footnotesize\kbd{d}} & {\scriptsize delete} \\[\kdsep]
+{\footnotesize\kbd{y}} & {\scriptsize yank} & {\footnotesize\kbd{>}} & {\scriptsize indent\,\textrightarrow} \\[\kdsep]
+{\footnotesize\kbd{<}} & {\scriptsize indent\,\textleftarrow} & {\footnotesize\kbd{=}} & {\scriptsize auto-indent} \\[\kdsep]
+{\footnotesize\kbd{gc}} & {\scriptsize line comment} & {\footnotesize\kbd{gb}} & {\scriptsize block comment} \\[\kdsep]
+{\footnotesize\kbd{ys}} & {\scriptsize surround add} & & \\
+\end{tabular}\par\vspace{1.5pt}
+\snote{Examples: \kbd{yaf} yank outer fn \textbullet{} \kbd{cit} change in tag \textbullet{} \kbd{dap} delete paragraph}
+
+% ═══════════════════════════════════════
+\sect{TEXT OBJECTS\enspace{\scriptsize mini.ai — prefix a / i}}
+\begin{kt}
+\kd{f}{function (treesitter)}
+\kd{c}{class (treesitter)}
+\kd{o}{block / conditional / loop (TS)}
+\kd{t}{HTML/XML tag}
+\kd{b}{bracket pair ( ) [ ] \{ \}}
+\kd{q}{quote " ' `}
+\kd{w\,/\,W}{word / WORD}
+\kd{p}{paragraph}
+\kd{g}{entire file (mini.ai bonus)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{COMMENTS \& SURROUND}
+\begin{kt}
+\kd{gcc}{toggle line comment}
+\kd{gbc}{toggle block comment}
+\kd{gc\{m\}}{comment by motion (e.g.\ \kbd{gcip})}
+\kd{gco\,/\,gcO}{comment line below / above}
+\kd{gcA}{append comment at end of line}
+\kd{ys\{m\}\{c\}}{add surround (e.g.\ \kbd{ysiw"})}
+\kd{yss\{c\}}{surround entire current line}
+\kd{ds\{c\}}{delete surrounding char}
+\kd{cs\{o\}\{n\}}{change surround (e.g.\ \kbd{cs"'})}
+\kd{S\{c\}}{surround visual selection}
+\end{kt}
+\snote{\kbd{S} may conflict with Flash Treesitter in visual — use \kbd{gS} as fallback.}
+
+% ═══════════════════════════════════════
+\sect{EX RANGES \& GLOBAL}
+\begin{kt}
+\kd{:\%}{entire file (shorthand for \kbd{1,\$})}
+\kd{:1,10}{lines 1 to 10}
+\kd{:'<,'>}{visual selection range}
+\kd{:.,.+5}{current line to +5 lines}
+\kd{:g/pat/\{cmd\}}{cmd on lines matching pat}
+\kd{:v/pat/\{cmd\}}{cmd on lines NOT matching}
+\kd{:!\{cmd\}}{run shell command}
+\kd{:\{r\}!\{cmd\}}{filter range through cmd}
+\kd{:read\,!\{cmd\}}{insert cmd output below}
+\end{kt}
+\snote{Examples: \kbd{:g/TODO/d} delete all TODO lines \textbullet{} \kbd{:\%!jq .} pretty-print JSON}
+
+% ═══════════════════════════════════════
+\sect{EX POWER COMMANDS}
+\begin{kt}
+\kd{:sort}{sort lines asc (\kbd{u}=unique, \kbd{n}=numeric)}
+\kd{:sort!}{sort descending}
+\kd{:\%y+}{yank entire file to system clipboard}
+\kd{:put\,\{r\}}{paste register as new lines below cursor}
+\kd{:norm\,\{cmd\}}{run normal cmd on every line in range}
+\kd{:retab}{replace tabs with spaces (per tabstop)}
+\kd{:saveas\,\{f\}}{save buffer to new filename}
+\end{kt}
+\snote{\kbd{:,+3norm\,A;} appends \kbd{;} to next 4 lines \textbullet{} \kbd{:\%y+} then paste in browser.}
+
+% ═══════════════════════════════════════
+\sect{SEARCH \& SUBSTITUTE}
+\begin{kt}
+\kd{/\,pat}{forward search (regex)}
+\kd{?\,pat}{backward search (regex)}
+\kd{:\%s/o/n/gc}{replace all with confirm}
+\kd{:g/pat/cmd}{global cmd on matching lines}
+\kd{:v/pat/cmd}{global cmd on non-matching}
+\kd{C-r\,C-w}{paste word under cursor (cmdline)}
+\kd{C-l}{clear search highlights + redraw}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{REGEX SYNTAX\enspace{\scriptsize / ? :s patterns}}
+\begin{kt}
+\kd{\textbackslash{}v}{very magic: \kbd{( ) | +} work unescaped}
+\kd{\textbackslash{}c\,/\,\textbackslash{}C}{force case-insensitive / case-sensitive}
+\kd{\textbackslash{}<\,/\,\textbackslash{}>}{word boundary: start / end}
+\kd{\textbackslash{}zs\,/\,\textbackslash{}ze}{set match start / end (trims result)}
+\kd{\textbackslash{}\%V}{match only inside last visual selection}
+\kd{\textbackslash{}n}{newline in search; \kbd{\textbackslash{}r} = newline in repl}
+\kd{\textbackslash{}1..\textbackslash{}9}{back-reference to captured group}
+\end{kt}
+\snote{Prefix patterns with \kbd{\textbackslash{}v} to avoid extra escaping: \kbd{/\textbackslash{}v(\textbackslash{}w+)\textbackslash{}s+\textbackslash{}1} finds doubled words.}
+
+% ═══════════════════════════════════════
+\sect{FILES\enspace{\scriptsize Snacks.nvim}}
+\begin{kt}
+\kd{SPC\,fe}{file explorer (sidebar)}
+\kd{SPC\,ff}{find files}
+\kd{SPC\,fr}{recent files}
+\kd{SPC\,fs}{smart find (files + recent + bufs)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{BUFFERS}
+\begin{kt}
+\kd{SPC\,bl}{buffer list picker}
+\kd{SPC\,bp\,/\,bn}{previous / next buffer}
+\kd{SPC\,bd}{delete buffer}
+\kd{SPC\,w}{quick save (:w)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{SEARCH PICKERS\enspace{\scriptsize Snacks Ivy — bottom}}
+\begin{kt}
+\kd{SPC\,sb}{buffer lines (fuzzy)}
+\kd{SPC\,sg}{grep (ripgrep)}
+\kd{SPC\,sw}{grep word / visual sel.\ (n/v)}
+\kd{SPC\,sC}{commands}
+\kd{SPC\,sh}{help pages}
+\kd{SPC\,sj}{jump list}
+\kd{SPC\,sk}{keymaps}
+\kd{SPC\,sl}{location list}
+\kd{SPC\,sm}{marks}
+\kd{SPC\,sq}{quickfix list}
+\kd{SPC\,sr}{registers}
+\kd{SPC\,sR}{resume last picker}
+\kd{SPC\,su}{undo history}
+\kd{SPC\,?}{buffer-local keymaps}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{WINDOWS \& SPLITS}
+\begin{kt}
+\kd{C-w\,s\,/\,v}{horizontal / vertical split}
+\kd{C-w\,h/j/k/l}{navigate to adjacent window}
+\kd{C-w\,H/J/K/L}{move window to edge}
+\kd{C-w\,r\,/\,R}{rotate windows cw / ccw}
+\kd{C-w\,x}{exchange with next window}
+\kd{C-w\,T}{move window to new tab}
+\kd{C-w\,=}{equalize window sizes}
+\kd{C-w\,q\,/\,C-w\,o}{close window / close others}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{DIFF MODE\enspace{\scriptsize :windo\,diffthis to start}}
+\begin{kt}
+\kd{{]}c\,/\,{[}c}{next / prev diff hunk}
+\kd{do\,/\,dp}{obtain diff from / put diff to other}
+\kd{:diffupdate}{refresh diff highlighting}
+\kd{:windo\,diffthis}{diff all visible windows}
+\kd{:diffoff}{exit diff mode (current window)}
+\kd{:diffoff!}{exit diff mode (all windows)}
+\end{kt}
+\snote{Open two files side-by-side: \kbd{:vs file2} then \kbd{:windo diffthis}. Or \kbd{nvim -d f1 f2} from CLI.}
+
+% ═══════════════════════════════════════
+\sect{QUICKFIX \& LOCLIST}
+\begin{kt}
+\kd{{]}q\,/\,{[}q}{next / prev quickfix item}
+\kd{{]}l\,/\,{[}l}{next / prev location list item}
+\kd{SPC\,sq}{quickfix picker (Snacks)}
+\kd{SPC\,sl}{location list picker (Snacks)}
+\kd{:copen\,/\,:cclose}{open / close quickfix window}
+\kd{:cdo\,\{cmd\}}{run cmd on every quickfix entry}
+\kd{:cfdo\,\{cmd\}}{run cmd on each quickfix file}
+\end{kt}
+\snote{\kbd{:cdo \%s/old/new/g} bulk-renames across all quickfix matches.}
+
+% ═══════════════════════════════════════
+\sect{TABS \& TERMINAL}
+\begin{kt}
+\kd{:tabnew}{open new tab}
+\kd{gt\,/\,gT}{next / prev tab}
+\kd{N\,gt}{jump to tab N}
+\kd{:tabclose}{close current tab}
+\kd{:term}{open terminal buffer}
+\kd{C-\textbackslash\,C-n}{terminal: exit to normal mode}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{DEBUG\enspace{\scriptsize nvim-dap + dap-ui (auto open/close)}}
+\begin{kt}
+\kd{SPC\,dc\,/\,F5}{start / continue}
+\kd{SPC\,do\,/\,F10}{step over}
+\kd{SPC\,di\,/\,F11}{step into}
+\kd{SPC\,du\,/\,F12}{step out}
+\kd{SPC\,db}{toggle breakpoint}
+\kd{SPC\,dB}{conditional breakpoint (prompt)}
+\kd{SPC\,dr}{open debug REPL}
+\kd{SPC\,dl}{run last debug session}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{RUST\enspace{\scriptsize rustaceanvim — rust files only}}
+\begin{kt}
+\kd{SPC\,rr}{runnables}
+\kd{SPC\,rt}{testables}
+\kd{SPC\,rd}{debuggables (codelldb)}
+\kd{SPC\,re}{expand macro inline}
+\kd{SPC\,rc}{open Cargo.toml}
+\kd{SPC\,rp}{goto parent module}
+\kd{SPC\,rj}{join lines (smart)}
+\kd{K}{hover + actions (richer override)}
+\kd{SPC\,la}{code action (richer override)}
+\end{kt}
+\snote{Clippy on save. All cargo features + proc macros enabled. Inlay hints on.}
+
+% ═══════════════════════════════════════
+\sect{LANG-SPECIFIC DEBUG}
+\begin{kt}
+\kd{SPC\,dtm}{Python: debug test method}
+\kd{SPC\,dtc}{Python: debug test class}
+\kd{SPC\,dt}{Go: debug nearest test (Delve)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{EDITOR BEHAVIORS\enspace{\scriptsize automatic}}
+\begin{kt}
+\kd{BufWritePre}{trailing whitespace stripped on save}
+\kd{BufReadPost}{cursor position restored on open}
+\kd{TextYankPost}{yanked region highlighted 200\,ms}
+\kd{VimResized}{splits auto-resize with window}
+\kd{undofile}{persistent undo history across sessions}
+\kd{exrc+secure}{.nvimrc in project root auto-loaded}
+\kd{Inlay hints}{auto-enabled for Rust + F\# on attach}
+\kd{autowrite}{buffer saved on window switch / :make}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{COMMON :SET OPTIONS}
+\begin{kt}
+\kd{:set nu}{line numbers on (\kbd{nonu} = off)}
+\kd{:set rnu}{relative line numbers}
+\kd{:set wrap}{wrap long lines (\kbd{nowrap} = off)}
+\kd{:set spell}{spell checking (see SPELL section)}
+\kd{:set list}{show tabs and trailing spaces}
+\kd{:set cc=80}{vertical column guide at col 80}
+\kd{:set paste}{paste mode — disables auto-indent}
+\end{kt}
+\snote{Prefix with \kbd{no} to disable: \kbd{:set nospell}. \kbd{:setlocal} applies buffer-only.}
+
+% ═══════════════════════════════════════
+\sect{PLUGIN COMMANDS}
+\begin{kt}
+\kd{:Mason}{open Mason package manager UI}
+\kd{:LspInfo}{show attached LSP servers}
+\kd{:LspRestart}{restart LSP for current buffer}
+\kd{:ConformInfo}{show formatter configuration}
+\kd{:TSUpdate}{update all treesitter parsers}
+\kd{:checkhealth}{Neovim + plugin health check}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{GITSIGNS\enspace{\scriptsize :Gitsigns \{cmd\}}}
+{\setlength{\tabcolsep}{0pt}%
+\begin{tabular}{@{}>{\footnotesize\raggedright\arraybackslash}p{21mm}@{\hspace{2pt}}>{\footnotesize\color{bodyclr}\raggedright\arraybackslash}p{\dimexpr\columnwidth-21mm-2pt\relax}@{}}%
+\kbd{stage\_hunk}   & stage diff hunk under cursor \\[\kdsep]
+\kbd{reset\_hunk}   & discard hunk to HEAD \\[\kdsep]
+\kbd{preview\_hunk} & floating diff preview \\[\kdsep]
+\kbd{blame\_line}   & git blame for current line \\[\kdsep]
+\kbd{diffthis}      & diff buffer vs index \\[\kdsep]
+\kbd{toggle\_signs} & toggle gutter sign column \\[\kdsep]
+\end{tabular}\par}
+\snote{Signs active in gutter. No default keymaps — use \kbd{:Gitsigns \{cmd\}} directly.}
+
+\end{multicols}
+\end{document}

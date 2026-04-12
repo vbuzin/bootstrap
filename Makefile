@@ -10,7 +10,7 @@ STOW_OPTS        := --ignore=.DS_Store --override=.*
 msg = @echo ">>> $(1) <<<"
 
 # Phony targets
-.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux zed clean-zed clean help
+.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux zed clean-zed clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
 
 # Default target
 all: shell brew ghostty tmux
@@ -41,6 +41,9 @@ help:
 	@echo "  clean-zed          : Uninstall Zed and remove configuration"
 	@echo "  clean              : Remove all installed configurations (use with caution)"
 	@echo "  help               : Show this help message"
+	@echo "  nvim-cheatsheet        : Build both cheatsheet PDFs (screen + print) via Docker"
+	@echo "  nvim-cheatsheet-screen : Build dark-background PDF for screen viewing"
+	@echo "  nvim-cheatsheet-print  : Build white-background PDF for printing"
 
 # Directory creation
 $(CONFIG_DIR):
@@ -183,6 +186,17 @@ clean-tmux:
 	$(call msg,"Cleaning Tmux")
 	@brew uninstall tmux
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) tmux
+
+# Neovim cheatsheet (requires Docker — first run pulls texlive/texlive:latest ~5 GB)
+nvim-cheatsheet: nvim-cheatsheet-screen nvim-cheatsheet-print
+
+nvim-cheatsheet-screen:
+	$(call msg,"Compiling nvim cheatsheet -- screen PDF")
+	@bash docs/compile.sh screen
+
+nvim-cheatsheet-print:
+	$(call msg,"Compiling nvim cheatsheet -- print PDF")
+	@bash docs/compile.sh print
 
 # Full cleanup
 # WARNING: This will remove all installed configurations and may delete user data.
