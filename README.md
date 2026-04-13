@@ -13,7 +13,7 @@ It uses [GNU Stow](https://www.gnu.org/software/stow/) to symlink configs into t
 ## What's inside
 
 - **Shell** — Zsh with a modular config (no framework), [Starship](https://starship.rs) prompt, fzf, bat, eza, direnv
-- **Terminal** — [Ghostty](https://ghostty.org), iTerm2 as fallback, Tmux for multiplexing
+- **Terminal** — [Ghostty](https://ghostty.org) with Tmux for multiplexing
 - **Editors** — Neovim (Lua config, lazy.nvim, LSP for Go, Python, Rust, TypeScript, F#), Emacs, Vim
 - **Packages** — Homebrew + Brewfile (CLI tools, casks, App Store apps via mas)
 - **Browsers** — Firefox with custom CSS, Brave

@@ -1,19 +1,41 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
-  // Plan is the plan-side primary agent — conversation, exploration,
-  // planning. Tab switches to Build when ready to execute.
-  "default_agent": "plan",
+  // Default to sage — every new session starts in disciplined mode.
+  // Tab to dev when you want to write code.
+  "default_agent": "sage",
+
+  // Notify me when updates are available; do not auto-install.
+  "autoupdate": "notify",
 
   "compaction": {
     "auto": true,
-    "prune": true,
+    "prune": true
   },
+
   "provider": {
     "xai": {
       "options": {
-        "apiKey": "{env:XAI_API_KEY}",
-      },
-    },
+        "apiKey": "{env:XAI_API_KEY}"
+      }
+    }
   },
+
+  // Disable built-in agents we are replacing or not using.
+  // Keep compaction, title, summary — those are hidden system agents
+  // opencode relies on internally, don't touch.
+  "agent": {
+    "build": {
+      "disable": true
+    },
+    "plan": {
+      "disable": true
+    },
+    "general": {
+      "disable": true
+    },
+    "explore": {
+      "disable": true
+    }
+  }
 }

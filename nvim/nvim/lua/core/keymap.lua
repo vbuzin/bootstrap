@@ -43,6 +43,7 @@ kmap.set("v", "K", ":m '<-2<CR>gv=gv") -- Move selection up
 kmap.set("n", "<leader>bp", ":bp<cr>")
 kmap.set("n", "<leader>bn", ":bn<cr>")
 kmap.set("n", "<leader>bd", ":bd<cr>")
+kmap.set("n", "<leader>bk", ":bp | bd #<cr>")
 
 -- Make j and k move by visual line, not actual line, when text is soft-wrapped
 kmap.set("n", "j", "gj")

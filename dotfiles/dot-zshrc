@@ -15,6 +15,10 @@ if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
   PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
 fi
 
+if command -v rustup >/dev/null 2>&1; then
+  PATH="${PATH:+${PATH}:}${HOME}/.cargo/bin:$(brew --prefix rustup)/bin"
+fi
+
 # 3. Bun (Homebrew) + smart 'node' and 'npm' wrappers
 if command -v bun >/dev/null 2>&1; then
   BUN_BIN="$(command -v bun)"

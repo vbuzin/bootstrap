@@ -17,10 +17,20 @@ return {
 			ensure_installed = { "vim", "vimdoc" },
 		},
 		config = function(_, opts)
-			require("nvim-treesitter").setup(opts)
+			require("nvim-treesitter").setup({}) -- new API: only install_dir is valid
+
+			-- Install parsers collected via lazy.nvim spec merging across lang files
+			if opts.ensure_installed and #opts.ensure_installed > 0 then
+				require("nvim-treesitter").install(opts.ensure_installed)
+			end
 
 			vim.api.nvim_create_autocmd("FileType", {
-				callback = function()
+				callback = function(ev)
+					-- auto-install parser for any filetype not in ensure_installed
+					local lang = vim.treesitter.language.get_lang(ev.match)
+					if lang then
+						pcall(require("nvim-treesitter").install, { lang })
+					end
 					pcall(vim.treesitter.start)
 				end,
 			})
@@ -40,48 +50,43 @@ return {
 		config = true,
 	},
 
-	--[[ Mini.ai: The Modern Text Objects (Replaces nvim-treesitter-textobjects) ]]
+	--[[ Treesitter Text Objects: select, move, swap ]]
 	{
-		"echasnovski/mini.ai",
-		event = "VeryLazy",
+		"nvim-treesitter/nvim-treesitter-textobjects",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
-		opts = function()
-			local ai = require("mini.ai")
+		event = "VeryLazy",
+		config = function()
+			local sel  = require("nvim-treesitter-textobjects.select")
+			local move = require("nvim-treesitter-textobjects.move")
+			local swap = require("nvim-treesitter-textobjects.swap")
 
-			-- Dynamic wrapper: never errors if grammar or textobjects query is missing
-			local function safe_treesitter(spec)
-				return function(type, line, opts)
-					local ok, result = pcall(ai.gen_spec.treesitter(spec), type, line, opts)
-					return ok and result or {}
-				end
+			local function map(modes, lhs, fn, desc)
+				vim.keymap.set(modes, lhs, fn, { noremap = true, silent = true, desc = desc })
+			end
+			local function sel_map(lhs, capture, desc)
+				map({ "x", "o" }, "a" .. lhs, function() sel.select_textobject("@" .. capture .. ".outer", "textobjects") end, desc .. " outer")
+				map({ "x", "o" }, "i" .. lhs, function() sel.select_textobject("@" .. capture .. ".inner", "textobjects") end, desc .. " inner")
+			end
+			local function move_map(next_lhs, prev_lhs, capture, desc)
+				map("n", next_lhs, function() move.goto_next_start("@" .. capture .. ".outer", "textobjects") end, "TS: next " .. desc)
+				map("n", prev_lhs, function() move.goto_previous_start("@" .. capture .. ".outer", "textobjects") end, "TS: prev " .. desc)
 			end
 
-			return {
-				n_lines = 500,
-				custom_textobjects = {
-					-- tags work everywhere (regex, no treesitter)
-					t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" },
+			-- Select
+			sel_map("f", "function",  "TS: function")
+			sel_map("c", "class",     "TS: class/struct/enum")
+			sel_map("o", "block",     "TS: block")
+			sel_map("a", "parameter", "TS: argument/parameter")
 
-					-- treesitter ones now safe on *any* filetype
-					o = safe_treesitter({
-						a = { "@block.outer", "@conditional.outer", "@loop.outer" },
-						i = { "@block.inner", "@conditional.inner", "@loop.inner" },
-					}),
+			-- Move
+			move_map("]f", "[f", "function", "function")
+			move_map("]c", "[c", "class",    "class")
+			move_map("]o", "[o", "block",    "block")
+			move_map("]a", "[a", "parameter", "argument")
 
-					f = safe_treesitter({
-						a = "@function.outer",
-						i = "@function.inner",
-					}),
-
-					c = safe_treesitter({
-						a = "@class.outer",
-						i = "@class.inner",
-					}),
-				},
-			}
-		end,
-		config = function(_, opts)
-			require("mini.ai").setup(opts)
+			-- Swap
+			map("n", "gsp", function() swap.swap_next("@parameter.inner",     "textobjects") end, "TS: swap next param")
+			map("n", "gsP", function() swap.swap_previous("@parameter.inner", "textobjects") end, "TS: swap prev param")
 		end,
 	},
 
@@ -382,6 +387,24 @@ return {
 					["<C-Space>"] = cmp.mapping.complete(), -- Trigger completion
 					["<C-e>"] = cmp.mapping.abort(), -- Abort completion
 					["<CR>"] = cmp.mapping.confirm({ select = true }), -- Confirm selection (Enter key)
+					["<Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_next_item()
+						elseif luasnip.expand_or_jumpable() then
+							luasnip.expand_or_jump()
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
+					["<S-Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_prev_item()
+						elseif luasnip.jumpable(-1) then
+							luasnip.jump(-1)
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
 				}),
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" }, -- LSP suggestions
