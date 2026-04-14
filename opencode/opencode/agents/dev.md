@@ -1,7 +1,7 @@
 ---
 description: "Everyday development — conversation, exploration, writing code. Dispatches to subagents for bulk work. Tab to sage for disciplined thinking."
 mode: "primary"
-model: "xai/grok-4.20-0309-reasoning"
+model: "xai/grok-4-1-fast"
 temperature: 0.55
 color: "primary"
 permission:

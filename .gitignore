@@ -44,3 +44,10 @@ zed/zed/prompts/
 *.log
 **/cache/
 .claude/
+
+# Secrets
+.env*
+*.pem
+*.p12
+id_rsa
+id_ed25519

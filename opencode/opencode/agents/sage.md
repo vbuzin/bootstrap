@@ -1,7 +1,7 @@
 ---
 description: "Disciplined thinking — brainstorming, architecture, ADRs, teaching. No code writing. Tab to dev when ready to execute."
 mode: "primary"
-model: "xai/grok-4.20-0309-reasoning"
+model: "xai/grok-4-1-fast"
 temperature: 0.75
 color: "accent"
 permission:

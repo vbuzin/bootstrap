@@ -60,3 +60,8 @@ end, { desc = "TS: shrink selection" })
 
 -- Quick-save
 kmap.set("n", "<leader>w", "<cmd>w<cr>")
+
+-- System clipboard fix
+vim.keymap.set("v", "p", function()
+	return '""d"+P' -- delete selection to unnamed register, then paste from +
+end, { expr = true, silent = true })

@@ -100,6 +100,7 @@ clean-opencode:
 	@rm -rf $(CONFIG_DIR)/opencode/.gitignore
 	@rm -rf $(CONFIG_DIR)/opencode/bun.lock
 	@rm -rf $(CONFIG_DIR)/opencode/package.json
+	@rm -rf $(CONFIG_DIR)/opencode/package-lock.json
 	@rm -rf $(CONFIG_DIR)/opencode/node_modules 2>/dev/null || true
 	@bun rm -g opencode-ai
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) opencode
