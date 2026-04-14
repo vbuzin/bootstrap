@@ -7,6 +7,15 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "buffer_line_height": "comfortable",
+  "vim_mode": false,
+  "status_bar": {
+    "show_active_file": false
+  },
+  "proxy": "",
+  "edit_predictions": {
+    "mode": "subtle"
+  },
   "icon_theme": "Zed (Default)",
   "languages": {
     "Markdown": {
@@ -16,7 +25,7 @@
   },
   "text_rendering_mode": "platform_default",
   "agent": {
-    "default_profile": "ask",
+    "default_profile": "write",
     "default_model": {
       "provider": "x_ai",
       "model": "grok-code-fast-1",
@@ -35,9 +44,11 @@
     "default_width": 300.0,
   },
   "tabs": {
+    "file_icons": true,
     "git_status": true,
   },
   "title_bar": {
+    "show_branch_icon": false,
     "show_menus": false,
     "show_user_picture": false,
   },

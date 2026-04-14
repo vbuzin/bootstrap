@@ -509,7 +509,18 @@ project's version history.
 
 ## Installation
 
-### Prerequisites
+### As part of the bootstrap repo
+
+From the root of the repo:
+
+```bash
+make opencode
+```
+Done.
+
+### Manual installation
+
+#### Prerequisites
 
 - Opencode installed (`curl -fsSL https://opencode.ai/install | bash`
   or Homebrew).
@@ -517,7 +528,7 @@ project's version history.
 - Ripgrep, fd, eza, bat — optional but assumed by the global AGENTS.md
   tooling defaults.
 
-### First install
+#### First install
 
 ```bash
 # Back up any existing config
@@ -534,7 +545,7 @@ You should see `sage` and `dev` as primaries, plus `fixer`,
 `reviewer`, `scout` as subagents. The built-ins (`build`, `plan`,
 `general`, `explore`) should be marked disabled.
 
-### Updating from a previous install
+#### Updating from a previous install
 
 If you already have a previous version of this setup, only the
 files in the update package need to be copied — the rest is

@@ -1,3 +1,7 @@
+if vim.fn.executable("dotnet") ~= 1 then
+	return {}
+end
+
 return {
 	-- Add F# filetype detection
 	{
