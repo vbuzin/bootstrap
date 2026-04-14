@@ -2,14 +2,7 @@
 # SECTION 1: GLOBAL ENVIRONMENT (Runs for IDEs and Terminal)
 # ==============================================================================
 
-# 1. 1Password Configuration
-if [ -S "${HOME}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" ]; then
-  export SSH_AUTH_SOCK="${HOME}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-fi
-
-export OP_BIOMETRIC_UNLOCK_ENABLED=true
-
-# 2. Path Configuration
+# 1. Path Configuration
 # Ensure FZF is in the path so IDEs can see it.
 if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
   PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
@@ -19,7 +12,7 @@ if command -v rustup >/dev/null 2>&1; then
   PATH="${PATH:+${PATH}:}${HOME}/.cargo/bin:$(brew --prefix rustup)/bin"
 fi
 
-# 3. Bun (Homebrew) + smart 'node' and 'npm' wrappers
+# 2. Bun (Homebrew) + smart 'node' and 'npm' wrappers
 if command -v bun >/dev/null 2>&1; then
   BUN_BIN="$(command -v bun)"
   BUN_SHIM_DIR="${HOME}/.cache/.bun/bin"
@@ -64,12 +57,12 @@ else
   rm -f "${HOME}/.cache/.bun/bin/node" "${HOME}/.cache/.bun/bin/npm"
 fi
 
-# 4. Secrets
+# 3. Secrets
 export XAI_API_KEY="$(security find-generic-password -s "XAI_API_KEY" -w 2>/dev/null || echo '')"
+export SSH_PRIVATE_KEY="$(security find-generic-password -s "ssh-ed25519-private" -w 2>/dev/null | base64 -d || echo '')"
 
-# 5. Other
+# 4. Other
 export DOTNET_CLI_TELEMETRY_OPTOUT=true
-
 export GOPATH=$HOME/.go
 
 # ==============================================================================
@@ -95,4 +88,16 @@ if [[ $- == *i* ]]; then
   #    See ~/.config/zsh-extra/init.zsh for the full load order.
   source "$HOME/.config/zsh-extra/init.zsh"
 
+  # SSH Agent + load private key from iCloud-synced Keychain
+  if [[ -n "${SSH_PRIVATE_KEY:-}" ]]; then
+    # start agent if missing
+    if [[ -z "${SSH_AUTH_SOCK:-}" ]] || [[ ! -S "$SSH_AUTH_SOCK" ]]; then
+      eval "$(ssh-agent -s)" >/dev/null
+    fi
+
+    # load key once (quietly)
+    if ! ssh-add -l 2>/dev/null | grep -q "ed25519"; then
+      printf '%s\n' "$SSH_PRIVATE_KEY" | ssh-add - 2>/dev/null || true
+    fi
+  fi
 fi
