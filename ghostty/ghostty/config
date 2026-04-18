@@ -1,6 +1,7 @@
 # -- Fonts & Text -------------------------------------------
-font-family = "Monaspace Xenon Light"
+font-family = "Monaspace Xenon NF Light"
 font-size = 13
+adjust-cell-height = 12%
 
 # -- Window & UI --------------------------------------------
 window-padding-x = 12

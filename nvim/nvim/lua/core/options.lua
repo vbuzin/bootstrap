@@ -30,7 +30,11 @@ opt.updatetime = 50
 opt.wildmode = "list:longest"
 opt.wildoptions = "pum"
 opt.winborder = "rounded"
+
+-- Line wrapping
 opt.wrap = false
+opt.linebreak = true     -- Wrap at word boundaries (uses 'breakat' chars)
+opt.showbreak = '↪ '     -- Show symbol at start of wrapped screen lines
 
 -- Indentation
 opt.shiftwidth = 4

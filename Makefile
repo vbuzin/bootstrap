@@ -10,7 +10,7 @@ STOW_OPTS        := --ignore=.DS_Store --override=.*
 msg = @echo ">>> $(1) <<<"
 
 # Phony targets
-.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux zed clean-zed clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
+.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux zed clean-zed macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
 
 # Default target
 all: shell brew ghostty tmux
@@ -39,6 +39,7 @@ help:
 	@echo "  clean-tmux         : Remove Tmux configuration"
 	@echo "  zed                : Install and configure Zed"
 	@echo "  clean-zed          : Uninstall Zed and remove configuration"
+	@echo "  macos              : Apply macOS system preferences (requires sudo)"
 	@echo "  clean              : Remove all installed configurations (use with caution)"
 	@echo "  help               : Show this help message"
 	@echo "  nvim-cheatsheet        : Build both cheatsheet PDFs (screen + print) via Docker"
@@ -198,6 +199,38 @@ nvim-cheatsheet-screen:
 nvim-cheatsheet-print:
 	$(call msg,"Compiling nvim cheatsheet -- print PDF")
 	@bash docs/compile.sh print
+
+# macOS system configuration
+macos:
+	$(call msg,"Configuring macOS")
+	@defaults write com.apple.dock tilesize -int 45
+	@defaults write com.apple.dock autohide -bool true
+	@defaults write com.apple.dock show-recents -bool false
+	@defaults write com.apple.dock mineffect -string scale
+	@defaults write com.apple.dock minimize-to-application -bool true
+	@defaults write com.apple.dock expose-group-apps -bool true
+	@defaults write com.apple.dock wvous-bl-corner -int 14
+	@defaults write com.apple.dock wvous-bl-modifier -int 1048576
+	@defaults write com.apple.dock wvous-br-corner -int 1
+	@defaults write com.apple.dock wvous-br-modifier -int 0
+	@defaults write NSGlobalDomain AppleInterfaceStyle Dark
+	@defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+	@defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+	@defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+	@defaults write com.apple.finder FXPreferredViewStyle -string Nlsv
+	@defaults write com.apple.finder NewWindowTarget -string PfAF
+	@defaults write com.apple.menuextra.clock ShowAMPM -bool true
+	@defaults write com.apple.menuextra.clock ShowDayOfWeek -bool true
+	@defaults write com.apple.menuextra.clock ShowDate -bool false
+	@defaults write com.apple.TextEdit RichText -bool false
+	@killall Dock
+	@killall Finder
+	@killall SystemUIServer
+	@sudo scutil --set LocalHostName vbmacp
+	@sudo nvram StartupMute=%01
+	@sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
+	@sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local
+	@sudo sed -i '' '/pam_tid.so/s/^#[[:space:]]*//' /etc/pam.d/sudo_local
 
 # Full cleanup
 # WARNING: This will remove all installed configurations and may delete user data.

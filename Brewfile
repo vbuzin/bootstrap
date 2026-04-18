@@ -18,7 +18,7 @@ brew "rustup"
 cask "1password"
 cask "brave-browser"
 cask "docker-desktop"
-cask "font-monaspace"
+cask "font-monaspace-nf"
 cask "mullvad-vpn"
 
 mas "1Blocker", id: 1365531024

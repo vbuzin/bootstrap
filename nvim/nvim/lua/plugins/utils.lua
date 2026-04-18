@@ -104,7 +104,20 @@ return {
 	{
 		"windwp/nvim-autopairs",
 		event = "InsertEnter",
-		config = true,
+		opts = {
+			check_ts = true,
+			ts_config = {
+				rust = { "string_content", "comment" },
+			},
+		},
+		config = function(_, opts)
+			require("nvim-autopairs").setup(opts)
+			local npairs = require("nvim-autopairs")
+			local Rule = require("nvim-autopairs.rule")
+			npairs.add_rules({
+				Rule("|", "|", "rust")
+			}, "rust")
+		end,
 	},
 	-- Comments
 	{

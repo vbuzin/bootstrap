@@ -7,14 +7,18 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "inlay_hints": {
+    "enabled": true,
+  },
+  "base_keymap": "VSCode",
   "buffer_line_height": "comfortable",
   "vim_mode": false,
   "status_bar": {
-    "show_active_file": false
+    "show_active_file": false,
   },
   "proxy": "",
   "edit_predictions": {
-    "mode": "subtle"
+    "mode": "subtle",
   },
   "icon_theme": "Zed (Default)",
   "languages": {
@@ -28,7 +32,7 @@
     "default_profile": "write",
     "default_model": {
       "provider": "x_ai",
-      "model": "grok-code-fast-1",
+      "model": "grok-4-1-fast-reasoning",
       "enable_thinking": false,
     },
     "favorite_models": [],
@@ -70,8 +74,8 @@
   },
   "cursor_shape": "underline",
   "agent_ui_font_size": 14.0,
-  "ui_font_family": "Monaspace Xenon",
-  "buffer_font_family": "Monaspace Xenon",
+  "ui_font_family": "Monaspace Xenon NF",
+  "buffer_font_family": "Monaspace Xenon NF",
   "telemetry": {
     "diagnostics": false,
     "metrics": false,

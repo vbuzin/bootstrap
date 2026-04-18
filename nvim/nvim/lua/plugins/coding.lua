@@ -56,7 +56,7 @@ return {
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		event = "VeryLazy",
 		config = function()
-			local sel  = require("nvim-treesitter-textobjects.select")
+			local sel = require("nvim-treesitter-textobjects.select")
 			local move = require("nvim-treesitter-textobjects.move")
 			local swap = require("nvim-treesitter-textobjects.swap")
 
@@ -64,29 +64,41 @@ return {
 				vim.keymap.set(modes, lhs, fn, { noremap = true, silent = true, desc = desc })
 			end
 			local function sel_map(lhs, capture, desc)
-				map({ "x", "o" }, "a" .. lhs, function() sel.select_textobject("@" .. capture .. ".outer", "textobjects") end, desc .. " outer")
-				map({ "x", "o" }, "i" .. lhs, function() sel.select_textobject("@" .. capture .. ".inner", "textobjects") end, desc .. " inner")
+				map({ "x", "o" }, "a" .. lhs, function()
+					sel.select_textobject("@" .. capture .. ".outer", "textobjects")
+				end, desc .. " outer")
+				map({ "x", "o" }, "i" .. lhs, function()
+					sel.select_textobject("@" .. capture .. ".inner", "textobjects")
+				end, desc .. " inner")
 			end
 			local function move_map(next_lhs, prev_lhs, capture, desc)
-				map("n", next_lhs, function() move.goto_next_start("@" .. capture .. ".outer", "textobjects") end, "TS: next " .. desc)
-				map("n", prev_lhs, function() move.goto_previous_start("@" .. capture .. ".outer", "textobjects") end, "TS: prev " .. desc)
+				map("n", next_lhs, function()
+					move.goto_next_start("@" .. capture .. ".outer", "textobjects")
+				end, "TS: next " .. desc)
+				map("n", prev_lhs, function()
+					move.goto_previous_start("@" .. capture .. ".outer", "textobjects")
+				end, "TS: prev " .. desc)
 			end
 
 			-- Select
-			sel_map("f", "function",  "TS: function")
-			sel_map("c", "class",     "TS: class/struct/enum")
-			sel_map("o", "block",     "TS: block")
+			sel_map("f", "function", "TS: function")
+			sel_map("c", "class", "TS: class/struct/enum")
+			sel_map("o", "block", "TS: block")
 			sel_map("a", "parameter", "TS: argument/parameter")
 
 			-- Move
 			move_map("]f", "[f", "function", "function")
-			move_map("]c", "[c", "class",    "class")
-			move_map("]o", "[o", "block",    "block")
+			move_map("]c", "[c", "class", "class")
+			move_map("]o", "[o", "block", "block")
 			move_map("]a", "[a", "parameter", "argument")
 
 			-- Swap
-			map("n", "gsp", function() swap.swap_next("@parameter.inner",     "textobjects") end, "TS: swap next param")
-			map("n", "gsP", function() swap.swap_previous("@parameter.inner", "textobjects") end, "TS: swap prev param")
+			map("n", "gsp", function()
+				swap.swap_next("@parameter.inner", "textobjects")
+			end, "TS: swap next param")
+			map("n", "gsP", function()
+				swap.swap_previous("@parameter.inner", "textobjects")
+			end, "TS: swap prev param")
 		end,
 	},
 
@@ -192,6 +204,10 @@ return {
 					local function map(mode, lhs, rhs, desc)
 						vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, buffer = bufnr, desc = desc })
 					end
+					map("n", "<leader>lh", function()
+						local enabled = vim.lsp.inlay_hint.is_enabled()
+						vim.lsp.inlay_hint.enable(not enabled)
+					end, "Toggle LSP Inlay Hints")
 					map("n", "<leader>la", vim.lsp.buf.code_action, "LSP: Code Action")
 					map("n", "<leader>ln", vim.lsp.buf.rename, "LSP: Rename")
 					map("n", "K", vim.lsp.buf.hover, "LSP: Hover Documentation")

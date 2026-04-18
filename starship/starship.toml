@@ -58,7 +58,7 @@ use_logical_path = true
 
 # -- Git Section --
 [git_branch]
-symbol = " "          # common Nerd Font branch icon ( also works great)
+symbol = " "
 style = "fg:green"
 format = '[ [$symbol$branch ](fg:green)]($style)'
 
