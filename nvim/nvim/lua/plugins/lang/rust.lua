@@ -93,9 +93,21 @@ return {
 					end
 
 					-- Runnables / testables / debuggables
-					map("<leader>rr", function() vim.cmd.RustLsp("runnables") end, "Rust: runnables")
+					map("<leader>rr", function()
+						vim.ui.input({ prompt = "Run args (empty = none): " }, function(input)
+							if input == nil then return end
+							local args = vim.split(input, " ", { trimempty = true })
+							require("rustaceanvim.runnables").runnables(args)
+						end)
+					end, "Rust: runnables")
 					map("<leader>rt", function() vim.cmd.RustLsp("testables") end, "Rust: testables")
-					map("<leader>rd", function() vim.cmd.RustLsp("debuggables") end, "Rust: debuggables")
+					map("<leader>rd", function()
+						vim.ui.input({ prompt = "Debug args (empty = none): " }, function(input)
+							if input == nil then return end
+							local args = vim.split(input, " ", { trimempty = true })
+							require("rustaceanvim.commands.debuggables").debuggables(args)
+						end)
+					end, "Rust: debuggables")
 
 					-- Code navigation / editing
 					map("<leader>re", function() vim.cmd.RustLsp("expandMacro") end, "Rust: expand macro")
