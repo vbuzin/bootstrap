@@ -31,13 +31,19 @@ return {
 		end,
 	},
 
-	-- Conform: formatting with Prettier (closest equivalent to Fantomas)
+	-- Conform: formatting with prettier bundled inside prettierd's Mason install.
+	-- CLI flags override project .prettierrc; prettierd daemon ignores them.
 	{
 		"stevearc/conform.nvim",
-		ft = { "markdown" },
 		opts = function(_, opts)
 			opts.formatters_by_ft = opts.formatters_by_ft or {}
-			opts.formatters_by_ft.markdown = { "prettierd" }
+			opts.formatters_by_ft.markdown = { "prettierd-markdown" }
+			opts.formatters = opts.formatters or {}
+			opts.formatters["prettierd-markdown"] = {
+				command = vim.fn.stdpath("data") .. "/mason/packages/prettierd/node_modules/.bin/prettier",
+				args = { "--stdin-filepath", "$FILENAME", "--prose-wrap=always", "--print-width=80" },
+				stdin = true,
+			}
 			return opts
 		end,
 	},

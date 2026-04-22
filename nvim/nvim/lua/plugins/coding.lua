@@ -210,6 +210,7 @@ return {
 					map("n", "<leader>la", vim.lsp.buf.code_action, "LSP: Code Action")
 					map("n", "<leader>ln", vim.lsp.buf.rename, "LSP: Rename")
 					map("n", "K", vim.lsp.buf.hover, "LSP: Hover Documentation")
+					map({ "n", "i" }, "<C-p>", vim.lsp.buf.signature_help, "LSP: Signature Help")
 					map("n", "<leader>lt", vim.lsp.buf.type_definition, "LSP: Go to Type Definition")
 					map("n", "<leader>xd", vim.diagnostic.open_float, "Diagnostics: Show Line Diagnostics")
 					map("n", "[d", function()

@@ -65,3 +65,12 @@ kmap.set("n", "<leader>w", "<cmd>w<cr>")
 vim.keymap.set("v", "p", function()
 	return '""d"+P' -- delete selection to unnamed register, then paste from +
 end, { expr = true, silent = true })
+
+-- Don't paste in select mode
+vim.keymap.set("s", "p", function()
+	vim.api.nvim_feedkeys("p", "n", false)
+end, { silent = true, remap = false })
+
+vim.keymap.set("s", "P", function()
+	vim.api.nvim_feedkeys("P", "n", false)
+end, { silent = true, remap = false })
