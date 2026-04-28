@@ -7,16 +7,20 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "outline_panel": {
+    "default_width": 320.0,
+  },
   "inlay_hints": {
     "enabled": true,
   },
   "base_keymap": "VSCode",
   "buffer_line_height": "comfortable",
-  "vim_mode": false,
   "status_bar": {
     "show_active_file": false,
   },
-  "proxy": "",
   "edit_predictions": {
     "mode": "subtle",
   },
@@ -39,20 +43,19 @@
     "model_parameters": [],
   },
   "git_panel": {
-    "default_width": 300.0,
+    "tree_view": true,
+    "default_width": 320.0,
   },
-  "agent_buffer_font_size": 14.0,
   "ui_font_weight": 300.0,
   "buffer_font_weight": 300.0,
   "project_panel": {
-    "default_width": 300.0,
+    "default_width": 320.0,
   },
   "tabs": {
     "file_icons": true,
     "git_status": true,
   },
   "title_bar": {
-    "show_branch_icon": false,
     "show_menus": false,
     "show_user_picture": false,
   },
@@ -61,7 +64,7 @@
     "coloring": "fixed",
   },
   "gutter": {
-    "folds": false,
+    "folds": true,
   },
   "auto_signature_help": false,
   "which_key": {
@@ -74,6 +77,7 @@
   },
   "cursor_shape": "underline",
   "agent_ui_font_size": 14.0,
+  "agent_buffer_font_size": 14.0,
   "ui_font_family": "Monaspace Xenon NF",
   "buffer_font_family": "Monaspace Xenon NF",
   "telemetry": {

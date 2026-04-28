@@ -190,16 +190,6 @@ return {
 				callback = function(event)
 					local bufnr = event.buf
 
-					-- Enable inlay hints for F# if supported
-					local client = vim.lsp.get_client_by_id(event.data.client_id)
-					if
-						client
-						and client.name == "fsautocomplete"
-						and client:supports_method("textDocument/inlayHint")
-					then
-						vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-					end
-
 					local function map(mode, lhs, rhs, desc)
 						vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, buffer = bufnr, desc = desc })
 					end
