@@ -197,7 +197,7 @@ return {
 						local enabled = vim.lsp.inlay_hint.is_enabled()
 						vim.lsp.inlay_hint.enable(not enabled)
 					end, "Toggle LSP Inlay Hints")
-					map("n", "<leader>la", vim.lsp.buf.code_action, "LSP: Code Action")
+					map("n", "<leader>ca", vim.lsp.buf.code_action, "LSP: Code Action")
 					map("n", "<leader>ln", vim.lsp.buf.rename, "LSP: Rename")
 					map("n", "K", vim.lsp.buf.hover, "LSP: Hover Documentation")
 					map({ "n", "i" }, "<C-p>", vim.lsp.buf.signature_help, "LSP: Signature Help")
@@ -210,6 +210,21 @@ return {
 						vim.diagnostic.jump({ count = 1 })
 					end, "Diagnostics: Go to Next")
 					map("n", "<leader>lr", vim.lsp.buf.references, "LSP: Find References")
+
+					local client = vim.lsp.get_client_by_id(event.data.client_id)
+					if client and client.supports_method("textDocument/codeLens") then
+						map("n", "<leader>lc", vim.lsp.codelens.run, "LSP: Run Code Lens")
+						local lens_on = false
+						map("n", "<leader>lC", function()
+							lens_on = not lens_on
+							if lens_on then
+								vim.lsp.codelens.refresh()
+							else
+								vim.lsp.codelens.clear()
+							end
+							vim.notify("Code lenses: " .. (lens_on and "ON" or "OFF"), vim.log.levels.INFO)
+						end, "LSP: Toggle Code Lenses")
+					end
 				end,
 			})
 
