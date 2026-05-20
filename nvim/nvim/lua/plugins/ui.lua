@@ -7,7 +7,11 @@ return {
 		config = function()
 			require("onedarkpro").setup({
 				colors = {
-					onedark = { bg = "#080909" },
+					onedark = {
+						bg = "#080909",
+						red = "#E15687",
+						comment = "#7F838C",
+					},
 				},
 			})
 			vim.cmd("colorscheme onedark")

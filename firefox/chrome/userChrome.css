@@ -67,14 +67,5 @@ browser[type="content"],
 .browserContainer {
     box-shadow: none !important;
     outline: none !important;
-    border-radius: 0 !important;
-    overflow: visible !important;
-}
-
-/* Be explicit when the sidebar is shown */
-:root:not([inDOMFullscreen])
-    #tabbrowser-tabbox[sidebar-shown]
-    .browserContainer {
-    border-start-start-radius: 0 !important;
-    border-start-end-radius: 0 !important;
+    /*overflow: visible !important;*/
 }

@@ -20,13 +20,18 @@ url("about:privatebrowsing") {
 
             --in-content-page-background: var(--my-background-color) !important;
             --background-color-canvas: var(--my-background-color) !important;
-
-            background-color: var(--my-background-color) !important;
-            accent-color: var(--my-focus-color) !important;
         }
 
         html.private .container {
             display: none !important;
         }
+    }
+}
+
+@-moz-document url("about:newtab"),
+url("about:home") {
+    body,
+    html {
+        background-color: #1c1c1e !important;
     }
 }

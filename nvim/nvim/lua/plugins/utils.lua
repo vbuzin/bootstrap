@@ -55,7 +55,7 @@ return {
       { "gr",         function() Snacks.picker.lsp_references() end,         nowait = true, desc = "References" },
       { "gI",         function() Snacks.picker.lsp_implementations() end,    desc = "Goto Implementation" },
       { "gy",         function() Snacks.picker.lsp_type_definitions() end,   desc = "Goto Type Definition" },
-      { "<leader>ss", function() Snacks.picker.lsp_symbols() end,            desc = "LSP Symbols" },
+      { "<leader>ss", function() Snacks.picker.lsp_symbols({ filter = { default = { "Class", "Constructor", "Enum", "EnumMember", "Field", "Function", "Interface", "Method", "Module", "Namespace", "Package", "Property", "Struct", "Trait" } } }) end, desc = "LSP Symbols" },
       { "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end,  desc = "LSP Workspace Symbols" },
     },
 	},

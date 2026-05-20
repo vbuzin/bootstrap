@@ -24,4 +24,28 @@
       "alt-cmd-shift-m": "diagnostics::DeployCurrentFile",
     },
   },
+  {
+    "context": "Editor",
+    "bindings": {
+      "alt-d": [
+        "editor::DeleteToNextWordEnd",
+        {
+          "ignore_newlines": false,
+          "ignore_brackets": false
+        }
+      ]
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-delete": [
+        "editor::DeleteToNextWordEnd",
+        {
+          "ignore_newlines": false,
+          "ignore_brackets": false
+        }
+      ]
+    }
+  }
 ]
