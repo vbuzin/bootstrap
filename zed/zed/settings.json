@@ -7,6 +7,7 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "semantic_tokens": "off",
   "completion_menu_item_kind": "symbol",
   "vim": {
     "use_smartcase_find": true,
@@ -30,14 +31,15 @@
     "show_active_file": false,
   },
   "edit_predictions": {
+    "allow_data_collection": "no",
     "mode": "subtle",
   },
   "icon_theme": "Zed (Default)",
   "languages": {
     "Rust": {
+      "line_ending": "enforce_lf",
       "inlay_hints": {
-        "show_background": false,
-      },
+        },
     },
     "Markdown": {
       "remove_trailing_whitespace_on_save": true,

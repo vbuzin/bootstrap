@@ -15,6 +15,7 @@ It uses [GNU Stow](https://www.gnu.org/software/stow/) to symlink configs into t
 - **Shell** — Zsh with a modular config (no framework), [Starship](https://starship.rs) prompt, fzf, bat, eza, direnv
 - **Terminal** — [Ghostty](https://ghostty.org) with Tmux for multiplexing
 - **Editors** — Neovim (Lua config, lazy.nvim, LSP for Go, Python, Rust, TypeScript, F#), Emacs, Vim
+- **AI Coding** — Custom Grok Build (xAI CLI) skills, hooks, and config managed via `make grok` + `GROK_HOME`
 - **Packages** — Homebrew + Brewfile (CLI tools, casks, App Store apps via mas)
 - **Browsers** — Firefox with custom CSS, Brave
 - **Theme** — One Dark Pro Max, consistently applied across terminal, prompt, editor, and tmux
@@ -29,9 +30,11 @@ make
 make nvim
 make emacs
 make firefox
+make grok          # custom Grok Build skills + config under ~/.config/grok
 
 # Tear down a component
 make clean-firefox
+make clean-grok
 ```
 
 Each target handles installing dependencies, symlinking configs, and any tool-specific setup (e.g. Firefox profile initialization).

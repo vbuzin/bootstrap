@@ -396,6 +396,7 @@ return {
 		opts = function()
 			local cmp = require("cmp")
 			local luasnip = require("luasnip")
+
 			return {
 				snippet = {
 					expand = function(args)
@@ -433,7 +434,7 @@ return {
 				}),
 				window = { -- Appearance of completion and documentation windows
 					completion = cmp.config.window.bordered(),
-					documentation = cmp.config.window.bordered(),
+					documentation = cmp.config.window.bordered({ max_height = 20 }),
 				},
 				experimental = {
 					ghost_text = true, -- Show inline virtual text for completion preview (Neovim 0.10+)

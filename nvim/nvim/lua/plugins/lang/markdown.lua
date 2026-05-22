@@ -31,28 +31,12 @@ return {
 		end,
 	},
 
-	-- Conform: formatting with prettier bundled inside prettierd's Mason install.
-	-- CLI flags override project .prettierrc; prettierd daemon ignores them.
+	-- Conform: formatting (same as JS/TS/etc.)
 	{
 		"stevearc/conform.nvim",
 		opts = function(_, opts)
 			opts.formatters_by_ft = opts.formatters_by_ft or {}
-			opts.formatters_by_ft.markdown = { "prettierd-markdown" }
-			opts.formatters = opts.formatters or {}
-			opts.formatters["prettierd-markdown"] = {
-				command = vim.fn.stdpath("data") .. "/mason/packages/prettierd/node_modules/.bin/prettier",
-				args = { "--stdin-filepath", "$FILENAME", "--prose-wrap=always", "--print-width=80" },
-				stdin = true,
-			}
-			return opts
-		end,
-	},
-	-- Mason: install formatter
-	{
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		opts = function(_, opts)
-			opts.ensure_installed = opts.ensure_installed or {}
-			vim.list_extend(opts.ensure_installed, { "prettierd" })
+			opts.formatters_by_ft.markdown = { "prettierd" }
 			return opts
 		end,
 	},

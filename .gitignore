@@ -40,6 +40,23 @@ nvim/nvim/plugin/**
 # Zed
 zed/zed/prompts/
 
+# Grok Build custom configuration layer (under GROK_HOME=~/.config/grok)
+# We only ever commit the curated custom bits (skills, hand-written config.toml, hooks, roles...).
+# Never commit runtime or installer-managed files that might leak into the source tree.
+grok/sessions/**
+grok/logs/**
+grok/marketplace-cache/**
+grok/memory/**
+grok/plugins/**
+grok/*.db
+grok/*.lock
+grok/worktrees.db
+grok/tip_cursor.json
+grok/version.json
+grok/agent_id
+grok/.metadata_version
+grok/auth.json*
+
 # General
 *.log
 **/cache/

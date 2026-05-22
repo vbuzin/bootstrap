@@ -10,7 +10,7 @@ STOW_OPTS        := --ignore=.DS_Store --override=.*
 msg = @echo ">>> $(1) <<<"
 
 # Phony targets
-.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux zed clean-zed macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
+.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode grok clean-grok emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux zed clean-zed macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
 
 # Default target
 all: shell brew ghostty tmux
@@ -28,6 +28,8 @@ help:
 	@echo "  clean-ghostty      : Uninstall Ghostty and remove configuration"
 	@echo "  opencode           : Install and configure Opencode"
 	@echo "  clean-opencode     : Uninstall Opencode and remove configuration"
+	@echo "  grok               : Ensure Grok CLI is installed (custom layering temporarily disabled due to GROK_HOME bugs)"
+	@echo "  clean-grok         : No-op while custom layering is paused"
 	@echo "  emacs              : Install and configure Emacs"
 	@echo "  clean-emacs        : Uninstall Emacs and remove configuration"
 	@echo "  firefox            : Install Firefox, initialize profile, and stow application settings"
@@ -93,6 +95,7 @@ clean-ghostty:
 # Opencode
 opencode:
 	$(call msg,"Installing Opencode")
+	@brew install oven-sh/bun/bun
 	@bun add -g opencode-ai
 	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) opencode
 
@@ -104,7 +107,21 @@ clean-opencode:
 	@rm -rf $(CONFIG_DIR)/opencode/package-lock.json
 	@rm -rf $(CONFIG_DIR)/opencode/node_modules 2>/dev/null || true
 	@bun rm -g opencode-ai
+	@brew rm oven-sh/bun/bun
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) opencode
+
+grok:
+	$(call msg,"Ensuring Grok CLI is installed")
+	@if command -v grok >/dev/null 2>&1; then \
+		grok update || true; \
+	else \
+		curl -fsSL https://x.ai/cli/install.sh | bash; \
+	fi
+	@echo ">>> Custom Grok configuration (GROK_HOME + stow) is paused due to upstream bugs."
+
+clean-grok:
+	$(call msg,"Nothing to do — custom Grok layering is currently disabled")
+	@echo ">>> To fully uninstall Grok (including sessions): rm -rf ~/.grok"
 
 # Emacs
 emacs: $(EMACS_CONFIG_DIR) shell
@@ -234,5 +251,5 @@ macos:
 
 # Full cleanup
 # WARNING: This will remove all installed configurations and may delete user data.
-clean: clean-ghostty clean-opencode clean-emacs clean-firefox clean-nvim clean-tmux clean-shell clean-brew
+clean: clean-ghostty clean-opencode clean-grok clean-emacs clean-firefox clean-nvim clean-tmux clean-shell clean-brew
 	$(call msg,"Full cleanup complete")

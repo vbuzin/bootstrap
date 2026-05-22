@@ -12,8 +12,8 @@ brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 brew "zsh-history-substring-search"
 
-brew "oven-sh/bun/bun"
 brew "rustup"
+brew "node"
 
 cask "1password"
 cask "brave-browser"

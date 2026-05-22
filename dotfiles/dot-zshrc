@@ -58,12 +58,22 @@ else
 fi
 
 # 3. Secrets
-export XAI_API_KEY="$(security find-generic-password -s "XAI_API_KEY" -w 2>/dev/null || echo '')"
+if [[ -x "$HOME/.grok/bin/grok" ]]; then
+  # grok is installed and manages its own auth (browser login, auth.json, etc.).
+  # XAI_API_KEY has highest precedence in grok's chain, so we must not let a
+  # stale keychain value leak in. Also cleans up the var on re-source after install.
+  unset XAI_API_KEY
+else
+  export XAI_API_KEY="$(security find-generic-password -s "XAI_API_KEY" -w 2>/dev/null || echo '')"
+fi
 export SSH_PRIVATE_KEY="$(security find-generic-password -s "ssh-ed25519-private" -w 2>/dev/null | base64 -d || echo '')"
 
 # 4. Other
 export DOTNET_CLI_TELEMETRY_OPTOUT=true
 export GOPATH=$HOME/.go
+
+export GROK_LSP_TOOLS=1
+export GROK_MEMORY=1
 
 # ==============================================================================
 # SECTION 2: INTERACTIVE SHELL (Human use only)
@@ -101,3 +111,13 @@ if [[ $- == *i* ]]; then
     fi
   fi
 fi
+
+# GROK_HOME intentionally not set (see bootstrap history).
+# We had it pointing at ~/.config/grok for a while, which caused session
+# discovery bugs. Keeping everything in the standard ~/.grok/ for now.
+
+# >>> grok installer >>>
+export PATH="$HOME/.grok/bin:$PATH"
+fpath=(~/.grok/completions/zsh $fpath)
+autoload -Uz compinit && compinit -C
+# <<< grok installer <<<
