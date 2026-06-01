@@ -110,19 +110,6 @@ clean-opencode:
 	@brew rm oven-sh/bun/bun
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) opencode
 
-grok:
-	$(call msg,"Ensuring Grok CLI is installed")
-	@if command -v grok >/dev/null 2>&1; then \
-		grok update || true; \
-	else \
-		curl -fsSL https://x.ai/cli/install.sh | bash; \
-	fi
-	@echo ">>> Custom Grok configuration (GROK_HOME + stow) is paused due to upstream bugs."
-
-clean-grok:
-	$(call msg,"Nothing to do — custom Grok layering is currently disabled")
-	@echo ">>> To fully uninstall Grok (including sessions): rm -rf ~/.grok"
-
 # Emacs
 emacs: $(EMACS_CONFIG_DIR) shell
 	$(call msg,"Installing Emacs")

@@ -7,11 +7,12 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "diff_view_style": "split",
   "semantic_tokens": "off",
   "completion_menu_item_kind": "symbol",
   "vim": {
     "use_smartcase_find": true,
-    "toggle_relative_line_numbers": true
+    "toggle_relative_line_numbers": true,
   },
   "vim_mode": false,
   "code_lens": "on",
@@ -38,8 +39,7 @@
   "languages": {
     "Rust": {
       "line_ending": "enforce_lf",
-      "inlay_hints": {
-        },
+      "inlay_hints": {},
     },
     "Markdown": {
       "remove_trailing_whitespace_on_save": true,
@@ -48,11 +48,11 @@
   },
   "text_rendering_mode": "platform_default",
   "agent": {
-    "default_profile": "ask",
+    "default_profile": "write",
     "default_model": {
       "provider": "x_ai",
-      "model": "grok-4-1-fast-reasoning",
-      "enable_thinking": false,
+      "model": "grok-4.20-0309-reasoning",
+      "enable_thinking": true,
     },
     "favorite_models": [],
     "model_parameters": [],

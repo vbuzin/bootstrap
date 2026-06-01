@@ -123,6 +123,16 @@ return {
 						vim.cmd.RustLsp("codeAction")
 					end, { buffer = bufnr, desc = "Rust: code action" })
 				end,
+
+				-- Disable semantic tokens from rust-analyzer.
+				-- This eliminates the brief wrong-color flash (magenta → blue)
+				-- when typing, especially after `fn` and in other declaration contexts.
+				-- Treesitter's Rust highlighting is excellent and synchronous, so we
+				-- prefer it for visual stability. All other LSP features remain active.
+				on_init = function(client, _)
+					client.server_capabilities.semanticTokensProvider = nil
+				end,
+
 				default_settings = {
 					["rust-analyzer"] = {
 						cargo = {
