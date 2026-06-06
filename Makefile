@@ -10,7 +10,7 @@ STOW_OPTS        := --ignore=.DS_Store --override=.*
 msg = @echo ">>> $(1) <<<"
 
 # Phony targets
-.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode grok clean-grok emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux zed clean-zed macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
+.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux zed clean-zed macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
 
 # Default target
 all: shell brew ghostty tmux
@@ -28,8 +28,6 @@ help:
 	@echo "  clean-ghostty      : Uninstall Ghostty and remove configuration"
 	@echo "  opencode           : Install and configure Opencode"
 	@echo "  clean-opencode     : Uninstall Opencode and remove configuration"
-	@echo "  grok               : Ensure Grok CLI is installed (custom layering temporarily disabled due to GROK_HOME bugs)"
-	@echo "  clean-grok         : No-op while custom layering is paused"
 	@echo "  emacs              : Install and configure Emacs"
 	@echo "  clean-emacs        : Uninstall Emacs and remove configuration"
 	@echo "  firefox            : Install Firefox, initialize profile, and stow application settings"
@@ -238,5 +236,5 @@ macos:
 
 # Full cleanup
 # WARNING: This will remove all installed configurations and may delete user data.
-clean: clean-ghostty clean-opencode clean-grok clean-emacs clean-firefox clean-nvim clean-tmux clean-shell clean-brew
+clean: clean-ghostty clean-opencode clean-emacs clean-firefox clean-nvim clean-tmux clean-shell clean-brew
 	$(call msg,"Full cleanup complete")

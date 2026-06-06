@@ -149,7 +149,60 @@ return {
 			local cmp_nvim_lsp = require("cmp_nvim_lsp")
 			local mason_lspconfig = require("mason-lspconfig")
 
-			-- Inline diagnostics toggle setup (unchanged)
+			-- Severity filter toggle: All <-> Errors only (on-the-fly, great for Rust/clippy noise)
+			-- We keep our own source of truth in vim.g because vim.diagnostic.config() getter
+			-- does not reliably return nil after you explicitly set severity = nil.
+			-- Start in "All" mode.
+			vim.g.diagnostic_severity = nil  -- nil = show all severities
+
+			local function set_diag_severity(sev)
+				vim.g.diagnostic_severity = sev
+				vim.diagnostic.config({ severity = sev })
+
+				-- Force the current buffer to re-apply diagnostic handlers (signs, virtual text, etc.)
+				-- with the new severity filter immediately. This makes the gutter update live on toggle.
+				local bufnr = vim.api.nvim_get_current_buf()
+				pcall(vim.diagnostic.hide, nil, bufnr)
+				pcall(vim.diagnostic.show, nil, bufnr)
+			end
+
+			local function toggle_diag_severity()
+				-- Flip between "filtered to errors" and "show all".
+				-- We deliberately use an explicit if because the common Lua "a and X or Y" idiom
+				-- breaks when X is nil/false (the 'or' ends up picking Y).
+				local new_sev
+				if vim.g.diagnostic_severity then
+					-- currently showing only errors → switch to all
+					new_sev = nil
+				else
+					-- currently showing all → switch to errors only
+					new_sev = { min = vim.diagnostic.severity.ERROR }
+				end
+				set_diag_severity(new_sev)
+				vim.notify(
+					"Diagnostics: " .. (new_sev and "Errors only" or "All"),
+					vim.log.levels.INFO,
+					{ title = "Diagnostics" }
+				)
+			end
+
+			-- Always read from our controlled vim.g (never from vim.diagnostic.config() getter)
+			local function get_diag_severity()
+				return vim.g.diagnostic_severity
+			end
+
+			-- Wrappers for navigation/float so they always respect the current filter
+			local function diag_jump_prev()
+				vim.diagnostic.jump({ count = -1, severity = get_diag_severity() })
+			end
+			local function diag_jump_next()
+				vim.diagnostic.jump({ count = 1, severity = get_diag_severity() })
+			end
+			local function diag_show_line()
+				vim.diagnostic.open_float({ severity = get_diag_severity() })
+			end
+
+			-- Initial config (start with All)
 			local inline_diagnostics_enabled = false
 			vim.diagnostic.config({
 				signs = true,
@@ -157,7 +210,9 @@ return {
 				update_in_insert = false,
 				severity_sort = true,
 				virtual_text = inline_diagnostics_enabled,
+				-- no severity key = All (we also set vim.g above)
 			})
+
 			local function toggle_inline_diagnostics()
 				inline_diagnostics_enabled = not inline_diagnostics_enabled
 				vim.diagnostic.config({ virtual_text = inline_diagnostics_enabled })
@@ -172,6 +227,14 @@ return {
 				"<leader>xt",
 				toggle_inline_diagnostics,
 				{ noremap = true, silent = true, desc = "Toggle Inline Diagnostics" }
+			)
+
+			-- Toggle All <-> Errors only (on the fly)
+			vim.keymap.set(
+				"n",
+				"<leader>xs",
+				toggle_diag_severity,
+				{ noremap = true, silent = true, desc = "Toggle Diagnostics Severity (All / Errors only)" }
 			)
 
 			-- LSP capabilities
@@ -202,13 +265,9 @@ return {
 					map("n", "K", vim.lsp.buf.hover, "LSP: Hover Documentation")
 					map({ "n", "i" }, "<C-p>", vim.lsp.buf.signature_help, "LSP: Signature Help")
 					map("n", "<leader>lt", vim.lsp.buf.type_definition, "LSP: Go to Type Definition")
-					map("n", "<leader>xd", vim.diagnostic.open_float, "Diagnostics: Show Line Diagnostics")
-					map("n", "[d", function()
-						vim.diagnostic.jump({ count = -1 })
-					end, "Diagnostics: Go to Previous")
-					map("n", "]d", function()
-						vim.diagnostic.jump({ count = 1 })
-					end, "Diagnostics: Go to Next")
+					map("n", "<leader>xd", diag_show_line, "Diagnostics: Show Line Diagnostics")
+					map("n", "[d", diag_jump_prev, "Diagnostics: Go to Previous (respects severity)")
+					map("n", "]d", diag_jump_next, "Diagnostics: Go to Next (respects severity)")
 					map("n", "<leader>lr", vim.lsp.buf.references, "LSP: Find References")
 
 					local client = vim.lsp.get_client_by_id(event.data.client_id)

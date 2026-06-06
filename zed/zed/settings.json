@@ -14,13 +14,14 @@
     "use_smartcase_find": true,
     "toggle_relative_line_numbers": true,
   },
-  "vim_mode": false,
+  "vim_mode": true,
   "code_lens": "on",
   "cli_default_open_behavior": "new_window",
   "collaboration_panel": {
-    "dock": "left",
+    "dock": "right",
   },
   "outline_panel": {
+    "dock": "right",
     "default_width": 340.0,
   },
   "inlay_hints": {
@@ -48,22 +49,25 @@
   },
   "text_rendering_mode": "platform_default",
   "agent": {
+    "dock": "left",
     "default_profile": "write",
     "default_model": {
       "provider": "x_ai",
-      "model": "grok-4.20-0309-reasoning",
-      "enable_thinking": true,
+      "model": "grok-4.3",
+      "enable_thinking": false,
     },
     "favorite_models": [],
     "model_parameters": [],
   },
   "git_panel": {
+    "dock": "right",
     "tree_view": true,
     "default_width": 340.0,
   },
   "ui_font_weight": 300.0,
   "buffer_font_weight": 300.0,
   "project_panel": {
+    "dock": "right",
     "default_width": 340.0,
   },
   "tabs": {

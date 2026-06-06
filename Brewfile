@@ -27,4 +27,3 @@ mas "Keynote", id: 361285480
 mas "Numbers", id: 361304891
 mas "Obsidian Web Clipper", id: 6720708363
 mas "Pages", id: 361309726
-mas "iA Writer", id: 775737590

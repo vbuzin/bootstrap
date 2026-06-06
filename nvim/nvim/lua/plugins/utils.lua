@@ -39,7 +39,9 @@ return {
       { "<leader>sw", function() Snacks.picker.grep_word() end,              desc = "Visual selection or word", mode = { "n", "x" } },
       -- Other
       { "<leader>sC", function() Snacks.picker.commands() end,               desc = "Commands" },
-      { "<leader>sd", function() Snacks.picker.diagnostics() end,            desc = "Diagnostics" },
+      { "<leader>sd", function()
+          Snacks.picker.diagnostics({ severity = vim.g.diagnostic_severity })
+      end, desc = "Diagnostics (current severity filter)" },
       { "<leader>sh", function() Snacks.picker.help() end,                   desc = "Help Pages" },
       { "<leader>sj", function() Snacks.picker.jumps() end,                  desc = "Jumps" },
       { "<leader>sk", function() Snacks.picker.keymaps() end,                desc = "Keymaps" },
