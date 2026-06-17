@@ -115,9 +115,3 @@ fi
 # GROK_HOME intentionally not set (see bootstrap history).
 # We had it pointing at ~/.config/grok for a while, which caused session
 # discovery bugs. Keeping everything in the standard ~/.grok/ for now.
-
-# >>> grok installer >>>
-export PATH="$HOME/.grok/bin:$PATH"
-fpath=(~/.grok/completions/zsh $fpath)
-autoload -Uz compinit && compinit -C
-# <<< grok installer <<<

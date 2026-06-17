@@ -18,42 +18,6 @@
       // "j k": "vim::NormalBefore"
     },
   },
-  //
-  // Vim normal mode: Space as leader (nvim parity).
-  // These are scoped strictly so they have ZERO effect when vim_mode is off,
-  // in insert mode, or outside an editor. Matches the requirement that the
-  // config must not affect Zed when not in vim mode.
-  //
-  // Only direct, stable Zed actions are bound here (no debug DAP, no
-  // language-specific runnables, no inlay toggles — those lack clear 1:1
-  // public actions or differ too much from nvim equivalents).
-  //
-  // Use `dev: open key context view` (command palette) while in normal mode
-  // to inspect the context tree. `which_key` (enabled in settings) will show
-  // continuations after space.
-  {
-    "context": "Editor && vim_mode == normal && !menu",
-    "bindings": {
-      // core
-      "space w": "workspace::Save",
-
-      // files / buffers / explorer (file_finder surfaces open buffers + recents + project)
-      "space f f": "file_finder::Toggle",
-      "space f e": "project_panel::ToggleFocus",
-      "space b k": "pane::CloseActiveItem",
-
-      // search / diagnostics / commands
-      "space s g": "workspace::NewSearch",
-      "space s d": "diagnostics::DeployCurrentFile",
-      "space x d": "diagnostics::DeployCurrentFile",
-      "space s C": "command_palette::Toggle",
-
-      // lsp / actions (augment Zed vim's built-in g., cd, gd etc.)
-      "space c a": "editor::ToggleCodeActions",
-      "space l a": "editor::ToggleCodeActions",
-      "space l n": "editor::Rename",
-    },
-  },
   {
     "context": "Workspace",
     "bindings": {

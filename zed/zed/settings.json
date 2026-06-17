@@ -7,6 +7,10 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "proxy": "",
+  "sticky_scroll": {
+    "enabled": true
+  },
   "diff_view_style": "split",
   "semantic_tokens": "off",
   "completion_menu_item_kind": "symbol",
@@ -30,6 +34,7 @@
   "base_keymap": "VSCode",
   "buffer_line_height": "comfortable",
   "status_bar": {
+    "cursor_position_button": true,
     "show_active_file": false,
   },
   "edit_predictions": {

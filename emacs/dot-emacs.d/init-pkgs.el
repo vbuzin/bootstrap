@@ -139,7 +139,7 @@
   (setq ibuffer-saved-filter-groups
         '(("default"
            ("Org"   (mode . org-mode))
-           ("F#"    (mode . fsharp-mode))
+           ("Rust"  (mode . rust-ts-mode))
            ("Dired" (mode . dired-mode))
            ("Magit" (derived-mode . magit-mode))
            ("Help"  (or (mode . help-mode) (mode . Info-mode)))
@@ -174,7 +174,7 @@
 ;; Utility Packages
 ;; -----------------------------------------------------------------------------
 (use-package avy
-  :bind (("s-`" . avy-goto-char-2)
+  :bind (("s-\\" . avy-goto-char-2)
          ("s-j" . avy-goto-line)))
 
 (use-package expand-region
@@ -218,7 +218,7 @@
 ;; -----------------------------------------------------------------------------
 (use-package eglot
   :ensure nil
-  :hook ((fsharp-mode . eglot-ensure))
+  :hook ((rust-ts-mode . eglot-ensure))
   :bind (:map eglot-mode-map
          ("C-c l a" . eglot-code-actions)
          ("C-c l r" . eglot-rename)
@@ -236,39 +236,33 @@
   ;; Performance: don't log jsonrpc events
   (fset #'jsonrpc--log-event #'ignore)
 
-  (add-to-list 'eglot-server-programs
-               '(fsharp-mode . ("fsautocomplete" "--adaptive-lsp-server-enabled")))
-
-  ;; Format F# on save
+  ;; Format via eglot (LSP) on save for any eglot-managed buffer (works for Rust, etc.)
   (defun my/eglot-format-on-save ()
     "Format buffer via eglot before saving, if eglot is active."
     (when (bound-and-true-p eglot--managed-mode)
       (eglot-format-buffer)))
   (add-hook 'before-save-hook #'my/eglot-format-on-save)
 
-  (defun my/eglot-fsharp-cleanup-doc (orig-fun &rest args)
-    "Simplify F# docs by removing VS Code links and markdown code markers."
-    (let ((contents (nth 0 args)))
-      (let* ((is-plist (listp contents))
-             (str (if is-plist (plist-get contents :value) contents)))
-        (when (stringp str)
-          ;; 1. Remove the VS Code 'command:' links
-          (setq str (replace-regexp-in-string "<a href=['\"]command:fsharp.showDocumentation\\?.*?['\"]>.*?</a>" "" str))
+  ;; --- Rust support (reuses existing eglot + treesit-auto; no new packages) ---
+  ;; rust-analyzer is provided by rustup component. treesit-auto gives rust-ts-mode.
+  (add-to-list 'eglot-server-programs
+    '((rust-ts-mode rust-mode rustic-mode) .
+      ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
 
-          ;; 2. Remove ```fsharp and ``` but KEEP the content
-          (setq str (replace-regexp-in-string "```\\(?:fsharp\\)?" "" str))
-          (setq str (replace-regexp-in-string "```" "" str))
+  ;; Inlay hints (Emacs 29+ built-in eglot support)
+  (add-hook 'eglot-managed-mode-hook #'eglot-inlay-hints-mode)
 
-          ;; 3. Clean up extra newlines for a tighter look
-          (setq str (replace-regexp-in-string "\n\n+" "\n\n" str))
+  ;; Prefer tree-sitter over RA semantic tokens for Rust (avoids flicker; matches
+  ;; the rationale in the user's nvim rustaceanvim config).
+  (defun my/eglot-prefer-treesitter-for-rust ()
+    (when (derived-mode-p 'rust-ts-mode 'rust-mode 'rustic-mode)
+      (setq-local eglot-ignored-server-capabilities
+                  (cons :semanticTokensProvider
+                        (or eglot-ignored-server-capabilities '())))))
+  (add-hook 'eglot-managed-mode-hook #'my/eglot-prefer-treesitter-for-rust)
 
-          ;; 4. Re-package
-          (if is-plist
-              (setq contents (list :kind "plaintext" :value str))
-            (setq contents str)))
-        (apply orig-fun (cons contents (cdr args))))))
-
-  (advice-add 'eglot--format-markup :around #'my/eglot-fsharp-cleanup-doc))
+  ;; Subword navigation (helpful for snake_case and mixed-case identifiers)
+  (add-hook 'rust-ts-mode-hook #'subword-mode))
 
 ;; Flymake (built-in) — replaces flycheck; eglot feeds diagnostics into it
 ;; -----------------------------------------------------------------------------
@@ -288,36 +282,6 @@
               ("M-p" . flymake-goto-prev-error))
   :custom
   (flymake-no-changes-timeout 0.5))
-
-;; F# — top-notch configuration
-;; -----------------------------------------------------------------------------
-(use-package fsharp-mode
-  :mode ("\\.fs[iylx]?\\'" . fsharp-mode)
-  :config
-  (setq inferior-fsharp-program nil)
-
-  (defun my/fsharp-prettify ()
-    "Set up prettify-symbols for F#."
-    (setq-local prettify-symbols-alist
-                '(("->"  . ?→)
-                  ("=>"  . ?⇒)
-                  ("|>"  . ?▷)
-                  ("<|"  . ?◁)
-                  (">>"  . ?≫)
-                  ("<<"  . ?≪)
-                  ("<>"  . ?≠)
-                  (">="  . ?≥)
-                  ("<="  . ?≤)
-                  ("fun" . ?λ)))
-    (prettify-symbols-mode 1))
-  (add-hook 'fsharp-mode-hook #'my/fsharp-prettify)
-
-  (add-hook 'fsharp-mode-hook #'subword-mode)
-  (add-hook 'fsharp-mode-hook #'eldoc-mode))
-
-(use-package eglot-fsharp
-  :after (eglot fsharp-mode)
-  :demand t)
 
 ;; Magit
 ;; -----------------------------------------------------------------------------
@@ -340,21 +304,12 @@
   :config
   (add-to-list 'project-vc-extra-root-markers ".project-root"))
 
-;;; Tree-sitter — reproducible F# support (core Emacs, zero extra deps for install)
+;;; Tree-sitter — automatic major modes (rust-ts-mode, toml-ts-mode, etc.)
 ;; -----------------------------------------------------------------------------
 (use-package treesit-auto
   :custom
   (treesit-auto-install 'prompt)
   :config
-  (let ((fsharp-recipe
-         (make-treesit-auto-recipe
-          :lang 'fsharp
-          :ts-mode 'fsharp-ts-mode
-          :remap 'fsharp-mode
-          :url "https://github.com/ionide/tree-sitter-fsharp"
-          :revision "main"
-          :source-dir "src")))
-    (add-to-list 'treesit-auto-recipe-list fsharp-recipe))
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
