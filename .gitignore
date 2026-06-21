@@ -40,6 +40,10 @@ nvim/nvim/plugin/**
 # Zed
 zed/zed/prompts/
 
+# Brave
+brave/**
+!brave/manifest.json
+
 # Grok Build custom configuration layer (under GROK_HOME=~/.config/grok)
 # We only ever commit the curated custom bits (skills, hand-written config.toml, hooks, roles...).
 # Never commit runtime or installer-managed files that might leak into the source tree.

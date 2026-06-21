@@ -16,7 +16,7 @@ brew "node"
 brew "rustup"
 
 cask "1password"
-cask "brave-browser"
+cask "brave-origin"
 cask "docker-desktop"
 cask "font-monaspace-nf"
 cask "mullvad-vpn"

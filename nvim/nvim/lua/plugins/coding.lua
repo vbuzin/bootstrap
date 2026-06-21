@@ -4,7 +4,76 @@ return {
 		"lewis6991/gitsigns.nvim",
 		event = { "BufReadPre", "BufNewFile" }, -- Load when opening files
 		config = function()
-			require("gitsigns").setup()
+			require("gitsigns").setup({
+				on_attach = function(bufnr)
+					local gitsigns = require("gitsigns")
+
+					local function map(mode, l, r, desc, opts)
+						opts = opts or {}
+						opts.buffer = bufnr
+						if desc then
+							opts.desc = desc
+						end
+						vim.keymap.set(mode, l, r, opts)
+					end
+
+					-- Navigation
+					map("n", "]c", function()
+						if vim.wo.diff then
+							vim.cmd.normal({ "]c", bang = true })
+						else
+							gitsigns.nav_hunk("next")
+						end
+					end, "Git: Next Hunk")
+
+					map("n", "[c", function()
+						if vim.wo.diff then
+							vim.cmd.normal({ "[c", bang = true })
+						else
+							gitsigns.nav_hunk("prev")
+						end
+					end, "Git: Prev Hunk")
+
+					-- Actions
+					map("n", "<leader>hs", gitsigns.stage_hunk, "Git: Stage Hunk")
+					map("n", "<leader>hr", gitsigns.reset_hunk, "Git: Reset Hunk")
+
+					map("v", "<leader>hs", function()
+						gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+					end, "Git: Stage Hunk")
+
+					map("v", "<leader>hr", function()
+						gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+					end, "Git: Reset Hunk")
+
+					map("n", "<leader>hS", gitsigns.stage_buffer, "Git: Stage Buffer")
+					map("n", "<leader>hR", gitsigns.reset_buffer, "Git: Reset Buffer")
+					map("n", "<leader>hp", gitsigns.preview_hunk, "Git: Preview Hunk")
+					map("n", "<leader>hi", gitsigns.preview_hunk_inline, "Git: Preview Hunk Inline")
+
+					map("n", "<leader>hb", function()
+						gitsigns.blame_line({ full = true })
+					end, "Git: Blame Line")
+
+					map("n", "<leader>hd", gitsigns.diffthis, "Git: Diff This")
+
+					map("n", "<leader>hD", function()
+						gitsigns.diffthis("~")
+					end, "Git: Diff This ~")
+
+					map("n", "<leader>hQ", function()
+						gitsigns.setqflist("all")
+					end, "Git: Send All Hunks to QF")
+					map("n", "<leader>hq", gitsigns.setqflist, "Git: Send Hunks to QF")
+
+					-- Toggles
+					map("n", "<leader>tb", gitsigns.toggle_current_line_blame, "Git: Toggle Line Blame")
+					map("n", "<leader>tw", gitsigns.toggle_word_diff, "Git: Toggle Word Diff")
+
+					-- Text object
+					map({ "o", "x" }, "ih", gitsigns.select_hunk, "Git: Select Hunk")
+				end,
+			})
 		end,
 	},
 
@@ -73,17 +142,17 @@ return {
 			local function move_map(next_lhs, prev_lhs, capture, desc)
 				map("n", next_lhs, function()
 					move.goto_next_start("@" .. capture .. ".outer", "textobjects")
-				end, "TS: next " .. desc)
+				end, "next " .. desc)
 				map("n", prev_lhs, function()
 					move.goto_previous_start("@" .. capture .. ".outer", "textobjects")
-				end, "TS: prev " .. desc)
+				end, "prev " .. desc)
 			end
 
 			-- Select
-			sel_map("f", "function", "TS: function")
-			sel_map("c", "class", "TS: class/struct/enum")
-			sel_map("o", "block", "TS: block")
-			sel_map("a", "parameter", "TS: argument/parameter")
+			sel_map("f", "function", "function")
+			sel_map("c", "class", "class/struct/enum")
+			sel_map("o", "block", "block")
+			sel_map("a", "parameter", "argument/parameter")
 
 			-- Move
 			move_map("]f", "[f", "function", "function")
@@ -94,10 +163,10 @@ return {
 			-- Swap
 			map("n", "gsp", function()
 				swap.swap_next("@parameter.inner", "textobjects")
-			end, "TS: swap next param")
+			end, "Next parameter")
 			map("n", "gsP", function()
 				swap.swap_previous("@parameter.inner", "textobjects")
-			end, "TS: swap prev param")
+			end, "Prev parameter")
 		end,
 	},
 
@@ -153,7 +222,7 @@ return {
 			-- We keep our own source of truth in vim.g because vim.diagnostic.config() getter
 			-- does not reliably return nil after you explicitly set severity = nil.
 			-- Start in "All" mode.
-			vim.g.diagnostic_severity = nil  -- nil = show all severities
+			vim.g.diagnostic_severity = nil -- nil = show all severities
 
 			local function set_diag_severity(sev)
 				vim.g.diagnostic_severity = sev
@@ -234,7 +303,7 @@ return {
 				"n",
 				"<leader>xs",
 				toggle_diag_severity,
-				{ noremap = true, silent = true, desc = "Toggle Diagnostics Severity (All / Errors only)" }
+				{ noremap = true, silent = true, desc = "Toggle Severity (All / Errors only)" }
 			)
 
 			-- LSP capabilities
@@ -256,25 +325,31 @@ return {
 					local function map(mode, lhs, rhs, desc)
 						vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, buffer = bufnr, desc = desc })
 					end
-					map("n", "<leader>lh", function()
+					map("n", "<leader>ci", function()
 						local enabled = vim.lsp.inlay_hint.is_enabled()
 						vim.lsp.inlay_hint.enable(not enabled)
-					end, "Toggle LSP Inlay Hints")
-					map("n", "<leader>ca", vim.lsp.buf.code_action, "LSP: Code Action")
-					map("n", "<leader>ln", vim.lsp.buf.rename, "LSP: Rename")
-					map("n", "K", vim.lsp.buf.hover, "LSP: Hover Documentation")
-					map({ "n", "i" }, "<C-p>", vim.lsp.buf.signature_help, "LSP: Signature Help")
-					map("n", "<leader>lt", vim.lsp.buf.type_definition, "LSP: Go to Type Definition")
-					map("n", "<leader>xd", diag_show_line, "Diagnostics: Show Line Diagnostics")
-					map("n", "[d", diag_jump_prev, "Diagnostics: Go to Previous (respects severity)")
-					map("n", "]d", diag_jump_next, "Diagnostics: Go to Next (respects severity)")
-					map("n", "<leader>lr", vim.lsp.buf.references, "LSP: Find References")
+					end, "Toggle Inlay Hints")
+					map("n", "<leader>ca", vim.lsp.buf.code_action, "Code Action")
+					map("n", "<leader>co", function()
+						vim.lsp.buf.code_action({
+							context = { only = { "source.organizeImports" } },
+							apply = true,
+						})
+					end, "Organize Imports")
+					map("n", "<leader>cr", vim.lsp.buf.rename, "Rename")
+					map("n", "K", vim.lsp.buf.hover, "Hover Documentation")
+					map({ "n", "i" }, "<C-p>", vim.lsp.buf.signature_help, "Signature Help")
+					map("n", "<leader>lt", vim.lsp.buf.type_definition, "Type Definition")
+					map("n", "<leader>xd", diag_show_line, "Show Line Diagnostics")
+					map("n", "[d", diag_jump_prev, "Go to Previous (severity)")
+					map("n", "]d", diag_jump_next, "Go to Next (severity)")
+					map("n", "<leader>lr", vim.lsp.buf.references, "Find References")
 
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
 					if client and client.supports_method("textDocument/codeLens") then
-						map("n", "<leader>lc", vim.lsp.codelens.run, "LSP: Run Code Lens")
+						map("n", "<leader>cl", vim.lsp.codelens.run, "Run Code Lens")
 						local lens_on = false
-						map("n", "<leader>lC", function()
+						map("n", "<leader>cL", function()
 							lens_on = not lens_on
 							if lens_on then
 								vim.lsp.codelens.refresh()
@@ -282,7 +357,7 @@ return {
 								vim.lsp.codelens.clear()
 							end
 							vim.notify("Code lenses: " .. (lens_on and "ON" or "OFF"), vim.log.levels.INFO)
-						end, "LSP: Toggle Code Lenses")
+						end, "Toggle Code Lenses")
 					end
 				end,
 			})
@@ -313,84 +388,84 @@ return {
 				function()
 					require("dap").continue()
 				end,
-				desc = "Debug: Start/Continue",
+				desc = "Start/Continue",
 			},
 			{
 				"<leader>dc",
 				function()
 					require("dap").continue()
 				end,
-				desc = "Debug: Start/Continue",
+				desc = "Start/Continue",
 			},
 			{
 				"<F10>",
 				function()
 					require("dap").step_over()
 				end,
-				desc = "Debug: Step Over",
+				desc = "Step Over",
 			},
 			{
 				"<leader>do",
 				function()
 					require("dap").step_over()
 				end,
-				desc = "Debug: Step Over",
+				desc = "Step Over",
 			},
 			{
 				"<F11>",
 				function()
 					require("dap").step_into()
 				end,
-				desc = "Debug: Step Into",
+				desc = "Step Into",
 			},
 			{
 				"<leader>di",
 				function()
 					require("dap").step_into()
 				end,
-				desc = "Debug: Step Into",
+				desc = "Step Into",
 			},
 			{
 				"<F12>",
 				function()
 					require("dap").step_out()
 				end,
-				desc = "Debug: Step Out",
+				desc = "Step Out",
 			},
 			{
 				"<leader>du",
 				function()
 					require("dap").step_out()
 				end,
-				desc = "Debug: Step Out",
+				desc = "Step Out",
 			},
 			{
 				"<leader>db",
 				function()
 					require("dap").toggle_breakpoint()
 				end,
-				desc = "Debug: Toggle Breakpoint",
+				desc = "Toggle Breakpoint",
 			},
 			{
 				"<leader>dB",
 				function()
 					require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
 				end,
-				desc = "Debug: Set Conditional Breakpoint",
+				desc = "Set Conditional Breakpoint",
 			},
 			{
 				"<leader>dr",
 				function()
 					require("dap").repl.open()
 				end,
-				desc = "Debug: Open REPL",
+				desc = "Open REPL",
 			},
 			{
 				"<leader>dl",
 				function()
 					require("dap").run_last()
 				end,
-				desc = "Debug: Run Last",
+				desc = "Run Last",
 			},
 		},
 		config = function()
@@ -405,29 +480,6 @@ return {
 		dependencies = { "williamboman/mason.nvim", "mfussenegger/nvim-dap" },
 		config = true, -- Calls require("mason-nvim-dap").setup({})
 	},
-	-- DAP UI
-	{
-		"rcarriga/nvim-dap-ui",
-		event = "VeryLazy", -- Load when DAP starts
-		dependencies = {
-			"mfussenegger/nvim-dap",
-			"nvim-neotest/nvim-nio", -- Required dependency for nvim-dap-ui
-		},
-		config = function()
-			local dap, dapui = require("dap"), require("dapui")
-			dapui.setup() -- Use default dapui configuration
-			-- Automatically open/close DAP UI when debugging session starts/ends
-			dap.listeners.after.event_initialized["dapui_config"] = function()
-				dapui.open()
-			end
-			dap.listeners.before.event_terminated["dapui_config"] = function()
-				dapui.close()
-			end
-			dap.listeners.before.event_exited["dapui_config"] = function()
-				dapui.close()
-			end
-		end,
-	},
 
 	--[[ Formatting with conform.nvim ]]
 	{
@@ -438,6 +490,16 @@ return {
 			format_on_save = {
 				timeout_ms = 1000, -- Max time for formatting on save
 				lsp_fallback = false, -- Do not fallback to LSP for formatting
+			},
+		},
+		keys = {
+			{
+				"<leader>cf",
+				function()
+					require("conform").format({ async = true })
+				end,
+				desc = "Format",
+				mode = { "n", "v" },
 			},
 		},
 		config = true, -- Calls require("conform").setup(opts)

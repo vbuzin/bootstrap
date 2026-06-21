@@ -10,7 +10,7 @@ kmap.set("n", "n", "nzz", { silent = true }) -- Next search result
 kmap.set("n", "N", "Nzz", { silent = true }) -- Previous search result
 kmap.set("n", "*", "*zz", { silent = true }) -- Search for word under cursor (forward)
 kmap.set("n", "#", "#zz", { silent = true }) -- Search for word under cursor (backward)
-kmap.set("n", "g*", "g*zz", { silent = true }) -- Like *, but without word boundaries
+kmap.set("n", "g*", "g*zz", { silent = true, desc = "Word (no boundary)" }) -- Like *, but without word boundaries
 
 -- Jumplist Navigation (Popping Jumps)
 kmap.set("n", "<C-o>", "<C-o>zz", { silent = true }) -- Go to older cursor position in jumplist
@@ -31,8 +31,8 @@ kmap.set("n", "<C-]>", "<C-]>zz", { silent = true }) -- Jump to the definition o
 kmap.set("n", "<C-t>", "<C-t>zz", { silent = true }) -- Jump to older tag in tag stack (pop tag)
 
 -- Changelist Navigation
-kmap.set("n", "g;", "g;zz", { silent = true }) -- Go to older position in changelist
-kmap.set("n", "g,", "g,zz", { silent = true }) -- Go to newer position in changelist
+kmap.set("n", "g;", "g;zz", { silent = true, desc = "Older change" })
+kmap.set("n", "g,", "g,zz", { silent = true, desc = "Newer change" })
 -- END SECTION
 
 -- Move selected text up and down
@@ -40,26 +40,26 @@ kmap.set("v", "J", ":m '>+1<CR>gv=gv") -- Move selection down
 kmap.set("v", "K", ":m '<-2<CR>gv=gv") -- Move selection up
 
 -- Managing buffers
-kmap.set("n", "<leader>bp", ":bp<cr>")
-kmap.set("n", "<leader>bn", ":bn<cr>")
-kmap.set("n", "<leader>bd", ":bd<cr>")
-kmap.set("n", "<leader>bk", ":bp | bd #<cr>")
+kmap.set("n", "<leader>bp", ":bp<cr>", { desc = "Previous" })
+kmap.set("n", "<leader>bn", ":bn<cr>", { desc = "Next" })
+kmap.set("n", "<leader>bd", ":bd<cr>", { desc = "Delete" })
+kmap.set("n", "<leader>bk", ":bp | bd #<cr>", { desc = "Delete (keep window)" })
 
 -- Make j and k move by visual line, not actual line, when text is soft-wrapped
-kmap.set("n", "j", "gj")
-kmap.set("n", "k", "gk")
+kmap.set("n", "j", "gj", { desc = "Down (visual)" })
+kmap.set("n", "k", "gk", { desc = "Up (visual)" })
 
 -- Expand/shrink selection
 kmap.set({ "x", "o" }, "+", function()
 	require("vim.treesitter._select").select_parent(vim.v.count1)
-end, { desc = "TS: expand selection" })
+end, { desc = "Expand selection" })
 
 kmap.set({ "x", "o" }, "-", function()
 	require("vim.treesitter._select").select_child(vim.v.count1)
-end, { desc = "TS: shrink selection" })
+end, { desc = "Shrink selection" })
 
 -- Quick-save
-kmap.set("n", "<leader>w", "<cmd>w<cr>")
+kmap.set("n", "<leader>w", "<cmd>w<cr>", { desc = "Write / Save" })
 
 -- System clipboard fix
 vim.keymap.set("v", "p", function()

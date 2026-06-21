@@ -9,7 +9,7 @@
 {
   "proxy": "",
   "sticky_scroll": {
-    "enabled": true
+    "enabled": true,
   },
   "diff_view_style": "split",
   "semantic_tokens": "off",
@@ -23,6 +23,7 @@
   "cli_default_open_behavior": "new_window",
   "collaboration_panel": {
     "dock": "right",
+    "button": false,
   },
   "outline_panel": {
     "dock": "right",
@@ -40,6 +41,9 @@
   "edit_predictions": {
     "allow_data_collection": "no",
     "mode": "subtle",
+  },
+  "file_finder": {
+    "modal_max_width": "medium",
   },
   "icon_theme": "Zed (Default)",
   "languages": {
@@ -80,6 +84,7 @@
     "git_status": true,
   },
   "title_bar": {
+    "show_branch_status_icon": true,
     "show_menus": false,
     "show_user_picture": false,
   },
@@ -131,6 +136,10 @@
           "lifetimeElisionHints": {
             "enable": "skip_trivial",
             "useParameterNames": true,
+          },
+          "check": {
+            "command": "clippy",
+            "arguments": "--all-targets",
           },
         },
       },

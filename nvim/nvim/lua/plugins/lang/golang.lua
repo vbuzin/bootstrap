@@ -87,7 +87,7 @@ return {
 					require("dap-go").debug_test()
 				end,
 				ft = "go",
-				desc = "Debug: Test",
+				desc = "Test",
 			},
 		},
 	},

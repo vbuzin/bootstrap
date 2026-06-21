@@ -99,29 +99,29 @@ return {
 							local args = vim.split(input, " ", { trimempty = true })
 							require("rustaceanvim.runnables").runnables(args)
 						end)
-					end, "Rust: runnables")
-					map("<leader>rt", function() vim.cmd.RustLsp("testables") end, "Rust: testables")
+					end, "Runnables")
+					map("<leader>rt", function() vim.cmd.RustLsp("testables") end, "Testables")
 					map("<leader>rd", function()
 						vim.ui.input({ prompt = "Debug args (empty = none): " }, function(input)
 							if input == nil then return end
 							local args = vim.split(input, " ", { trimempty = true })
 							require("rustaceanvim.commands.debuggables").debuggables(args)
 						end)
-					end, "Rust: debuggables")
+					end, "Debuggables")
 
 					-- Code navigation / editing
-					map("<leader>re", function() vim.cmd.RustLsp("expandMacro") end, "Rust: expand macro")
-					map("<leader>rc", function() vim.cmd.RustLsp("openCargo") end, "Rust: open Cargo.toml")
-					map("<leader>rp", function() vim.cmd.RustLsp("parentModule") end, "Rust: parent module")
-					map("<leader>rj", function() vim.cmd.RustLsp("joinLines") end, "Rust: join lines")
+					map("<leader>re", function() vim.cmd.RustLsp("expandMacro") end, "Expand Macro")
+					map("<leader>rc", function() vim.cmd.RustLsp("openCargo") end, "Open Cargo.toml")
+					map("<leader>rp", function() vim.cmd.RustLsp("parentModule") end, "Parent Module")
+					map("<leader>rj", function() vim.cmd.RustLsp("joinLines") end, "Join Lines")
 
 					-- Override hover + code action with rustaceanvim's richer versions
 					vim.keymap.set({ "n", "v" }, "K", function()
 						vim.cmd.RustLsp({ "hover", "actions" })
-					end, { buffer = bufnr, desc = "Rust: hover actions" })
-					vim.keymap.set({ "n", "v" }, "<leader>la", function()
+					end, { buffer = bufnr, desc = "Hover actions" })
+					vim.keymap.set({ "n", "v" }, "<leader>ca", function()
 						vim.cmd.RustLsp("codeAction")
-					end, { buffer = bufnr, desc = "Rust: code action" })
+					end, { buffer = bufnr, desc = "Code Action" })
 				end,
 
 				-- Disable semantic tokens from rust-analyzer.

@@ -91,7 +91,7 @@ return {
 					require("dap-python").test_method()
 				end,
 				ft = "python",
-				desc = "Debug: Test Method",
+				desc = "Test Method",
 			},
 			{
 				"<leader>dtc",
@@ -99,7 +99,7 @@ return {
 					require("dap-python").test_class()
 				end,
 				ft = "python",
-				desc = "Debug: Test Class",
+				desc = "Test Class",
 			},
 		},
 	},

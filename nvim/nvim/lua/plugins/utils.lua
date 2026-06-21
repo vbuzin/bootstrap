@@ -23,6 +23,22 @@ return {
 				layout = {
 					preset = "ivy",
 				},
+				sources = {
+					select = {
+						preview = "none",
+						layout = {
+							preset = "ivy",
+							hidden = { "preview" },
+						},
+					},
+				},
+				icons = {
+					tree = {
+						vertical = "│ ",
+						middle   = "├╴",
+						last     = "└╴",
+					},
+				},
 			},
 		},
 --stylua: ignore start
@@ -57,8 +73,11 @@ return {
       { "gr",         function() Snacks.picker.lsp_references() end,         nowait = true, desc = "References" },
       { "gI",         function() Snacks.picker.lsp_implementations() end,    desc = "Goto Implementation" },
       { "gy",         function() Snacks.picker.lsp_type_definitions() end,   desc = "Goto Type Definition" },
-      { "<leader>ss", function() Snacks.picker.lsp_symbols({ filter = { default = { "Class", "Constructor", "Enum", "EnumMember", "Field", "Function", "Interface", "Method", "Module", "Namespace", "Package", "Property", "Struct", "Trait" } } }) end, desc = "LSP Symbols" },
+      { "<leader>ss", function() Snacks.picker.lsp_symbols({ tree = true, keep_parents = true, filter = { default = true } }) end, desc = "LSP Symbols" },
       { "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end,  desc = "LSP Workspace Symbols" },
+      -- Also under code group
+      { "<leader>cs", function() Snacks.picker.lsp_symbols({ tree = true, keep_parents = true, filter = { default = true } }) end, desc = "LSP Symbols" },
+      { "<leader>cS", function() Snacks.picker.lsp_workspace_symbols() end,  desc = "LSP Workspace Symbols" },
     },
 	},
   --stylua: ignore start
@@ -88,6 +107,44 @@ return {
 				{ "<leader>f", group = "files" },
 				{ "<leader>s", group = "search" },
 				{ "<leader>x", group = "diagnostics" },
+				{ "<leader>h", group = "git" },
+				{ "<leader>t", group = "toggle" },
+				{ "<leader>c", group = "code" },
+				-- g-prefix: explicit labels + sub-groups so which-key shows a clean organized list
+				{ "g", group = "goto / g" },
+				-- Our controlled goto mappings (Snacks + custom)
+				{ "gd", desc = "Definition" },
+				{ "gD", desc = "Declaration" },
+				{ "gI", desc = "Implementation" },
+				{ "gy", desc = "Type Definition" },
+				{ "gr", desc = "References" },
+				{ "g*", desc = "Word (no boundary)" },
+				{ "g;", desc = "Older change" },
+				{ "g,", desc = "Newer change" },
+				-- Common native g commands (short clean labels instead of long defaults)
+				{ "gg", desc = "First line" },
+				{ "ge", desc = "End of prev word" },
+				{ "gf", desc = "File under cursor" },
+				{ "gi", desc = "Last insert" },
+				{ "gn", desc = "Search fwd select" },
+				{ "gN", desc = "Search bwd select" },
+				{ "gt", desc = "Next tab" },
+				{ "gT", desc = "Prev tab" },
+				{ "gu", desc = "Lowercase" },
+				{ "gU", desc = "Uppercase" },
+				{ "gv", desc = "Reselect visual" },
+				{ "gw", desc = "Format" },
+				{ "gx", desc = "Open URI / file" },
+				{ "g~", desc = "Toggle case" },
+				{ "g%", desc = "Cycle results" },
+				-- Comment blockwise (gc is grouped below)
+				{ "gb", desc = "Comment blockwise" },
+				-- sub-groups (appear as headers when prefix typed)
+				{ "gc", group = "comment" },
+				{ "gs", group = "swap" },
+				-- bracket navigation (also under g? no, top level brackets)
+				{ "[", group = "prev" },
+				{ "]", group = "next" },
 			},
 		},
 		keys = {
