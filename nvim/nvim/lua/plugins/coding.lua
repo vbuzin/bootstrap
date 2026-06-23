@@ -321,6 +321,7 @@ return {
 				group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
 				callback = function(event)
 					local bufnr = event.buf
+					local snacks = require("snacks")
 
 					local function map(mode, lhs, rhs, desc)
 						vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, buffer = bufnr, desc = desc })
@@ -339,11 +340,15 @@ return {
 					map("n", "<leader>cr", vim.lsp.buf.rename, "Rename")
 					map("n", "K", vim.lsp.buf.hover, "Hover Documentation")
 					map({ "n", "i" }, "<C-p>", vim.lsp.buf.signature_help, "Signature Help")
-					map("n", "<leader>lt", vim.lsp.buf.type_definition, "Type Definition")
+					map("n", "<leader>lt", function()
+						snacks.picker.lsp_type_definitions()
+					end, "Type Definition")
 					map("n", "<leader>xd", diag_show_line, "Show Line Diagnostics")
 					map("n", "[d", diag_jump_prev, "Go to Previous (severity)")
 					map("n", "]d", diag_jump_next, "Go to Next (severity)")
-					map("n", "<leader>lr", vim.lsp.buf.references, "Find References")
+					map("n", "<leader>lr", function()
+						snacks.picker.lsp_references()
+					end, "Find References")
 
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
 					if client and client.supports_method("textDocument/codeLens") then
