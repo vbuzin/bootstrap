@@ -132,14 +132,14 @@
   "lsp": {
     "rust-analyzer": {
       "initialization_options": {
+        "check": {
+          "command": "clippy",
+          "arguments": "--all-targets",
+        },
         "inlayHints": {
           "lifetimeElisionHints": {
             "enable": "skip_trivial",
             "useParameterNames": true,
-          },
-          "check": {
-            "command": "clippy",
-            "arguments": "--all-targets",
           },
         },
       },

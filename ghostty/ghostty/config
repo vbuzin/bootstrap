@@ -1,7 +1,7 @@
 # -- Fonts & Text -------------------------------------------
-font-family = "Monaspace Xenon NF Light"
+font-family = "Monaspace Xenon NF"
 font-size = 13
-adjust-cell-height = 14%
+adjust-cell-height = 18%
 
 window-colorspace = "display-p3"
 

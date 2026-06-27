@@ -63,6 +63,16 @@ return {
 		opts = {
 			completion = {
 				crates = { enabled = true },
+				-- Native blink.cmp support (icons + labels for version/feature items)
+				blink = {
+					use_custom_kind = true,
+					kind_text = { version = "Version", feature = "Feature" },
+					kind_highlight = {
+						version = "BlinkCmpKindVersion",
+						feature = "BlinkCmpKindFeature",
+					},
+					kind_icon = { version = " ", feature = " " },
+				},
 			},
 			lsp = {
 				enabled = true,

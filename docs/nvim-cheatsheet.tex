@@ -386,16 +386,18 @@
 \end{kt}
 
 % ═══════════════════════════════════════
-\sect{COMPLETION\enspace{\scriptsize nvim-cmp, insert mode}}
+\sect{COMPLETION\enspace{\scriptsize blink.cmp, insert mode}}
 \begin{kt}
-\kd{C-Space}{trigger completion menu}
-\kd{C-n\,/\,C-p}{next / prev completion item}
-\kd{CR}{confirm selection}
-\kd{C-e}{close / abort completion}
-\kd{C-b\,/\,C-f}{scroll docs up / down}
-\kd{Tab\,/\,S-Tab}{next / prev snippet placeholder}
+\kd{C-Space}{trigger / toggle docs}
+\kd{C-n\,/\,C-p}{next / prev item (fallback to native)}
+\kd{Tab}{accept / expand snippet (super-tab preset)}
+\kd{S-Tab}{prev / snippet backward}
+\kd{CR}{confirm / accept selection}
+\kd{C-e}{close / abort}
+\kd{C-b\,/\,C-f}{scroll docs}
+\kd{C-k}{toggle signature help}
 \end{kt}
-\snote{Ghost-text preview appears inline (Neovim 0.10+). Completion sources: LSP + LuaSnip.}
+\snote{Ghost-text + auto brackets. Sources: LSP + path + snippets (friendly-snippets) + buffer. Signature help integrated.}
 
 % ═══════════════════════════════════════
 \sect{OPERATORS\enspace{\scriptsize + motion or text object}}

@@ -9,18 +9,6 @@
   {
     "context": "Workspace",
     "bindings": {
-      // "shift shift": "file_finder::Toggle"
-    },
-  },
-  {
-    "context": "Editor && vim_mode == insert",
-    "bindings": {
-      // "j k": "vim::NormalBefore"
-    },
-  },
-  {
-    "context": "Workspace",
-    "bindings": {
       "alt-cmd-shift-m": "diagnostics::DeployCurrentFile",
     },
   },
@@ -48,9 +36,70 @@
       ],
     },
   },
+  // Vim
   {
     "bindings": {
       "cmd-shift-v": "workspace::ToggleVimMode",
     },
   },
+  {
+    "context": "vim_mode == normal || vim_mode == visual",
+    "bindings": {
+      "g w": "vim::HelixJumpToWord",
+    },
+  },
+  {
+    "context": "vim_mode == visual",
+    "bindings": {
+      "shift-s": "vim::PushAddSurrounds",
+    },
+  },
+  {
+    "context": "(vim_mode == normal || vim_mode == select) && !menu",
+    "bindings": {
+      "f": [
+        "vim::PushFindForward",
+        {
+          "before": false,
+          "multiline": true
+        }
+      ]
+    }
+  },
+  {
+    "context": "(vim_mode == normal || vim_mode == select) && !menu",
+    "bindings": {
+      "t": [
+        "vim::PushFindForward",
+        {
+          "before": true,
+          "multiline": true
+        }
+      ]
+    }
+  },
+  {
+    "context": "(vim_mode == normal || vim_mode == select) && !menu",
+    "bindings": {
+      "shift-f": [
+        "vim::PushFindBackward",
+        {
+          "after": false,
+          "multiline": true
+        }
+      ]
+    }
+  },
+  {
+    "context": "(vim_mode == normal || vim_mode == select) && !menu",
+    "bindings": {
+      "shift-t": [
+        "vim::PushFindBackward",
+        {
+          "after": true,
+          "multiline": true
+        }
+      ]
+    }
+  }
 ]

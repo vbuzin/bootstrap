@@ -18,52 +18,29 @@ return {
 					end
 
 					-- Navigation
-					map("n", "]c", function()
-						if vim.wo.diff then
-							vim.cmd.normal({ "]c", bang = true })
-						else
-							gitsigns.nav_hunk("next")
-						end
-					end, "Git: Next Hunk")
-
-					map("n", "[c", function()
-						if vim.wo.diff then
-							vim.cmd.normal({ "[c", bang = true })
-						else
-							gitsigns.nav_hunk("prev")
-						end
-					end, "Git: Prev Hunk")
+					-- stylua: ignore start
+					map("n", "]c", function() if vim.wo.diff then vim.cmd.normal({ "]c", bang = true }) else gitsigns.nav_hunk("next") end end, "Git: Next Hunk")
+					map("n", "[c", function() if vim.wo.diff then vim.cmd.normal({ "[c", bang = true }) else gitsigns.nav_hunk("prev") end end, "Git: Prev Hunk")
 
 					-- Actions
 					map("n", "<leader>hs", gitsigns.stage_hunk, "Git: Stage Hunk")
 					map("n", "<leader>hr", gitsigns.reset_hunk, "Git: Reset Hunk")
 
-					map("v", "<leader>hs", function()
-						gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
-					end, "Git: Stage Hunk")
-
-					map("v", "<leader>hr", function()
-						gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
-					end, "Git: Reset Hunk")
+					map("v", "<leader>hs", function() gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Git: Stage Hunk")
+					map("v", "<leader>hr", function() gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Git: Reset Hunk")
 
 					map("n", "<leader>hS", gitsigns.stage_buffer, "Git: Stage Buffer")
 					map("n", "<leader>hR", gitsigns.reset_buffer, "Git: Reset Buffer")
 					map("n", "<leader>hp", gitsigns.preview_hunk, "Git: Preview Hunk")
 					map("n", "<leader>hi", gitsigns.preview_hunk_inline, "Git: Preview Hunk Inline")
 
-					map("n", "<leader>hb", function()
-						gitsigns.blame_line({ full = true })
-					end, "Git: Blame Line")
+					map("n", "<leader>hb", function() gitsigns.blame_line({ full = true }) end, "Git: Blame Line")
 
 					map("n", "<leader>hd", gitsigns.diffthis, "Git: Diff This")
 
-					map("n", "<leader>hD", function()
-						gitsigns.diffthis("~")
-					end, "Git: Diff This ~")
+					map("n", "<leader>hD", function() gitsigns.diffthis("~") end, "Git: Diff This ~")
 
-					map("n", "<leader>hQ", function()
-						gitsigns.setqflist("all")
-					end, "Git: Send All Hunks to QF")
+					map("n", "<leader>hQ", function() gitsigns.setqflist("all") end, "Git: Send All Hunks to QF")
 					map("n", "<leader>hq", gitsigns.setqflist, "Git: Send Hunks to QF")
 
 					-- Toggles
@@ -72,6 +49,8 @@ return {
 
 					-- Text object
 					map({ "o", "x" }, "ih", gitsigns.select_hunk, "Git: Select Hunk")
+
+					-- stylua: ignore end
 				end,
 			})
 		end,
@@ -131,22 +110,18 @@ return {
 			local function map(modes, lhs, fn, desc)
 				vim.keymap.set(modes, lhs, fn, { noremap = true, silent = true, desc = desc })
 			end
+
+            -- stylua: ignore start
 			local function sel_map(lhs, capture, desc)
-				map({ "x", "o" }, "a" .. lhs, function()
-					sel.select_textobject("@" .. capture .. ".outer", "textobjects")
-				end, desc .. " outer")
-				map({ "x", "o" }, "i" .. lhs, function()
-					sel.select_textobject("@" .. capture .. ".inner", "textobjects")
-				end, desc .. " inner")
+				map({ "x", "o" }, "a" .. lhs, function() sel.select_textobject("@" .. capture .. ".outer", "textobjects") end, desc .. " outer")
+				map({ "x", "o" }, "i" .. lhs, function() sel.select_textobject("@" .. capture .. ".inner", "textobjects") end, desc .. " inner")
 			end
+
 			local function move_map(next_lhs, prev_lhs, capture, desc)
-				map("n", next_lhs, function()
-					move.goto_next_start("@" .. capture .. ".outer", "textobjects")
-				end, "next " .. desc)
-				map("n", prev_lhs, function()
-					move.goto_previous_start("@" .. capture .. ".outer", "textobjects")
-				end, "prev " .. desc)
+				map("n", next_lhs, function() move.goto_next_start("@" .. capture .. ".outer", "textobjects") end, "next " .. desc)
+				map("n", prev_lhs, function() move.goto_previous_start("@" .. capture .. ".outer", "textobjects") end, "prev " .. desc)
 			end
+			-- stylua: ignore end
 
 			-- Select
 			sel_map("f", "function", "function")
@@ -173,7 +148,7 @@ return {
 	--[[ Mason Core ]]
 	{
 		"williamboman/mason.nvim",
-		event = "VeryLazy",
+		lazy = false,
 		opts = {
 			ui = {
 				icons = {
@@ -188,7 +163,7 @@ return {
 	--[[ Mason Tool Installer (formatters/linters/debuggers) ]]
 	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		event = "VeryLazy",
+		-- no event/lazy: its plugin/ registers VimEnter autocmd for run_on_start + ensure_installed
 		dependencies = { "williamboman/mason.nvim" },
 		opts = {
 			ensure_installed = {},
@@ -208,14 +183,13 @@ return {
 		dependencies = {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
-			"hrsh7th/cmp-nvim-lsp",
+			"saghen/blink.cmp",
 		},
 		opts = {
 			-- Default server configurations. These will be extended by language-specific plugins.
 			servers = {},
 		},
 		config = function(_, opts)
-			local cmp_nvim_lsp = require("cmp_nvim_lsp")
 			local mason_lspconfig = require("mason-lspconfig")
 
 			-- Severity filter toggle: All <-> Errors only (on-the-fly, great for Rust/clippy noise)
@@ -306,14 +280,26 @@ return {
 				{ noremap = true, silent = true, desc = "Toggle Severity (All / Errors only)" }
 			)
 
-			-- LSP capabilities
-			local capabilities = cmp_nvim_lsp.default_capabilities()
+			-- LSP capabilities (provided by blink.cmp)
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
 			capabilities.workspace = capabilities.workspace or {}
 			capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = true }
 
 			-- Apply capabilities to all LSP servers via wildcard
 			vim.lsp.config("*", {
 				capabilities = capabilities,
+			})
+
+			vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+				border = "rounded",
+				max_width = math.max(60, math.floor(vim.o.columns * 0.55)),
+				max_height = math.max(8, math.floor(vim.o.lines * 0.65)),
+			})
+
+			vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+				border = "rounded",
+				max_width = math.max(50, math.floor(vim.o.columns * 0.4)),
+				max_height = 8,
 			})
 
 			-- LspAttach autocmd for keymaps (replaces on_attach)
@@ -339,7 +325,8 @@ return {
 					end, "Organize Imports")
 					map("n", "<leader>cr", vim.lsp.buf.rename, "Rename")
 					map("n", "K", vim.lsp.buf.hover, "Hover Documentation")
-					map({ "n", "i" }, "<C-p>", vim.lsp.buf.signature_help, "Signature Help")
+					-- <C-k> for signature help is provided by blink.cmp (when signature.enabled)
+					-- We intentionally do not override here so blink's integrated signature wins.
 					map("n", "<leader>lt", function()
 						snacks.picker.lsp_type_definitions()
 					end, "Type Definition")
@@ -388,90 +375,20 @@ return {
 			"jay-babu/mason-nvim-dap.nvim", -- Integrates DAP with Mason
 		},
 		keys = {
-			{
-				"<F5>",
-				function()
-					require("dap").continue()
-				end,
-				desc = "Start/Continue",
-			},
-			{
-				"<leader>dc",
-				function()
-					require("dap").continue()
-				end,
-				desc = "Start/Continue",
-			},
-			{
-				"<F10>",
-				function()
-					require("dap").step_over()
-				end,
-				desc = "Step Over",
-			},
-			{
-				"<leader>do",
-				function()
-					require("dap").step_over()
-				end,
-				desc = "Step Over",
-			},
-			{
-				"<F11>",
-				function()
-					require("dap").step_into()
-				end,
-				desc = "Step Into",
-			},
-			{
-				"<leader>di",
-				function()
-					require("dap").step_into()
-				end,
-				desc = "Step Into",
-			},
-			{
-				"<F12>",
-				function()
-					require("dap").step_out()
-				end,
-				desc = "Step Out",
-			},
-			{
-				"<leader>du",
-				function()
-					require("dap").step_out()
-				end,
-				desc = "Step Out",
-			},
-			{
-				"<leader>db",
-				function()
-					require("dap").toggle_breakpoint()
-				end,
-				desc = "Toggle Breakpoint",
-			},
-			{
-				"<leader>dB",
-				function()
-					require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
-				end,
-				desc = "Set Conditional Breakpoint",
-			},
-			{
-				"<leader>dr",
-				function()
-					require("dap").repl.open()
-				end,
-				desc = "Open REPL",
-			},
-			{
-				"<leader>dl",
-				function()
-					require("dap").run_last()
-				end,
-				desc = "Run Last",
-			},
+        --stylua: ignore start
+			{ "<F5>", function() require("dap").continue() end, desc = "Start/Continue", },
+			{ "<leader>dc", function() require("dap").continue() end, desc = "Start/Continue", },
+			{ "<F10>", function() require("dap").step_over() end, desc = "Step Over", },
+			{ "<leader>do", function() require("dap").step_over() end, desc = "Step Over", },
+			{ "<F11>", function() require("dap").step_into() end, desc = "Step Into", },
+			{ "<leader>di", function() require("dap").step_into() end, desc = "Step Into", },
+			{ "<F12>", function() require("dap").step_out() end, desc = "Step Out", },
+			{ "<leader>du", function() require("dap").step_out() end, desc = "Step Out", },
+			{ "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint", },
+			{ "<leader>dB", function() require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: ")) end, desc = "Set Conditional Breakpoint", },
+			{ "<leader>dr", function() require("dap").repl.open() end, desc = "Open REPL", },
+			{ "<leader>dl", function() require("dap").run_last() end, desc = "Run Last", },
+			-- stylua: ignore end
 		},
 		config = function()
 			vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "Error", linehl = "", numhl = "" })
@@ -481,7 +398,7 @@ return {
 	-- Mason helper for DAP
 	{
 		"jay-babu/mason-nvim-dap.nvim",
-		event = "VeryLazy", -- Load with nvim-dap or when its commands are used
+		-- removed VeryLazy so ensure_installed (debugpy, codelldb, ...) runs early via this path too
 		dependencies = { "williamboman/mason.nvim", "mfussenegger/nvim-dap" },
 		config = true, -- Calls require("mason-nvim-dap").setup({})
 	},
@@ -510,66 +427,60 @@ return {
 		config = true, -- Calls require("conform").setup(opts)
 	},
 
-	--[[ Autocompletion with nvim-cmp ]]
+	--[[ Autocompletion with blink.cmp ]]
 	{
-		"hrsh7th/nvim-cmp",
-		event = "InsertEnter", -- Load when entering insert mode
+		"saghen/blink.cmp",
+		event = { "InsertEnter", "CmdlineEnter" },
+		version = "1.*",
 		dependencies = {
-			"hrsh7th/cmp-nvim-lsp", -- LSP completion source
-			"L3MON4D3/LuaSnip", -- Snippet engine
-			"saadparwaiz1/cmp_luasnip", -- Bridge between nvim-cmp and LuaSnip
+			"rafamadriz/friendly-snippets", -- provides snippets for the default (vim.snippet) engine
 		},
-		opts = function()
-			local cmp = require("cmp")
-			local luasnip = require("luasnip")
+		opts = {
+			-- Keymap customizations (super-tab + Enter accept)
+			keymap = {
+				preset = "super-tab",
+				["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
+				["<C-e>"] = { "hide", "fallback" },
+				-- Keep Enter working to accept too (original behavior)
+				["<CR>"] = { "accept", "fallback" },
+			},
+			appearance = {},
+			completion = {
+				menu = {
+					border = "rounded",
+					auto_show = false,
+					max_height = 16, -- default is 10
+					draw = {
+						columns = {
+							{ "kind_icon" },
+							{ "label", "label_description", gap = 1 },
+							{ "kind" },
+						},
+					},
+				},
+				documentation = {
+					auto_show = true,
+					auto_show_delay_ms = 250, -- default is 500
+					window = {
+						border = "rounded",
+					},
+				},
+				ghost_text = { enabled = true },
+			},
+			-- Integrated signature help (replaces direct vim.lsp.buf.signature_help in many cases)
+			signature = {
+				enabled = true,
+				window = { border = "rounded" },
+			},
 
-			return {
-				snippet = {
-					expand = function(args)
-						luasnip.lsp_expand(args.body) -- Expand snippets provided by LSP
-					end,
-				},
-				mapping = cmp.mapping.preset.insert({
-					["<C-b>"] = cmp.mapping.scroll_docs(-4), -- Scroll backwards in documentation
-					["<C-f>"] = cmp.mapping.scroll_docs(4), -- Scroll forwards in documentation
-					["<C-Space>"] = cmp.mapping.complete(), -- Trigger completion
-					["<C-e>"] = cmp.mapping.abort(), -- Abort completion
-					["<CR>"] = cmp.mapping.confirm({ select = true }), -- Confirm selection (Enter key)
-					["<Tab>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							cmp.select_next_item()
-						elseif luasnip.expand_or_jumpable() then
-							luasnip.expand_or_jump()
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-					["<S-Tab>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							cmp.select_prev_item()
-						elseif luasnip.jumpable(-1) then
-							luasnip.jump(-1)
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-				}),
-				sources = cmp.config.sources({
-					{ name = "nvim_lsp" }, -- LSP suggestions
-					{ name = "luasnip" }, -- Snippet suggestions
-				}),
-				window = { -- Appearance of completion and documentation windows
-					completion = cmp.config.window.bordered(),
-					documentation = cmp.config.window.bordered({ max_height = 20 }),
-				},
-				experimental = {
-					ghost_text = true, -- Show inline virtual text for completion preview (Neovim 0.10+)
-				},
-			}
-		end,
+			-- Command line completion (very useful for : commands, searches)
+			cmdline = {
+				keymap = { preset = "inherit" },
+				completion = { menu = { auto_show = true } },
+			},
+		},
 		config = function(_, opts)
-			require("luasnip.loaders.from_vscode").lazy_load()
-			require("cmp").setup(opts)
+			require("blink.cmp").setup(opts)
 		end,
 	},
 }
