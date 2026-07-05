@@ -44,8 +44,8 @@ return {
 					map("n", "<leader>hq", gitsigns.setqflist, "Git: Send Hunks to QF")
 
 					-- Toggles
-					map("n", "<leader>tb", gitsigns.toggle_current_line_blame, "Git: Toggle Line Blame")
-					map("n", "<leader>tw", gitsigns.toggle_word_diff, "Git: Toggle Word Diff")
+					map("n", "<leader>hB", gitsigns.toggle_current_line_blame, "Git: Toggle Line Blame")
+					map("n", "<leader>hw", gitsigns.toggle_word_diff, "Git: Toggle Word Diff")
 
 					-- Text object
 					map({ "o", "x" }, "ih", gitsigns.select_hunk, "Git: Select Hunk")

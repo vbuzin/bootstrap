@@ -26,6 +26,44 @@ return {
 							hidden = { "preview" },
 						},
 					},
+					buffers = {
+						-- Use a safe snapshot preview for buffers to avoid side-effects and
+						-- exceptions from special buffers (e.g. netrw, terminal) when their
+						-- buffer is set directly into the preview window (triggers ftplugins,
+						-- autocommands, etc). For normal buffers we snapshot current lines
+						-- (captures unsaved changes) without hijacking the user's buffer.
+						preview = function(ctx)
+							local item = ctx.item
+							local b = item.buf
+							if b and vim.api.nvim_buf_is_valid(b) and vim.api.nvim_buf_is_loaded(b) then
+								ctx.preview:reset()
+								local name = vim.api.nvim_buf_get_name(b)
+								if name == "" then
+									name = "[Scratch]"
+								end
+								ctx.preview:set_title(name)
+								local ok, lines = pcall(vim.api.nvim_buf_get_lines, b, 0, -1, false)
+								lines = ok and lines or { "<failed to read buffer>" }
+								if #lines > 5000 then
+									lines = vim.list_slice(lines, 1, 5000)
+									lines[#lines + 1] = "... (preview truncated)"
+								end
+								ctx.preview:set_lines(lines)
+								local bt = item.buftype or vim.bo[b].buftype
+								local ft = item.filetype or vim.bo[b].filetype
+								if bt == "" and ft ~= "" and ft ~= "netrw" then
+									pcall(function()
+										ctx.preview:highlight({ ft = ft })
+									end)
+								end
+								pcall(function()
+									ctx.preview:loc()
+								end)
+							else
+								Snacks.picker.preview.file(ctx)
+							end
+						end,
+					},
 				},
 				icons = {
 					tree = {
@@ -50,9 +88,7 @@ return {
              { "<leader>sw", function() Snacks.picker.grep_word() end,              desc = "Visual selection or word", mode = { "n", "x" } },
              -- Other
              { "<leader>sC", function() Snacks.picker.commands() end,               desc = "Commands" },
-             { "<leader>sd", function()
-                 Snacks.picker.diagnostics({ severity = vim.g.diagnostic_severity })
-             end, desc = "Diagnostics (current severity filter)" },
+             { "<leader>sd", function() Snacks.picker.diagnostics({ severity = vim.g.diagnostic_severity }) end, desc = "Diagnostics (current severity filter)" },
              { "<leader>sh", function() Snacks.picker.help() end,                   desc = "Help Pages" },
              { "<leader>sj", function() Snacks.picker.jumps() end,                  desc = "Jumps" },
              { "<leader>sk", function() Snacks.picker.keymaps() end,                desc = "Keymaps" },

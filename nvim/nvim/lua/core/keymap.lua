@@ -39,11 +39,16 @@ kmap.set("n", "g,", "g,zz", { silent = true, desc = "Newer change" })
 kmap.set("v", "J", ":m '>+1<CR>gv=gv") -- Move selection down
 kmap.set("v", "K", ":m '<-2<CR>gv=gv") -- Move selection up
 
--- Managing buffers
-kmap.set("n", "<leader>bp", ":bp<cr>", { desc = "Previous" })
-kmap.set("n", "<leader>bn", ":bn<cr>", { desc = "Next" })
-kmap.set("n", "<leader>bd", ":bd<cr>", { desc = "Delete" })
-kmap.set("n", "<leader>bk", ":bp | bd #<cr>", { desc = "Delete (keep window)" })
+-- Managing buffers and tabs
+kmap.set("n", "<leader>bp", ":bp<cr>", { desc = "Previous buffer" })
+kmap.set("n", "<leader>bn", ":bn<cr>", { desc = "Next buffer" })
+kmap.set("n", "<leader>bd", ":bd<cr>", { desc = "Delete buffer" })
+kmap.set("n", "<leader>bk", ":bp | bd #<cr>", { desc = "Delete buffer (keep window)" })
+
+kmap.set("n", "<leader>tN", ":tabnew<cr>", { desc = "New tab" })
+kmap.set("n", "<leader>tp", ":tabprevious<cr>", { desc = "Previous tab" })
+kmap.set("n", "<leader>tn", ":tabnext<cr>", { desc = "Next tab" })
+kmap.set("n", "<leader>td", ":tabclose<cr>", { desc = "Close tab" })
 
 -- Make j and k move by visual line, not actual line, when text is soft-wrapped
 kmap.set("n", "j", "gj", { desc = "Down (visual)" })
