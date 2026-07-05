@@ -36,18 +36,18 @@
       ],
     },
   },
+  {
+    "context": "ProjectPanel",
+    "unbind": {
+      "alt-cmd-shift-f": "project_panel::NewSearchInDirectory",
+    },
+  },
+  {
+    "bindings": {
+      "alt-cmd-shift-f": "text_finder::Toggle",
+    },
+  },
   // Vim
-  {
-    "bindings": {
-      "cmd-shift-v": "workspace::ToggleVimMode",
-    },
-  },
-  {
-    "context": "vim_mode == normal || vim_mode == visual",
-    "bindings": {
-      "g w": "vim::HelixJumpToWord",
-    },
-  },
   {
     "context": "vim_mode == visual",
     "bindings": {
@@ -57,49 +57,20 @@
   {
     "context": "(vim_mode == normal || vim_mode == select) && !menu",
     "bindings": {
-      "f": [
-        "vim::PushFindForward",
-        {
-          "before": false,
-          "multiline": true
-        }
-      ]
-    }
-  },
-  {
-    "context": "(vim_mode == normal || vim_mode == select) && !menu",
-    "bindings": {
-      "t": [
-        "vim::PushFindForward",
-        {
-          "before": true,
-          "multiline": true
-        }
-      ]
-    }
-  },
-  {
-    "context": "(vim_mode == normal || vim_mode == select) && !menu",
-    "bindings": {
+      "f": ["vim::PushFindForward", { "before": false, "multiline": true }],
+      "t": ["vim::PushFindForward", { "before": true, "multiline": true }],
       "shift-f": [
         "vim::PushFindBackward",
-        {
-          "after": false,
-          "multiline": true
-        }
-      ]
-    }
-  },
-  {
-    "context": "(vim_mode == normal || vim_mode == select) && !menu",
-    "bindings": {
+        { "after": false, "multiline": true },
+      ],
       "shift-t": [
         "vim::PushFindBackward",
-        {
-          "after": true,
-          "multiline": true
-        }
-      ]
-    }
-  }
+        { "after": true, "multiline": true },
+      ],
+
+      "g w": "vim::HelixJumpToWord",
+      "s": "vim::PushSneak",
+      "shift-s": "vim::PushSneakBackward",
+    },
+  },
 ]

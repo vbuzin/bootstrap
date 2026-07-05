@@ -13,13 +13,8 @@ return {
 				},
 			},
 			picker = {
-				exclude = {
-					".git",
-					"node_modules",
-					"dist",
-					"build",
-					"target",
-				},
+				-- Common excludes for file listings (top level is sufficient for most sources)
+				exclude = { ".git", "node_modules", "dist", "build", "target" },
 				layout = {
 					preset = "ivy",
 				},
@@ -200,14 +195,6 @@ return {
 				rust = { "string_content", "comment" },
 			},
 		},
-		config = function(_, opts)
-			require("nvim-autopairs").setup(opts)
-			local npairs = require("nvim-autopairs")
-			local Rule = require("nvim-autopairs.rule")
-			npairs.add_rules({
-				Rule("|", "|", "rust")
-			}, "rust")
-		end,
 	},
 	-- Comments
 	{

@@ -10,7 +10,6 @@ if vim.fn.executable("rg") == 1 then
 end
 
 opt.autowrite = true
-opt.clipboard = "unnamedplus"
 opt.cursorline = true
 opt.incsearch = true
 opt.laststatus = 3

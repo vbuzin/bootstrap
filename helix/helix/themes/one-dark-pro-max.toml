@@ -1,0 +1,127 @@
+# One Dark Pro Max
+# Ported from https://github.com/bukitoka/one-dark-pro-max (Zed)
+# Adapted for Helix to match the onedarkpro.nvim usage in this repo
+# (pink used for vars + as the effective "error"/diagnostic color to keep
+#  function names + diagnostics looking consistent with nvim/Zed adaptation).
+
+"tag" = { fg = "pink" }
+"attribute" = { fg = "orange" }
+"comment" = { fg = "comment", modifiers = ["italic"] }
+"constant" = { fg = "orange" }
+"constant.numeric" = { fg = "orange" }
+"constant.builtin" = { fg = "orange" }
+"constant.character.escape" = { fg = "cyan" }
+"constructor" = { fg = "pink" }
+"function" = { fg = "blue" }
+"function.builtin" = { fg = "yellow" }
+"function.macro" = { fg = "purple" }
+"keyword" = { fg = "purple" }
+"keyword.control" = { fg = "purple" }
+"keyword.control.import" = { fg = "purple" }
+"keyword.directive" = { fg = "purple" }
+"keyword.storage" = { fg = "purple" }
+"label" = { fg = "purple" }
+"namespace" = { fg = "blue" }
+"operator" = { fg = "fg" }
+"keyword.operator" = { fg = "fg" }
+"special" = { fg = "blue" }
+"string" = { fg = "green" }
+"string.regex" = { fg = "pink" }
+"string.special" = { fg = "pink" }
+"string.special.symbol" = { fg = "pink" }
+"enum" = { fg = "cyan" }
+"type" = { fg = "yellow" }
+"variable" = { fg = "pink" }
+"variable.builtin" = { fg = "yellow" }
+"variable.parameter" = { fg = "pink" }
+"variable.other.member" = { fg = "pink" }
+"embedded" = { fg = "fg" }
+"punctuation" = { fg = "fg" }
+"punctuation.special" = { fg = "fg" }
+
+"markup.heading" = { fg = "red" }
+"markup.raw.inline" = { fg = "green" }
+"markup.bold" = { fg = "yellow", modifiers = ["bold"] }
+"markup.italic" = { fg = "purple", modifiers = ["italic"] }
+"markup.strikethrough" = { modifiers = ["crossed_out"] }
+"markup.list" = { fg = "red" }
+"markup.quote" = { fg = "yellow" }
+"markup.link.url" = { fg = "cyan", modifiers = ["underlined"] }
+"markup.link.text" = { fg = "purple" }
+
+"diff.plus" = "green"
+"diff.delta" = "yellow"
+"diff.minus" = "red"
+
+"diagnostic.info".underline = { color = "blue", style = "curl" }
+"diagnostic.hint".underline = { color = "green", style = "curl" }
+"diagnostic.warning".underline = { color = "yellow", style = "curl" }
+"diagnostic.error".underline = { color = "pink", style = "curl" }
+"diagnostic.unnecessary" = { modifiers = ["dim"] }
+"diagnostic.deprecated" = { modifiers = ["crossed_out"] }
+
+"info" = { fg = "blue", modifiers = ["bold"] }
+"hint" = { fg = "green", modifiers = ["bold"] }
+"warning" = { fg = "yellow", modifiers = ["bold"] }
+"error" = { fg = "pink", modifiers = ["bold"] }
+
+"ui.background" = { bg = "bg" }
+"ui.virtual" = { fg = "gray" }
+"ui.virtual.indent-guide" = { fg = "gray" }
+"ui.virtual.whitespace" = { fg = "comment" }
+"ui.virtual.ruler" = { bg = "subtle" }
+"ui.virtual.inlay-hint" = { fg = "comment" }
+"ui.virtual.jump-label" = { fg = "yellow", modifiers = ["bold"] }
+
+"ui.cursor" = { modifiers = ["reversed"] }
+"ui.cursor.primary" = { fg = "bg", bg = "blue" }
+"ui.cursor.match" = { fg = "blue", modifiers = ["underlined"] }
+
+"ui.selection" = { bg = "sel" }
+"ui.selection.primary" = { bg = "sel" }
+"ui.cursorline.primary" = { bg = "subtle" }
+
+"ui.highlight" = { bg = "subtle" }
+"ui.highlight.frameline" = { bg = "#97202a" }
+
+"ui.linenr" = { fg = "gray" }
+"ui.linenr.selected" = { fg = "fg" }
+
+"ui.statusline" = { fg = "fg", bg = "bg" }
+"ui.statusline.inactive" = { fg = "comment", bg = "bg" }
+"ui.statusline.normal" = { fg = "bg", bg = "blue", modifiers = ["bold"] }
+"ui.statusline.insert" = { fg = "bg", bg = "green", modifiers = ["bold"] }
+"ui.statusline.select" = { fg = "bg", bg = "purple", modifiers = ["bold"] }
+
+"ui.bufferline" = { fg = "comment", bg = "bg" }
+"ui.bufferline.active" = { fg = "bg", bg = "blue", underline = { color = "bg", style = "line" } }
+"ui.bufferline.background" = { bg = "bg" }
+
+"ui.text" = { fg = "fg" }
+"ui.text.directory" = { fg = "blue" }
+"ui.text.focus" = { fg = "fg", bg = "subtle", modifiers = ["bold"] }
+
+"ui.help" = { fg = "fg", bg = "subtle" }
+"ui.popup" = { bg = "subtle" }
+"ui.window" = { fg = "gray" }
+"ui.menu" = { fg = "fg", bg = "subtle" }
+"ui.menu.selected" = { fg = "bg", bg = "blue" }
+"ui.menu.scroll" = { fg = "fg", bg = "gray" }
+
+"ui.debug" = { fg = "pink" }
+
+[palette]
+bg = "#080909"
+fg = "#abb2bf"
+comment = "#7F838C"
+blue = "#61afef"
+purple = "#c678dd"
+green = "#98c379"
+yellow = "#e5c07b"
+orange = "#d19a66"
+cyan = "#56b6c2"
+red = "#e05561"      # terminal/ansi red (used for some markup + diff)
+pink = "#E15687"      # variables + constructors (and diagnostics/error to match nvim onedarkpro adaptation)
+gray = "#495162"
+subtle = "#0f1419"
+sel = "#2c313a"

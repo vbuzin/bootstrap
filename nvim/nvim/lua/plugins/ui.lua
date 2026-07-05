@@ -22,7 +22,7 @@ return {
 		event = "VeryLazy",
 		opts = {
 			options = {
-				theme = "iceberg_dark",
+				theme = "onedark",
 			},
 		},
 	},

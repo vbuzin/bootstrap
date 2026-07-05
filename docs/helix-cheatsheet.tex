@@ -1,0 +1,554 @@
+% Helix Cheatsheet — comprehensive reference for new users from Neovim
+% Two colour modes:
+%   screen (default)  — dark One Dark background, compile as-is
+%   print             — white background, compile with: \def\printmode{1}
+%
+% Build:  see docs/compile.sh  (wraps Docker + pdflatex)
+%   ./compile.sh helix          — both variants
+%   ./compile.sh helix screen   — dark only
+%   ./compile.sh helix print    — light only
+%
+% Philosophy: learn selection-first (Kakoune model), not Vim habits.
+%   selection → action   •   multiple selections are native   •   space ? discovers everything
+
+\documentclass[9pt,a4paper,landscape]{extarticle}
+
+\usepackage[landscape,a4paper,
+            top=5mm,bottom=4mm,left=5mm,right=5mm]{geometry}
+\usepackage{multicol}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{array}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{enumitem}
+
+% ── Colour scheme ────────────────────────────────────────────────────────────
+\ifdefined\printmode
+  \colorlet{pagebg}{white}
+  \definecolor{hdrbg}{RGB}{215,220,230}
+  \definecolor{hdrfg}{RGB}{25,30,45}
+  \definecolor{keyclr}{RGB}{15,55,145}
+  \definecolor{bodyclr}{RGB}{10,10,15}
+  \definecolor{noteclr}{RGB}{60,70,90}
+  \definecolor{ruleclr}{RGB}{175,180,192}
+  \definecolor{titlebg}{RGB}{35,40,55}
+  \definecolor{titlefg}{RGB}{240,242,248}
+\else
+  \definecolor{pagebg}{RGB}{40,44,52}
+  \definecolor{hdrbg}{RGB}{60,66,82}
+  \definecolor{hdrfg}{RGB}{228,234,244}
+  \definecolor{keyclr}{RGB}{97,175,239}
+  \definecolor{bodyclr}{RGB}{171,178,191}
+  \definecolor{noteclr}{RGB}{130,155,180}
+  \definecolor{ruleclr}{RGB}{72,82,98}
+  \definecolor{titlebg}{RGB}{30,34,42}
+  \definecolor{titlefg}{RGB}{228,234,244}
+\fi
+
+\pagecolor{pagebg}
+\color{bodyclr}
+
+% ── Layout ───────────────────────────────────────────────────────────────────
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\columnsep}{2.8mm}
+\setlength{\columnseprule}{0.25pt}
+\setlength{\multicolsep}{0.5pt}
+\renewcommand{\columnseprulecolor}{\color{ruleclr}}
+\renewcommand{\baselinestretch}{0.76}
+\renewcommand{\arraystretch}{0.74}
+
+% ── Helpers ──────────────────────────────────────────────────────────────────
+
+% Monospace bold key  (\k is a reserved LaTeX accent — use \kbd)
+\newcommand{\kbd}[1]{{\ttfamily\bfseries\footnotesize\color{keyclr}#1}}
+
+% Section header — full-width coloured bar
+\newcommand{\sect}[1]{%
+  \vspace{0pt}%
+  {\setlength{\fboxsep}{0.5pt}%
+   \noindent\colorbox{hdrbg}{\parbox{\dimexpr\columnwidth-1pt\relax}{%
+     \color{hdrfg}\bfseries\sffamily\footnotesize\strut\,#1}}}%
+  \par\vspace{0pt}}
+
+% Extra vertical space between rows (0 = content-height only, tune up if space allows)
+\newlength{\kdsep}\setlength{\kdsep}{0pt}
+
+% \kd{keys}{description}  —  one row in a kt table
+\newcommand{\kd}[2]{\kbd{#1} & #2 \\[\kdsep]}
+
+% Key table: both columns p{} so they share the same vtop reference —
+% first-line baselines always align regardless of cell height.
+\newenvironment{kt}{%
+  \setlength{\tabcolsep}{0pt}%
+  \begin{tabular}{@{}>{\footnotesize\raggedright\arraybackslash}p{17mm}@{\hspace{1.5pt}}>{\footnotesize\color{bodyclr}\raggedright\arraybackslash}p{\dimexpr\columnwidth-17mm-1.5pt\relax}@{}}%
+}{%
+  \end{tabular}\par}
+
+% Italic note below a section
+\newcommand{\snote}[1]{{\scriptsize\color{noteclr}\textit{#1}}\vspace{0pt}\par}
+
+\pagestyle{empty}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\begin{document}
+% ═══════════════════════════════════════════════════════════════════════════
+
+% ── Title bar ────────────────────────────────────────────────────────────────
+{\setlength{\fboxsep}{4pt}%
+ \noindent\colorbox{titlebg}{\parbox{\dimexpr\textwidth-8pt\relax}{%
+   \centering\color{titlefg}%
+   {\large\bfseries\sffamily Helix Cheatsheet}\enspace
+   {\footnotesize\color{hdrfg}%
+    selection $\rightarrow$ action \textbullet\ multiple cursors \textbullet\ built-in LSP/TS/pickers \textbullet\ SPC ? discover \textbullet\ Kakoune model}}}}
+\vspace{1pt}
+
+\begin{multicols}{5}
+
+% ═══════════════════════════════════════
+\sect{HELIX MINDSET (start here)}
+\begin{kt}
+\kd{:tutor}{interactive built-in tutorial --- run it!}
+\kd{SPC ?}{command palette / key discovery (use it constantly)}
+\kd{selection first}{select target(s) before the verb (d/c/y etc)}
+\kd{multi-sel core}{C/Alt-C add cursors; s select matches inside}
+\kd{x}{select line (repeat x to extend downward)}
+\kd{think ranges}{cursor = 1-char sel; act on any sel(s)}
+\kd{no visual mode}{v = select/extend mode (motions now extend)}
+\kd{avoid dw etc}{don't port Vim habits --- select then act}
+\end{kt}
+\snote{First thing: run \kbd{:tutor}. Use SPC ? constantly to discover.}
+
+% ═══════════════════════════════════════
+\sect{MODES}
+\begin{kt}
+\kd{Normal}{default --- navigation + commands}
+\kd{Insert}{i / a / o / I / A / O --- minimal bindings}
+\kd{Select (v)}{movements \textit{extend} selections instead of moving cursor}
+\kd{goto (g)}{g prefix --- jumps, LSP goto, file ends}
+\kd{match (m)}{m prefix --- brackets, surround, textobjects}
+\kd{view (z / Z)}{z = temp view ops; Z = sticky view (Esc to exit)}
+\kd{window (C-w)}{split / nav / swap windows (Vim-like)}
+\kd{space (SPC)}{pickers + LSP + clipboard (leader-like)}
+\kd{:}{command / ex mode (typable commands)}
+\end{kt}
+\snote{Esc always returns to Normal. Changes only checkpoint on Esc from Insert.}
+
+% ═══════════════════════════════════════
+\sect{MOVEMENT (normal mode)}
+\begin{kt}
+\kd{h / j / k / l}{left / down / up / right (visual lines for j/k)}
+\kd{w / b / e}{next/prev word start, word end}
+\kd{W / B / E}{WORD (non-word chars separate)}
+\kd{t\{c\} / f\{c\}}{till / find char (works \textit{across lines})}
+\kd{T / F}{prev till / prev find}
+\kd{Alt-.}{repeat last f/t/m/[ motion}
+\kd{Home / End}{line start / end}
+\kd{0 / \$}{start / end (goto mode has more)}
+\kd{C-u / C-d}{half page up/down (cursor moves with view)}
+\kd{C-b / C-f}{page up / down}
+\kd{C-o / C-i}{jump list backward / forward}
+\kd{C-s}{save current selection to jumplist}
+\kd{gg / G}{file start / end (also via g mode)}
+\end{kt}
+\snote{f/t/F/T are \textbf{not} line-limited like Vim. Use Alt-. to repeat.}
+
+% ═══════════════════════════════════════
+\sect{GOTO MODE (g prefix)}
+\begin{kt}
+\kd{gg}{file start (or nG for line n)}
+\kd{ge}{file end}
+\kd{gh / gl}{line home / end}
+\kd{gs}{first non-blank}
+\kd{gt / gc / gb}{view top / center / bottom}
+\kd{gd}{goto definition (LSP)}
+\kd{gy}{goto type def (LSP)}
+\kd{gr}{goto references (LSP)}
+\kd{gi}{goto implementation (LSP)}
+\kd{gf}{open file under cursor / sel}
+\kd{ga}{last accessed file}
+\kd{gm}{last modified file}
+\kd{gn / gp}{next / prev buffer}
+\kd{g.}{last modification in file}
+\kd{gw}{word jump labels (type chars)}
+\kd{gj / gk}{move by \textit{textual} line (not wrapped)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{SELECTION MANIPULATION}
+\begin{kt}
+\kd{x}{select current line (repeat = extend down)}
+\kd{X}{extend selection to full line bounds}
+\kd{Alt-x}{shrink to line bounds}
+\kd{\%}{select entire file}
+\kd{s}{select \textit{all regex matches} inside current sel(s)}
+\kd{S}{split selection(s) on regex}
+\kd{Alt-s}{split selection on newlines}
+\kd{Alt--}{merge all selections}
+\kd{Alt-\_}{merge consecutive selections}
+\kd{\&}{align selections into columns}
+\kd{\_}{trim whitespace from selections}
+\kd{;}{collapse selection to single cursor (keep pos)}
+\kd{Alt-;}{flip anchor $\leftrightarrow$ cursor}
+\kd{Alt-:}{force selection forward}
+\kd{,}{keep only primary selection}
+\kd{Alt-,}{remove primary selection}
+\kd{C}{duplicate selection + cursor to next line}
+\kd{Alt-C}{duplicate selection + cursor to prev line}
+\kd{( / )}{rotate main selection backward / forward}
+\kd{Alt-(/Alt-)}{rotate sel contents (parens)}
+\end{kt}
+\snote{This is the heart of Helix. Master x, s, C, Alt-C, ; and \% early.}
+
+% ═══════════════════════════════════════
+\sect{TS SYNTAX SELECTIONS (Alt)}
+\begin{kt}
+\kd{Alt-o / Alt-Up}{expand to parent syntax node}
+\kd{Alt-i / Alt-Down}{shrink to child syntax node}
+\kd{Alt-p / Alt-Left}{previous sibling node}
+\kd{Alt-n / Alt-Right}{next sibling node}
+\kd{Alt-a}{select all siblings}
+\kd{Alt-I}{select all children of node}
+\kd{Alt-e}{move to end of parent node}
+\kd{Alt-b}{move to start of parent node}
+\end{kt}
+\snote{Requires tree-sitter grammar. Combine with ma/mi for powerful selects.}
+
+% ═══════════════════════════════════════
+\sect{CHANGES (act on selections)}
+\begin{kt}
+\kd{d}{delete selection (yanks to ")}
+\kd{Alt-d}{delete, \textit{no yank} (black-hole)}
+\kd{c}{change = delete + insert}
+\kd{Alt-c}{change, no yank}
+\kd{y}{yank selection(s)}
+\kd{p / P}{paste after / before selection}
+\kd{"r y / "r p}{use register r for yank/paste}
+\kd{r\{c\}}{replace each char in sel with c}
+\kd{R}{replace selection(s) with last yank}
+\kd{\textasciitilde}{toggle case of selection}
+\kd{\textasciigrave}{lowercase selection}
+\kd{Alt-\textasciigrave}{uppercase selection}
+\kd{> / <}{indent / dedent selection}
+\kd{=}{format selection (LSP formatter)}
+\kd{C-a / C-x}{increment / decrement number under cursor}
+\kd{J / Alt-J}{join lines (no space / with space)}
+\end{kt}
+\snote{All operations apply to \textit{every} active selection simultaneously.}
+
+% ═══════════════════════════════════════
+\sect{INSERT}
+\begin{kt}
+\kd{i}{insert before sel}
+\kd{a}{append after sel}
+\kd{I}{insert at line start}
+\kd{A}{insert at line end}
+\kd{o}{open below + insert}
+\kd{O}{open above + insert}
+\kd{.}{repeat last insert}
+\kd{Esc}{back to normal (checkpoint)}
+\kd{C-s}{commit undo checkpoint}
+\kd{C-x}{completion menu}
+\kd{C-r}{insert register}
+\kd{C-w/Alt-BS}{del word back}
+\kd{Alt-d/Alt-Del}{del word fwd}
+\kd{C-u}{kill to line start}
+\kd{C-k}{kill to end}
+\kd{C-h/BS}{del char back}
+\kd{C-d/Del}{del char fwd}
+\kd{C-j/Enter}{newline}
+\end{kt}
+\snote{Minimal insert by design. Disable arrows in config later.}
+
+% ═══════════════════════════════════════
+\sect{SELECT / EXTEND MODE (v)}
+\begin{kt}
+\kd{v}{enter --- all movement now \textit{extends} sel}
+\kd{(normal keys)}{h/j/k/l/w/... extend instead of move}
+\kd{g...}{goto motions also extend}
+\kd{n / N}{in select: add next/prev search match}
+\kd{Esc}{back to normal (keep extended sel)}
+\end{kt}
+\snote{Toggle v on/off while searching to accumulate matches into selections.}
+
+% ═══════════════════════════════════════
+\sect{SEARCH}
+\begin{kt}
+\kd{/}{search forward (regex, stores in / reg)}
+\kd{?}{search backward}
+\kd{n / N}{select next / prev match (replaces sel)}
+\kd{*}{search using current sel (word boundaries)}
+\kd{Alt-*}{search using current sel (exact)}
+\kd{"r /}{use register r for search pattern}
+\end{kt}
+\snote{Combine with v (select mode) or s to accumulate many matches.}
+
+% ═══════════════════════════════════════
+\sect{MATCH MODE (m prefix)}
+\begin{kt}
+\kd{mm}{goto matching bracket (TS)}
+\kd{ms\{c\}}{surround add (e.g. ms")}
+\kd{mr\{old\}\{new\}}{replace surrounding (mr"' )}
+\kd{md\{c\}}{delete surrounding (md")}
+\kd{ma\{obj\}}{select \textbf{around} textobject}
+\kd{mi\{obj\}}{select \textbf{inside} textobject}
+\end{kt}
+\snote{ma/mi for around/inside. Counts work (2ms"). Requires TS for f/t etc.}
+
+% ═══════════════════════════════════════
+\sect{TEXTOBJECTS \& SURROUND}
+\begin{kt}
+\kd{w/W}{word/WORD}
+\kd{p}{paragraph}
+\kd{f}{function (TS)}
+\kd{t}{type/class (TS)}
+\kd{a}{arg/param (TS)}
+\kd{c}{comment (TS)}
+\kd{T}{test (TS)}
+\kd{g}{change/hunk}
+\kd{m}{closest pair}
+\kd{( [ ' "}{specific pair}
+\kd{ms\{c\}}{add surround}
+\kd{mr old new}{replace surround}
+\kd{md\{c\}}{delete surround}
+\end{kt}
+\snote{ma f = around fn. \% then s then mr turns many. }
+
+% ═══════════════════════════════════════
+\sect{UNIMPAIRED NAV ([ ])}
+\begin{kt}
+\kd{]d / [d}{next / prev diagnostic (LSP)}
+\kd{]D / [D}{last / first diagnostic}
+\kd{]f / [f}{next / prev function (TS)}
+\kd{]t / [t}{next / prev type/class}
+\kd{]a / [a}{next / prev arg/param}
+\kd{]c / [c}{next / prev comment}
+\kd{]T / [T}{next / prev test}
+\kd{]p / [p}{next / prev paragraph}
+\kd{]g / [g}{next / prev change}
+\kd{]G / [G}{last / first change}
+\kd{]Space / [Space}{add blank line below / above}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{SPACE MODE (SPC prefix)}
+\begin{kt}
+\kd{f / F}{file picker (workspace / cwd)}
+\kd{b}{buffer picker}
+\kd{j}{jumplist picker}
+\kd{g}{changed files (git) picker}
+\kd{k}{hover / docs popup (LSP)}
+\kd{s / S}{document / workspace symbols (LSP)}
+\kd{d / D}{document / workspace diagnostics}
+\kd{r}{rename symbol (LSP)}
+\kd{a}{code action (LSP)}
+\kd{h}{select references to symbol}
+\kd{'}{re-open last fuzzy picker}
+\kd{w}{enter window mode}
+\kd{c / C}{toggle line / block comments}
+\kd{Alt-c}{toggle line comments}
+\kd{p / P}{paste system clipboard after / before}
+\kd{y / Y}{yank sel(s) / main sel to clipboard}
+\kd{R}{replace selections with clipboard}
+\kd{/}{global search (regex in workspace)}
+\kd{?}{command palette (discover keys + cmds)}
+\end{kt}
+\snote{SPC ? is your best friend when learning. SPC ' resumes global search etc.}
+
+% ═══════════════════════════════════════
+\sect{WINDOW MODE (C-w)}
+\begin{kt}
+\kd{C-w / w}{next window}
+\kd{v / C-v}{vertical split}
+\kd{s / C-s}{horizontal split}
+\kd{h/j/k/l}{move to left/down/up/right window}
+\kd{H/J/K/L}{swap window left/down/up/right}
+\kd{q / C-q}{close window}
+\kd{o / C-o}{only current window (close others)}
+\kd{f / F}{goto file in sel (hsplit / vsplit)}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{VIEW MODE (z / Z)}
+\begin{kt}
+\kd{z / c}{center line vertically}
+\kd{t}{align line to top}
+\kd{b}{align line to bottom}
+\kd{m}{align view horizontally to middle}
+\kd{j/k}{scroll view down/up (no cursor move)}
+\kd{C-f / C-b}{page down/up}
+\kd{C-u / C-d}{half page (cursor moves)}
+\end{kt}
+\snote{Z makes it sticky (Esc exits). Great for reading without moving point.}
+
+% ═══════════════════════════════════════
+\sect{PICKER KEYS}
+\begin{kt}
+\kd{Tab / C-n / Down}{next entry}
+\kd{S-Tab / C-p / Up}{prev entry}
+\kd{C-u / PgUp}{page up}
+\kd{C-d / PgDn}{page down}
+\kd{Home / End}{first / last}
+\kd{Enter}{open selected}
+\kd{Alt-Enter}{open in background (keep picker)}
+\kd{C-s}{open in horizontal split}
+\kd{C-v}{open in vertical split}
+\kd{C-t}{toggle preview}
+\kd{Esc / C-c}{close picker}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{PROMPT / COMMAND-LINE}
+\begin{kt}
+\kd{Esc / C-c}{close / cancel}
+\kd{C-b / Left}{char left}
+\kd{Alt-b/C-Left}{word left}
+\kd{C-f / Right}{char right}
+\kd{Alt-f/C-Right}{word right}
+\kd{C-a / Home}{prompt start}
+\kd{C-e / End}{prompt end}
+\kd{C-w / C-BS}{delete word back}
+\kd{Alt-d/C-Del}{delete word fwd}
+\kd{C-u}{kill to start}
+\kd{C-k}{kill to end}
+\kd{C-r}{insert register (then name)}
+\kd{C-s}{insert word under cursor}
+\kd{C-p / Up}{history prev}
+\kd{C-n / Down}{history next}
+\kd{Tab / S-Tab}{next / prev completion}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{REGISTERS}
+\begin{kt}
+\kd{"r before op}{use register r (yank/paste/change/delete)}
+\kd{"}{default yank register (last yank)}
+\kd{/}{last search pattern}
+\kd{:}{last command}
+\kd{@}{last macro}
+\kd{+}{system clipboard (yank/paste join)}
+\kd{*}{primary selection clipboard}
+\kd{.}{current selection contents (read-only)}
+\kd{\%}{current filename (read-only)}
+\kd{\#}{selection indices (1,2,...) (read-only)}
+\kd{\_}{black hole (write discards)}
+\end{kt}
+\snote{"+y yanks to system. Multiple sels joined by newline on clipboard yank.}
+
+% ═══════════════════════════════════════
+\sect{SHELL \& MACROS}
+\begin{kt}
+\kd{|}{pipe sel thru cmd (replace w/ stdout)}
+\kd{Alt-|}{pipe to cmd, ignore out}
+\kd{!}{insert cmd stdout before sel}
+\kd{Alt-!}{append cmd stdout after}
+\kd{\$}{keep sels where cmd==0}
+\kd{:sh / :!}{run shell cmd}
+\kd{:pipe / :| }{pipe sels}
+\kd{Q}{start/stop macro rec}
+\kd{q}{replay macro}
+\end{kt}
+\snote{Macros still experimental --- prefer multi-sel + s for most bulk edits.}
+
+% ═══════════════════════════════════════
+\sect{TYPABLE COMMANDS (:)}
+\begin{kt}
+\kd{:w / :write}{save}
+\kd{:q / :quit}{close view}
+\kd{:q!}{force quit}
+\kd{:wq / :x}{write + quit}
+\kd{:bc / :bclose}{close buffer}
+\kd{:bco}{close other buffers}
+\kd{:bn / :bp}{next / prev buffer}
+\kd{:format / :fmt}{format via LSP or formatter}
+\kd{:cd}{change directory}
+\kd{:pwd}{show cwd}
+\kd{:reload}{discard changes + reload file}
+\kd{:theme}{switch theme (no arg = current)}
+\kd{:tutor}{open interactive tutor}
+\kd{:config-open}{edit your config.toml}
+\kd{:lsp-restart}{restart language servers}
+\kd{:set / :toggle}{runtime option (e.g. search.smart-case)}
+\end{kt}
+\snote{Many more; use SPC ? or : then Tab to explore. :reflow for hard wrap.}
+
+% ═══════════════════════════════════════
+\sect{LSP WORKFLOW (built-in)}
+\begin{kt}
+\kd{SPC k}{hover docs}
+\kd{SPC s}{document symbols picker}
+\kd{SPC r}{rename}
+\kd{SPC a}{code action (quickfix/refactor)}
+\kd{gd / gy / gr / gi}{goto def/type/refs/impl}
+\kd{]d / [d}{next/prev diagnostic}
+\kd{SPC d}{document diagnostics picker}
+\kd{=}{format selection / :format}
+\kd{inlay hints}{toggle via config or command}
+\end{kt}
+\snote{No plugin install. Just open project with hx . --- servers auto-start per lang.}
+
+% ═══════════════════════════════════════
+\sect{MULTI-SELECTION TACTICS}
+\begin{kt}
+\kd{C/Alt-C}{add cursor below/above}
+\kd{\% s pat Enter}{select every match of regex in file}
+\kd{* or Alt-* then n}{search sel, add more matches}
+\kd{v n / v N}{in select mode: accumulate search hits}
+\kd{SPC / then pick}{global search + open files}
+\kd{ma f then c}{change inside every function at once}
+\kd{x C x C}{select several lines then edit together}
+\end{kt}
+\snote{This replaces 90\% of what you used macros / :\%s for in Vim.}
+
+% ═══════════════════════════════════════
+\sect{CONFIG \& BEHAVIORS}
+\begin{kt}
+\kd{theme}{"onedark" (or other)}
+\kd{line-number}{relative (in [editor])}
+\kd{auto-format}{true (on save)}
+\kd{auto-save}{false}
+\kd{cursorline}{true}
+\kd{cursor-shape}{normal=block insert=bar}
+\kd{file-picker}{hidden=true}
+\kd{keys.normal}{add your maps}
+\kd{trim-ws}{on write (opt)}
+\kd{jumplist}{C-o/C-i +C-s}
+\kd{undo}{persistent history}
+\kd{EditorConfig}{respected}
+\kd{smart-tab}{smart indent}
+\end{kt}
+\snote{File: ~/.config/helix/config.toml . Use :config-open + :config-reload}
+
+% ═══════════════════════════════════════
+\sect{COMMON GOTCHAS (from nvim)}
+\begin{kt}
+\kd{no :\%s}{use select-all + c or global search + replace}
+\kd{no visual block I}{use C to add cursors then i or c}
+\kd{dd is xd}{or x d; line select is explicit}
+\kd{yyp is x y p}{select line, yank, paste}
+\kd{f only line?}{no --- multiline in Helix}
+\kd{registers}{mostly same, but +/* special for clip}
+\kd{plugins}{almost none needed --- everything built-in}
+\end{kt}
+
+% ═══════════════════════════════════════
+\sect{QUICKSTART CHEAT}
+\begin{kt}
+\kd{hx file.rs}{open}
+\kd{SPC f}{find files}
+\kd{SPC / foo}{project search}
+\kd{x d}{delete current line}
+\kd{\% s foo Enter c}{change every foo in file}
+\kd{C C c bar Esc}{add cursors on 3 lines, change all}
+\kd{ma f c}{change inside all functions}
+\kd{SPC a}{apply code action at point}
+\kd{SPC r newname}{rename symbol}
+\kd{:w}{save}
+\kd{:bc or SPC w?}{close buffer}
+\end{kt}
+\snote{SPC ? for discovery. See official keymap.html for full list.}
+
+\end{multicols}
+\end{document}

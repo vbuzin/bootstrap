@@ -7,6 +7,11 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "agent_servers": {
+    "grok-build": {
+      "type": "registry"
+    }
+  },
   "proxy": "",
   "sticky_scroll": {
     "enabled": true,
@@ -58,6 +63,8 @@
   },
   "text_rendering_mode": "platform_default",
   "agent": {
+    "limit_content_width": true,
+    "flexible": true,
     "dock": "left",
     "default_profile": "write",
     "default_model": {

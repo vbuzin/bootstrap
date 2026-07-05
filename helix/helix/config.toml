@@ -1,0 +1,19 @@
+# Helix configuration
+# https://docs.helix-editor.com/configuration.html
+
+theme = "one-dark-pro-max"
+
+[editor]
+line-number = "relative"
+bufferline = "multiple"
+color-modes = true
+trim-final-newlines = true
+trim-trailing-whitespace = true
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.auto-save]
+focus-lost = true
