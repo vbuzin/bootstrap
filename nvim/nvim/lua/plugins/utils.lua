@@ -134,7 +134,7 @@ return {
 				{ "<leader>s", group = "search" },
 				{ "<leader>x", group = "diagnostics" },
 				{ "<leader>h", group = "git" },
-				{ "<leader>t", group = "toggle" },
+				{ "<leader>t", group = "tabs" },
 				{ "<leader>c", group = "code" },
 				-- g-prefix: explicit labels + sub-groups so which-key shows a clean organized list
 				{ "g", group = "goto / g" },
@@ -168,9 +168,83 @@ return {
 				-- sub-groups (appear as headers when prefix typed)
 				{ "gc", group = "comment" },
 				{ "gs", group = "swap" },
-				-- bracket navigation (also under g? no, top level brackets)
+				-- bracket navigation: [ = prev, ] = next
+				-- Explicit short labels for (almost) everything that appears under these
+				-- prefixes. This replaces raw rhs ("bnext", "call rust#Jump..."), long
+				-- defaults, and the giant mixed list. We hide only the rarely-used
+				-- punctuation motions to keep the popup focused and readable.
 				{ "[", group = "prev" },
 				{ "]", group = "next" },
+
+				-- Git hunks (gitsigns) — traditional [c/]c
+				{ "[c", desc = "Hunk" },
+				{ "]c", desc = "Hunk" },
+
+				-- Treesitter textobjects (note: class uses uppercase to avoid [c clash)
+				{ "[f", desc = "Function" },
+				{ "]f", desc = "Function" },
+				{ "[C", desc = "Class" },
+				{ "]C", desc = "Class" },
+				{ "[o", desc = "Block" },
+				{ "]o", desc = "Block" },
+				{ "[a", desc = "Argument" },
+				{ "]a", desc = "Argument" },
+				{ "[A", desc = "Arg end" },
+				{ "]A", desc = "Arg end" },
+				{ "[m", desc = "Method" },
+				{ "]m", desc = "Method" },
+				{ "[M", desc = "Method end" },
+				{ "]M", desc = "Method end" },
+
+				-- LSP diagnostics (override any long default for D)
+				{ "[d", desc = "Diagnostic" },
+				{ "]d", desc = "Diagnostic" },
+				{ "[D", desc = "First diagnostic" },
+				{ "]D", desc = "Last diagnostic" },
+
+				-- Lists (quickfix / loclist / tags / spell)
+				{ "[q", desc = "Quickfix" },
+				{ "]q", desc = "Quickfix" },
+				{ "[Q", desc = "Quickfix first" },
+				{ "]Q", desc = "Quickfix last" },
+				{ "[l", desc = "Loclist" },
+				{ "]l", desc = "Loclist" },
+				{ "[L", desc = "Loclist first" },
+				{ "]L", desc = "Loclist last" },
+				{ "[t", desc = "Tag" },
+				{ "]t", desc = "Tag" },
+				{ "[T", desc = "Tag first" },
+				{ "]T", desc = "Tag last" },
+				{ "[s", desc = "Spell" },
+				{ "]s", desc = "Spell" },
+
+				-- Buffers (common even when <leader>b is primary)
+				{ "[b", desc = "Buffer" },
+				{ "]b", desc = "Buffer" },
+				{ "[B", desc = "Buffer first" },
+				{ "]B", desc = "Buffer last" },
+
+				-- Marks / changes
+				{ "['", desc = "Change/yank start" },
+				{ "]'", desc = "Change/yank end" },
+
+				-- Sections / items (built-in + language ftplugins e.g. Rust)
+				{ "[[", desc = "Section" },
+				{ "]]", desc = "Section" },
+				{ "[]", desc = "Section end" },
+				{ "][", desc = "Section end" },
+
+				-- Hide noisy/low-value punctuation & blank-line motions
+				{ "[(", hidden = true },
+				{ "](", hidden = true },
+				{ "[{", hidden = true },
+				{ "]{", hidden = true },
+				{ "[<", hidden = true },
+				{ "]<", hidden = true },
+				{ "[%", hidden = true },
+				{ "]%", hidden = true },
+				{ "[_", hidden = true },
+				{ "]_", hidden = true },
 			},
 		},
 		keys = {

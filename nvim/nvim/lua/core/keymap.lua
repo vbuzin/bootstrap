@@ -19,10 +19,10 @@ kmap.set("n", "<C-i>", "<C-i>zz", { silent = true }) -- Go to newer cursor posit
 -- Mark Navigation
 kmap.set("n", "''", "''zz", { silent = true }) -- Go to position before the last jump
 kmap.set("n", "``", "``zz", { silent = true }) -- Go to precise position before the last jump
-kmap.set("n", "['", "['zz", { silent = true }) -- Go to the start of the previously changed/yanked text line
-kmap.set("n", "]'", "]'zz", { silent = true }) -- Go to the end of the previously changed/yanked text line
-kmap.set("n", "`[", "`[zz", { silent = true }) -- Go to the precise start of the previously changed/yanked text
-kmap.set("n", "`]", "`]zz", { silent = true }) -- Go to the precise end of the previously changed/yanked text
+kmap.set("n", "['", "['zz", { silent = true, desc = "Prev change/yank start" })
+kmap.set("n", "]'", "]'zz", { silent = true, desc = "Next change/yank end" })
+kmap.set("n", "`[", "`[zz", { silent = true, desc = "Precise prev change/yank start" })
+kmap.set("n", "`]", "`]zz", { silent = true, desc = "Precise next change/yank end" })
 kmap.set("n", "`.", "`.zz", { silent = true }) -- Go to the position of the last change in the current buffer
 kmap.set("n", "'.", "'.zz", { silent = true }) -- Go to the line of the last change in the current buffer
 

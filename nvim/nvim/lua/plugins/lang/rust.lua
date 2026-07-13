@@ -105,25 +105,39 @@ return {
 					-- Runnables / testables / debuggables
 					map("<leader>rr", function()
 						vim.ui.input({ prompt = "Run args (empty = none): " }, function(input)
-							if input == nil then return end
+							if input == nil then
+								return
+							end
 							local args = vim.split(input, " ", { trimempty = true })
 							require("rustaceanvim.runnables").runnables(args)
 						end)
 					end, "Runnables")
-					map("<leader>rt", function() vim.cmd.RustLsp("testables") end, "Testables")
+					map("<leader>rt", function()
+						vim.cmd.RustLsp("testables")
+					end, "Testables")
 					map("<leader>rd", function()
 						vim.ui.input({ prompt = "Debug args (empty = none): " }, function(input)
-							if input == nil then return end
+							if input == nil then
+								return
+							end
 							local args = vim.split(input, " ", { trimempty = true })
 							require("rustaceanvim.commands.debuggables").debuggables(args)
 						end)
 					end, "Debuggables")
 
 					-- Code navigation / editing
-					map("<leader>re", function() vim.cmd.RustLsp("expandMacro") end, "Expand Macro")
-					map("<leader>rc", function() vim.cmd.RustLsp("openCargo") end, "Open Cargo.toml")
-					map("<leader>rp", function() vim.cmd.RustLsp("parentModule") end, "Parent Module")
-					map("<leader>rj", function() vim.cmd.RustLsp("joinLines") end, "Join Lines")
+					map("<leader>re", function()
+						vim.cmd.RustLsp("expandMacro")
+					end, "Expand Macro")
+					map("<leader>rc", function()
+						vim.cmd.RustLsp("openCargo")
+					end, "Open Cargo.toml")
+					map("<leader>rp", function()
+						vim.cmd.RustLsp("parentModule")
+					end, "Parent Module")
+					map("<leader>rj", function()
+						vim.cmd.RustLsp("joinLines")
+					end, "Join Lines")
 
 					-- Override hover + code action with rustaceanvim's richer versions
 					vim.keymap.set({ "n", "v" }, "K", function()
@@ -134,11 +148,7 @@ return {
 					end, { buffer = bufnr, desc = "Code Action" })
 				end,
 
-				-- Disable semantic tokens from rust-analyzer.
-				-- This eliminates the brief wrong-color flash (magenta → blue)
-				-- when typing, especially after `fn` and in other declaration contexts.
-				-- Treesitter's Rust highlighting is excellent and synchronous, so we
-				-- prefer it for visual stability. All other LSP features remain active.
+				-- Disable semantic tokens from rust-analyzer - prefer treesitter's.
 				on_init = function(client, _)
 					client.server_capabilities.semanticTokensProvider = nil
 				end,
@@ -147,17 +157,13 @@ return {
 					["rust-analyzer"] = {
 						cargo = {
 							allFeatures = true,
-							loadOutDirsFromCheck = true,
-							buildScripts = { enable = true },
 						},
-						checkOnSave = true,
 						check = {
 							command = "clippy",
 							features = "all",
 							extraArgs = { "--no-deps" },
 						},
 						procMacro = {
-							enable = true,
 							ignored = {
 								["async-trait"] = { "async_trait" },
 								["napi-derive"] = { "napi" },
@@ -165,19 +171,10 @@ return {
 							},
 						},
 						inlayHints = {
-							chainingHints = { enable = true },
-							closingBraceHints = { enable = true, minLines = 25 },
+							closureReturnTypeHints = { enable = true },
 							lifetimeElisionHints = {
 								enable = "skip_trivial",
 								useParameterNames = false,
-							},
-							maxLength = 25,
-							parameterHints = { enable = true },
-							renderColons = true,
-							typeHints = {
-								enable = true,
-								hideClosureInitialization = false,
-								hideNamedConstructor = false,
 							},
 						},
 					},
@@ -188,5 +185,4 @@ return {
 			vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts)
 		end,
 	},
-
 }

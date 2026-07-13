@@ -10,8 +10,8 @@
   "format_on_save": "on",
   "agent_servers": {
     "grok-build": {
-      "type": "registry"
-    }
+      "type": "registry",
+    },
   },
   "proxy": "",
   "sticky_scroll": {
@@ -149,6 +149,7 @@
             "enable": "skip_trivial",
             "useParameterNames": true,
           },
+          "closureReturnTypeHints": { "enable": "always" },
         },
       },
     },

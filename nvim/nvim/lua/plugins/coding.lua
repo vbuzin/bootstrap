@@ -19,8 +19,8 @@ return {
 
 					-- Navigation
 					-- stylua: ignore start
-					map("n", "]c", function() if vim.wo.diff then vim.cmd.normal({ "]c", bang = true }) else gitsigns.nav_hunk("next") end end, "Git: Next Hunk")
-					map("n", "[c", function() if vim.wo.diff then vim.cmd.normal({ "[c", bang = true }) else gitsigns.nav_hunk("prev") end end, "Git: Prev Hunk")
+					map("n", "]c", function() if vim.wo.diff then vim.cmd.normal({ "]c", bang = true }) else gitsigns.nav_hunk("next") end end, "Next hunk")
+					map("n", "[c", function() if vim.wo.diff then vim.cmd.normal({ "[c", bang = true }) else gitsigns.nav_hunk("prev") end end, "Prev hunk")
 
 					-- Actions
 					map("n", "<leader>hs", gitsigns.stage_hunk, "Git: Stage Hunk")
@@ -118,10 +118,9 @@ return {
 			end
 
 			local function move_map(next_lhs, prev_lhs, capture, desc)
-				map("n", next_lhs, function() move.goto_next_start("@" .. capture .. ".outer", "textobjects") end, "next " .. desc)
-				map("n", prev_lhs, function() move.goto_previous_start("@" .. capture .. ".outer", "textobjects") end, "prev " .. desc)
+				map("n", next_lhs, function() move.goto_next_start("@" .. capture .. ".outer", "textobjects") end, "Next " .. desc)
+				map("n", prev_lhs, function() move.goto_previous_start("@" .. capture .. ".outer", "textobjects") end, "Prev " .. desc)
 			end
-			-- stylua: ignore end
 
 			-- Select
 			sel_map("f", "function", "function")
@@ -130,18 +129,17 @@ return {
 			sel_map("a", "parameter", "argument/parameter")
 
 			-- Move
+			-- NOTE: [c / ]c is reserved for gitsigns hunks (traditional).
+			-- Use uppercase C for class to avoid conflict.
 			move_map("]f", "[f", "function", "function")
-			move_map("]c", "[c", "class", "class")
+			move_map("]C", "[C", "class", "class")
 			move_map("]o", "[o", "block", "block")
 			move_map("]a", "[a", "parameter", "argument")
 
 			-- Swap
-			map("n", "gsp", function()
-				swap.swap_next("@parameter.inner", "textobjects")
-			end, "Next parameter")
-			map("n", "gsP", function()
-				swap.swap_previous("@parameter.inner", "textobjects")
-			end, "Prev parameter")
+			map("n", "gsp", function() swap.swap_next("@parameter.inner", "textobjects") end, "Next parameter")
+			map("n", "gsP", function() swap.swap_previous("@parameter.inner", "textobjects") end, "Prev parameter")
+			-- stylua: ignore end
 		end,
 	},
 
@@ -307,7 +305,6 @@ return {
 				group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
 				callback = function(event)
 					local bufnr = event.buf
-					local snacks = require("snacks")
 
 					local function map(mode, lhs, rhs, desc)
 						vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, buffer = bufnr, desc = desc })
@@ -327,15 +324,9 @@ return {
 					map("n", "K", vim.lsp.buf.hover, "Hover Documentation")
 					-- <C-k> for signature help is provided by blink.cmp (when signature.enabled)
 					-- We intentionally do not override here so blink's integrated signature wins.
-					map("n", "<leader>lt", function()
-						snacks.picker.lsp_type_definitions()
-					end, "Type Definition")
 					map("n", "<leader>xd", diag_show_line, "Show Line Diagnostics")
-					map("n", "[d", diag_jump_prev, "Go to Previous (severity)")
-					map("n", "]d", diag_jump_next, "Go to Next (severity)")
-					map("n", "<leader>lr", function()
-						snacks.picker.lsp_references()
-					end, "Find References")
+					map("n", "[d", diag_jump_prev, "Prev diagnostic")
+					map("n", "]d", diag_jump_next, "Next diagnostic")
 
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
 					if client and client.supports_method("textDocument/codeLens") then
