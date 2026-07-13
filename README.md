@@ -18,7 +18,7 @@ It uses [GNU Stow](https://www.gnu.org/software/stow/) to symlink configs into t
 - **AI Coding** — Custom Grok Build (xAI CLI) skills, hooks, and config managed via `make grok` + `GROK_HOME`
 - **Packages** — Homebrew + Brewfile (CLI tools, casks, App Store apps via mas)
 - **Browsers** — Firefox with custom CSS, Brave
-- **Theme** — One Dark Pro Max, consistently applied across terminal, prompt, editor, and tmux
+- **Theme** — One Dark Pro Max, consistently applied across terminal, prompt, editor, tmux, and lazygit
 
 ## Usage
 
@@ -29,12 +29,14 @@ make
 # Individual components
 make nvim
 make helix
+make lazygit
 make emacs
 make firefox
 make grok          # custom Grok Build skills + config under ~/.config/grok
 
 # Tear down a component
 make clean-helix
+make clean-lazygit
 make clean-firefox
 make clean-grok
 ```

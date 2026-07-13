@@ -10,7 +10,7 @@ STOW_OPTS        := --ignore=.DS_Store --override=.*
 msg = @echo ">>> $(1) <<<"
 
 # Phony targets
-.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux zed clean-zed helix clean-helix macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
+.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux zed clean-zed helix clean-helix lazygit clean-lazygit macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
 
 # Default target
 all: shell brew ghostty tmux
@@ -41,6 +41,8 @@ help:
 	@echo "  clean-zed          : Uninstall Zed and remove configuration"
 	@echo "  helix              : Install and configure Helix"
 	@echo "  clean-helix        : Uninstall Helix and remove configuration"
+	@echo "  lazygit            : Install and configure Lazygit"
+	@echo "  clean-lazygit      : Uninstall Lazygit and remove configuration"
 	@echo "  macos              : Apply macOS system preferences (requires sudo)"
 	@echo "  clean              : Remove all installed configurations (use with caution)"
 	@echo "  help               : Show this help message"
@@ -193,6 +195,17 @@ clean-helix:
 	@brew uninstall helix 2>/dev/null || true
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) helix
 
+# Lazygit
+lazygit: brew
+	$(call msg,"Installing Lazygit")
+	@brew install lazygit
+	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) lazygit
+
+clean-lazygit:
+	$(call msg,"Cleaning Lazygit")
+	@brew uninstall lazygit 2>/dev/null || true
+	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) lazygit
+
 # Tmux
 tmux:
 	$(call msg,"Installing and configuring Tmux")
@@ -249,5 +262,5 @@ macos:
 
 # Full cleanup
 # WARNING: This will remove all installed configurations and may delete user data.
-clean: clean-ghostty clean-opencode clean-emacs clean-firefox clean-nvim clean-tmux clean-helix clean-shell clean-brew
+clean: clean-ghostty clean-opencode clean-emacs clean-firefox clean-nvim clean-tmux clean-helix clean-lazygit clean-shell clean-brew
 	$(call msg,"Full cleanup complete")
