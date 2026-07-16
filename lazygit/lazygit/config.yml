@@ -8,6 +8,16 @@
 #
 # This provides a cohesive One Dark Pro Max experience across the terminal.
 
+os:
+  # Reuse zsh _editor (nvim if installed, else vi) from functions.zsh
+  shellFunctionsFile: ~/.config/zsh-extra/functions.zsh
+  edit: '_editor {{filename}}'
+  editAtLine: '_editor +{{line}} {{filename}}'
+  editAtLineAndWait: '_editor +{{line}} {{filename}}'
+  editInTerminal: true
+  openDirInEditor: '_editor {{dir}}'
+
+
 gui:
   theme:
     # Border color of focused window

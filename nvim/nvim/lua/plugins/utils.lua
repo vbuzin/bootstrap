@@ -13,17 +13,12 @@ return {
 			picker = {
 				-- Common excludes for file listings (top level is sufficient for most sources)
 				exclude = { ".git", "node_modules", "dist", "build", "target" },
-				layout = {
-					preset = "ivy",
-				},
+				layout = { preset = "ivy" },
 				sources = {
-					select = {
-						preview = "none",
-						layout = {
-							preset = "ivy",
-							hidden = { "preview" },
-						},
+					explorer = {
+						layout = { layout = { position = "right" } },
 					},
+					select = { preview = "none", layout = { preset = "ivy", hidden = { "preview" } } },
 					buffers = {
 						-- Use a safe snapshot preview for buffers to avoid side-effects and
 						-- exceptions from special buffers (e.g. netrw, terminal) when their

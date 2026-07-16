@@ -10,3 +10,6 @@ alias lg='XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}" lazygit'
 
 # -- Editor
 alias vi="_editor"
+
+# -- Git
+alias gs="git status -s"

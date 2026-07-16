@@ -55,8 +55,16 @@
     },
   },
   {
+    "context": "Editor && vim_mode == normal && !menu",
+    "bindings": {
+      "space w": "workspace::Save",
+      "space s g": "text_finder::Toggle",
+    },
+  },
+  {
     "context": "(vim_mode == normal || vim_mode == select) && !menu",
     "bindings": {
+      // fF/tT
       "f": ["vim::PushFindForward", { "before": false, "multiline": true }],
       "t": ["vim::PushFindForward", { "before": true, "multiline": true }],
       "shift-f": [
@@ -67,10 +75,46 @@
         "vim::PushFindBackward",
         { "after": true, "multiline": true },
       ],
+      // Diagnostics
+      "space s d": "diagnostics::DeployCurrentFile",
+      "space s D": "diagnostics::Deploy",
 
       "g w": "vim::HelixJumpToWord",
-      "s": "vim::PushSneak",
-      "shift-s": "vim::PushSneakBackward",
+      // Pickers
+      "space f f": "file_finder::Toggle",
+      "space s S": "project_symbols::Toggle",
+      "space s s": "outline::Toggle",
+      "space s c": "command_palette::Toggle",
+
+      // Debugging
+      "space shift-g c": "debugger::Continue",
+      "space shift-g h": "debugger::Pause",
+      "space shift-g r": "debugger::Restart",
+      "space shift-g l": "debugger::Start",
+      "space shift-g i": "debugger::StepInto",
+      "space shift-g o": "debugger::StepOut",
+      "space shift-g n": "debugger::StepOver",
+      "space shift-g t": "debugger::Stop",
+      "space y": "editor::Copy",
+      "space shift-g ctrl-l": "editor::EditLogBreakpoint",
     },
   },
+  {
+    "context": "!Editor && !Terminal",
+    "bindings": {
+      "space f f": "file_finder::Toggle"
+    }
+  },
+  {
+    "context": "!Editor && !Terminal",
+    "unbind": {
+      "space f": "file_finder::Toggle"
+    }
+  },
+  {
+    "context": "(vim_mode == helix_normal || vim_mode == helix_select) && !menu",
+    "unbind": {
+      "space f": "file_finder::Toggle"
+    }
+  }
 ]
