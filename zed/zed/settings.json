@@ -116,8 +116,8 @@
   "cursor_shape": "underline",
   "agent_ui_font_size": 14.0,
   "agent_buffer_font_size": 14.0,
-  "ui_font_family": "Monaspace Xenon NF",
-  "buffer_font_family": "Monaspace Xenon NF",
+  "ui_font_family": "JetBrainsMono Nerd Font",
+  "buffer_font_family": "JetBrainsMono Nerd Font",
   "telemetry": {
     "diagnostics": false,
     "metrics": false,
