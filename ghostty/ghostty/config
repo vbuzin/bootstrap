@@ -2,7 +2,7 @@
 font-family = "JetBrainsMono NFM Regular"
 font-size = 13
 font-thicken = true
-adjust-cell-height = 18%
+adjust-cell-height = 16%
 
 window-colorspace = "display-p3"
 
