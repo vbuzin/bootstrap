@@ -4,6 +4,8 @@
 ;; =============================================================================
 (setq package-user-dir (expand-file-name "packages" user-emacs-directory))
 (require 'package)
+
+(setq use-package-enable-imenu-support t)
 (require 'use-package-ensure)
 
 (setq package-archives
@@ -21,8 +23,8 @@
   (package-refresh-contents))
 
 (setq use-package-always-defer t
-      use-package-always-ensure t
-      use-package-enable-imenu-support t)
+      use-package-always-ensure t)
+
 
 ;;; Core Packages
 ;; =============================================================================
@@ -160,11 +162,25 @@
 
 ;; Themes
 ;; -----------------------------------------------------------------------------
+;; doom-one + One Dark Pro Max tweaks (same overrides as nvim onedarkpro):
+;;   bg #080909, comment #7F838C, red→#E15687 (vars/diagnostics)
+;; https://github.com/bukitoka/one-dark-pro-max
 (use-package doom-themes
   :demand t                          ; ← override global defer
   :config                            ; ← moved (load-theme) from :init to :config
-  (load-theme 'doom-tokyo-night t)
+  (load-theme 'doom-one t)
   (custom-set-faces
+   ;; One Dark Pro Max base tweaks (match nvim onedarkpro overrides)
+   `(default ((t :background "#080909" :foreground "#abb2bf")))
+   `(font-lock-comment-face ((t :foreground "#7F838C")))
+   `(font-lock-variable-name-face ((t :foreground "#E15687")))
+   `(error ((t :foreground "#E15687")))
+   ;; Un-mute doom-one blends so treesit level-4 faces actually read
+   ;; (function-call / property / variable-use are washed out by default).
+   `(font-lock-function-call-face ((t :foreground "#61afef" :slant normal)))
+   `(font-lock-property-name-face ((t :foreground "#E15687" :weight normal)))
+   `(font-lock-property-use-face ((t :foreground "#E15687")))
+   `(font-lock-variable-use-face ((t :foreground "#E15687")))
    `(help-key-binding ((t :box nil)))
    `(fringe ((t (:inherit default :foreground ,(face-attribute 'default :foreground)))))
    `(line-number-current-line ((t (:inherit default :foreground ,(face-attribute 'default :foreground) :weight normal))))
@@ -213,6 +229,22 @@
 
 ;;; Development
 ;; =============================================================================
+;; -----------------------------------------------------------------------------
+(setq treesit-font-lock-level 4)
+
+;; Eldoc (built-in) — richer ambient docs from eglot hover/signature
+;; -----------------------------------------------------------------------------
+(use-package eldoc
+  :ensure nil
+  :custom
+  (eldoc-idle-delay 0.2)
+  ;; Allow multi-line hover/signature in the echo area (default truncates hard).
+  (eldoc-echo-area-use-multiline-p 5)
+  (eldoc-echo-area-prefer-doc-buffer 'maybe)
+  (eldoc-echo-area-display-truncation-message nil)
+  :config
+  ;; Room for a few lines of hover without dominating the frame.
+  (setq max-mini-window-height 0.25))
 
 ;; Eglot (built-in LSP client) — replaces lsp-mode
 ;; -----------------------------------------------------------------------------
@@ -223,9 +255,11 @@
          ("C-c l a" . eglot-code-actions)
          ("C-c l r" . eglot-rename)
          ("C-c l f" . eglot-format-buffer)
+         ;; Full hover docs in a buffer (ambient eldoc still uses the echo area).
          ("C-c l d" . eldoc-print-current-symbol-info)
          ("C-c l i" . eglot-find-implementation)
-         ("C-c l t" . eglot-find-typeDefinition))
+         ("C-c l t" . eglot-find-typeDefinition)
+         ("C-c l h" . eglot-inlay-hints-mode))
   :custom
   (eglot-autoshutdown t)
   (eglot-events-buffer-config '(:size 0 :format full))
@@ -243,11 +277,33 @@
       (eglot-format-buffer)))
   (add-hook 'before-save-hook #'my/eglot-format-on-save)
 
-  ;; --- Rust support (reuses existing eglot + treesit-auto; no new packages) ---
-  ;; rust-analyzer is provided by rustup component. treesit-auto gives rust-ts-mode.
   (add-to-list 'eglot-server-programs
     '((rust-ts-mode rust-mode rustic-mode) .
-      ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+      ("rust-analyzer"
+       :initializationOptions
+       (:cargo (:allFeatures t)
+        :check (:command "clippy"
+                :features "all"
+                :extraArgs ["--no-deps"])
+        :procMacro (:enable t)
+        :inlayHints
+        (:closureReturnTypeHints (:enable t)
+         :lifetimeElisionHints (:enable "skip_trivial"
+                                 :useParameterNames :json-false)
+         :parameterHints (:enable t)
+         :typeHints (:enable t))))))
+
+  ;; Also send as workspace config (live updates without full restart).
+  (setq-default eglot-workspace-configuration
+                '(:rust-analyzer
+                  (:cargo (:allFeatures t)
+                   :check (:command "clippy"
+                           :features "all"
+                           :extraArgs ["--no-deps"])
+                   :inlayHints
+                   (:closureReturnTypeHints (:enable t)
+                    :lifetimeElisionHints (:enable "skip_trivial"
+                                            :useParameterNames :json-false)))))
 
   ;; Inlay hints (Emacs 29+ built-in eglot support)
   (add-hook 'eglot-managed-mode-hook #'eglot-inlay-hints-mode)
@@ -264,15 +320,29 @@
   ;; Subword navigation (helpful for snake_case and mixed-case identifiers)
   (add-hook 'rust-ts-mode-hook #'subword-mode))
 
-;; Flymake (built-in) — replaces flycheck; eglot feeds diagnostics into it
+;; Flymake (built-in) — eglot feeds LSP diagnostics into it when managing a buffer
 ;; -----------------------------------------------------------------------------
 (use-package flymake
   :ensure nil
   :init
+  (defun my/eglot-will-manage-p ()
+    "Non-nil if `eglot-ensure' is on this major mode's hook."
+    (let ((hook (intern (format "%s-hook" major-mode))))
+      (and (boundp hook)
+           (seq-some (lambda (fn)
+                       (eq (if (consp fn) (car fn) fn) #'eglot-ensure))
+                     (symbol-value hook)))))
+
   (defun my/maybe-enable-flymake ()
-    "Enable Flymake in programming buffers, except *scratch*."
-    (unless (and (derived-mode-p 'lisp-interaction-mode)
-                 (string= (buffer-name) "*scratch*"))
+    "Enable Flymake in programming buffers where Eglot won't own it.
+
+Eglot turns Flymake on itself and replaces `flymake-diagnostic-functions'
+with only `eglot-flymake-backend'.  Enabling Flymake earlier — e.g. from
+`prog-mode-hook' — lets mode-local backends like `rust-ts-flymake' start
+async work that races with that handoff (\"Can't find state for …\")."
+    (unless (or (and (derived-mode-p 'lisp-interaction-mode)
+                     (string= (buffer-name) "*scratch*"))
+                (my/eglot-will-manage-p))
       (flymake-mode 1)))
 
   :hook (prog-mode . my/maybe-enable-flymake)
@@ -281,7 +351,9 @@
               ("M-n" . flymake-goto-next-error)
               ("M-p" . flymake-goto-prev-error))
   :custom
-  (flymake-no-changes-timeout 0.5))
+  (flymake-no-changes-timeout 0.5)
+  ;; Inline hint for the worst diagnostic on the line (no extra packages).
+  (flymake-show-diagnostics-at-end-of-line 'short))
 
 ;; Magit
 ;; -----------------------------------------------------------------------------
@@ -306,11 +378,16 @@
 
 ;;; Tree-sitter — automatic major modes (rust-ts-mode, toml-ts-mode, etc.)
 ;; -----------------------------------------------------------------------------
+;; Deferred via after-init (not :demand): still early enough to register
+;; auto-mode remaps before interactive file visits, and so missing-grammar
+;; install (treesit-auto-install) can run when a ts-mode activates.
 (use-package treesit-auto
+  :hook (after-init . global-treesit-auto-mode)
   :custom
+  ;; Prompt on first visit of a language whose grammar isn't installed yet.
+  ;; Grammars land in ~/.emacs.d/tree-sitter/ as libtree-sitter-*.dylib.
   (treesit-auto-install 'prompt)
   :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
+  (treesit-auto-add-to-auto-mode-alist 'all))
 
 ;;; end of init-pkgs.el

@@ -1,11 +1,19 @@
-// Zed keymap
+// Zed keymap — nvim leader parity + Zed-native QoL
 //
-// For information on binding keys, see the Zed
-// documentation: https://zed.dev/docs/key-bindings
+// Leader: space
 //
-// To see the default key bindings run `zed: open default keymap`
-// from the command palette.
+// Contexts:
+//   VimControl          — normal/visual/operator (not insert)
+//   vim_mode == normal  — pure normal
+//   vim_mode == visual  — char/line/block visual
+//   !VimWaiting         — not mid f/t/operator char wait
+//   !menu               — not inside a picker/menu
+//
+// Defaults: `zed: open default keymap` / `vim: open default keymap`
 [
+  // ─────────────────────────────────────────────────────────────
+  // Non-vim macOS conveniences
+  // ─────────────────────────────────────────────────────────────
   {
     "context": "Workspace",
     "bindings": {
@@ -17,29 +25,15 @@
     "bindings": {
       "alt-d": [
         "editor::DeleteToNextWordEnd",
-        {
-          "ignore_newlines": false,
-          "ignore_brackets": false,
-        },
+        { "ignore_newlines": false, "ignore_brackets": false },
       ],
-    },
-  },
-  {
-    "context": "Editor",
-    "unbind": {
-      "alt-delete": [
-        "editor::DeleteToNextWordEnd",
-        {
-          "ignore_newlines": false,
-          "ignore_brackets": false,
-        },
-      ],
+      "alt-delete": null,
     },
   },
   {
     "context": "ProjectPanel",
-    "unbind": {
-      "alt-cmd-shift-f": "project_panel::NewSearchInDirectory",
+    "bindings": {
+      "alt-cmd-shift-f": null,
     },
   },
   {
@@ -47,24 +41,15 @@
       "alt-cmd-shift-f": "text_finder::Toggle",
     },
   },
-  // Vim
+
+  // ─────────────────────────────────────────────────────────────
+  // Motion QoL (from nvim core/keymap.lua)
+  // ─────────────────────────────────────────────────────────────
   {
-    "context": "vim_mode == visual",
+    "context": "VimControl && !menu",
     "bindings": {
-      "shift-s": "vim::PushAddSurrounds",
-    },
-  },
-  {
-    "context": "Editor && vim_mode == normal && !menu",
-    "bindings": {
-      "space w": "workspace::Save",
-      "space s g": "text_finder::Toggle",
-    },
-  },
-  {
-    "context": "(vim_mode == normal || vim_mode == select) && !menu",
-    "bindings": {
-      // fF/tT
+      "j": ["vim::Down", { "display_lines": true }],
+      "k": ["vim::Up", { "display_lines": true }],
       "f": ["vim::PushFindForward", { "before": false, "multiline": true }],
       "t": ["vim::PushFindForward", { "before": true, "multiline": true }],
       "shift-f": [
@@ -75,46 +60,142 @@
         "vim::PushFindBackward",
         { "after": true, "multiline": true },
       ],
-      // Diagnostics
-      "space s d": "diagnostics::DeployCurrentFile",
-      "space s D": "diagnostics::Deploy",
 
-      "g w": "vim::HelixJumpToWord",
-      // Pickers
-      "space f f": "file_finder::Toggle",
-      "space s S": "project_symbols::Toggle",
-      "space s s": "outline::Toggle",
-      "space s c": "command_palette::Toggle",
+      // nvim-style gr (Zed default is grr; gd/gD/gy/gI already match)
+      "g r": "editor::FindAllReferences",
 
-      // Debugging
-      "space shift-g c": "debugger::Continue",
-      "space shift-g h": "debugger::Pause",
-      "space shift-g r": "debugger::Restart",
-      "space shift-g l": "debugger::Start",
-      "space shift-g i": "debugger::StepInto",
-      "space shift-g o": "debugger::StepOut",
-      "space shift-g n": "debugger::StepOver",
-      "space shift-g t": "debugger::Stop",
-      "space y": "editor::Copy",
-      "space shift-g ctrl-l": "editor::EditLogBreakpoint",
+      // pane focus without ctrl-w prefix (popular; not in your nvim)
+      // note: steals default ctrl-j = Down; ctrl-w hjkl still works too
+      "ctrl-h": "workspace::ActivatePaneLeft",
+      "ctrl-j": "workspace::ActivatePaneDown",
+      "ctrl-k": "workspace::ActivatePaneUp",
+      "ctrl-l": "workspace::ActivatePaneRight",
     },
   },
   {
-    "context": "!Editor && !Terminal",
+    // Visual: S = surround (nvim-surround); +/− = syntax expand/shrink
+    "context": "vim_mode == visual && !menu",
     "bindings": {
-      "space f f": "file_finder::Toggle"
-    }
+      "shift-s": "vim::PushAddSurrounds",
+      "+": "editor::SelectLargerSyntaxNode",
+      "-": "editor::SelectSmallerSyntaxNode",
+    },
   },
+
+  // ─────────────────────────────────────────────────────────────
+  // Insert QoL (not in your nvim)
+  // ─────────────────────────────────────────────────────────────
   {
-    "context": "!Editor && !Terminal",
-    "unbind": {
-      "space f": "file_finder::Toggle"
-    }
+    "context": "Editor && vim_mode == insert && !menu",
+    "bindings": {
+      // double-tap escape (common; avoids accidental single-j delay)
+      "j k": "vim::NormalBefore",
+    },
   },
+
+  // ─────────────────────────────────────────────────────────────
+  // SPACE LEADER — editor
+  // nvim groups: b f s c d h t  ·  Zed extras: a g / | - z r
+  // ─────────────────────────────────────────────────────────────
   {
-    "context": "(vim_mode == helix_normal || vim_mode == helix_select) && !menu",
-    "unbind": {
-      "space f": "file_finder::Toggle"
-    }
-  }
+    "context": "Editor && (vim_mode == normal || vim_mode == visual) && !VimWaiting && !menu",
+    "bindings": {
+      // ── write ──
+      "space w": "workspace::Save",
+
+      // ── buffers ──
+      "space b l": "tab_switcher::ToggleAll",
+      "space b p": "pane::ActivatePreviousItem",
+      "space b n": "pane::ActivateNextItem",
+      "space b d": ["pane::CloseActiveItem", { "close_pinned": false }],
+      "space b o": ["pane::CloseOtherItems", { "close_pinned": false }],
+
+      // ── files ──
+      "space f f": "file_finder::Toggle",
+      "space f p": "projects::OpenRecent",
+
+      // ── search / pickers ──
+      "space s g": "text_finder::Toggle",
+      "space s b": "buffer_search::Deploy",
+      "space s s": "outline::Toggle",
+      "space s shift-s": "project_symbols::Toggle",
+      "space s c": "command_palette::Toggle",
+      "space s d": "diagnostics::DeployCurrentFile",
+      "space s shift-d": "diagnostics::Deploy",
+      "space s k": "zed::OpenKeymap",
+      "space s shift-r": "workspace::ReopenLastPicker",
+      "space s r": ["pane::DeploySearch", { "replace_enabled": true }],
+      "space /": "pane::DeploySearch",
+
+      // ── code / lsp ──
+      "space c a": "editor::ToggleCodeActions",
+      "space c r": "editor::Rename",
+      "space c f": "editor::Format",
+      "space c o": "editor::OrganizeImports",
+      "space c i": "editor::ToggleInlayHints",
+
+      // ── debug ──
+      "space d c": "debugger::Continue",
+      "space d o": "debugger::StepOver",
+      "space d i": "debugger::StepInto",
+      "space d u": "debugger::StepOut",
+      "space d b": "editor::ToggleBreakpoint",
+      "space d shift-b": "editor::EditLogBreakpoint",
+      "space d l": "debugger::Start",
+      "space d r": "debugger::Restart",
+      "space d t": "debugger::Stop",
+      "space d h": "debugger::Pause",
+      "space d p": "debug_panel::ToggleFocus",
+
+      // ── git hunks (h) ──
+      "space h s": "git::ToggleStaged",
+      "space h shift-s": "git::StageAll",
+      "space h r": "git::Restore",
+      "space h shift-r": "git::RestoreFile",
+      "space h i": "editor::ToggleSelectedDiffHunks",
+      "space h b": "git::Blame",
+      "space h d": "git::Diff",
+
+      // panels --
+      "space p r": "workspace::ToggleRightDock",
+      "space p g": "git_panel::ToggleFocus",
+      "space p f": "project_panel::ToggleFocus",
+      "space p o": "outline_panel::ToggleFocus",
+
+      // ── tabs / terminal ──
+      "space t n": "pane::ActivateNextItem",
+      "space t p": "pane::ActivatePreviousItem",
+      "space t d": ["pane::CloseActiveItem", { "close_pinned": false }],
+      "space t shift-n": "workspace::NewFile",
+      "space t t": "terminal_panel::ToggleFocus",
+
+      // ── Zed-native extras (not in your nvim) ──
+      "space a": "agent::ToggleFocus",
+      "space z": "workspace::ToggleZoom",
+      "space |": "pane::SplitRight",
+      "space -": "pane::SplitDown",
+      "space r r": "task::Rerun",
+      "space r s": "task::Spawn",
+    },
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // SPACE LEADER — outside editor (pickers / docks only)
+  // ─────────────────────────────────────────────────────────────
+  {
+    "context": "!Editor && !Terminal && !menu",
+    "bindings": {
+      "space f f": "file_finder::Toggle",
+      "space f e": "workspace::ToggleRightDock",
+      "space f p": "projects::OpenRecent",
+      "space s g": "text_finder::Toggle",
+      "space s c": "command_palette::Toggle",
+      "space s D": "diagnostics::Deploy",
+      "space /": "pane::DeploySearch",
+      "space b l": "tab_switcher::ToggleAll",
+      "space w": "workspace::Save",
+      // default vim binds bare `space f` here — free the prefix
+      "space f": null,
+    },
+  },
 ]

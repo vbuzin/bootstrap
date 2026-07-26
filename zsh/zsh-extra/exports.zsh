@@ -22,6 +22,9 @@ export SAVEHIST=50000
 export BAT_THEME="ansi"
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 
+# Update packages without asking
+export HOMEBREW_NO_ASK=1
+
 # -- FZF global styling (layout & colours only) --
 export FZF_DEFAULT_OPTS='
 --layout reverse

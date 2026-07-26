@@ -20,16 +20,32 @@
 
 ;; macOS Specific Environment
 (when (eq system-type 'darwin)
-  ;; Add Homebrew executables to Emacs' path
-  (let ((brew-bin-path "/opt/homebrew/bin"))
-    (when (file-directory-p brew-bin-path)
-      (add-to-list 'exec-path brew-bin-path)
-      (setenv "PATH" (concat brew-bin-path ":" (getenv "PATH")))))
-
-  ;; SSH agent (1Password)
-  (setenv "SSH_AUTH_SOCK"
-          (concat (getenv "HOME")
-                  "/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"))
+  ;; Homebrew bins: PREFIX/bin, PREFIX/sbin, and keg paths under PREFIX/opt/*/bin
+  ;; (e.g. rust-analyzer via rustup → /opt/homebrew/opt/rustup/bin). GUI/daemon
+  ;; Emacs does not inherit a login-shell PATH, so wire this up ourselves.
+  (let* ((brew-prefix (or (getenv "HOMEBREW_PREFIX")
+                          (and (file-directory-p "/opt/homebrew") "/opt/homebrew")
+                          (and (file-directory-p "/usr/local/Homebrew") "/usr/local")))
+         (brew-bins
+          (when brew-prefix
+            (append
+             (list (expand-file-name "bin" brew-prefix)
+                   (expand-file-name "sbin" brew-prefix))
+             (let ((opt (expand-file-name "opt" brew-prefix)))
+               (when (file-directory-p opt)
+                 (mapcar (lambda (pkg) (expand-file-name "bin" pkg))
+                         (directory-files opt t directory-files-no-dot-files-regexp)))))))
+         ;; Existing dirs only; reverse so add-to-list leaves bin/sbin first.
+         (brew-bins (nreverse (delq nil (mapcar (lambda (d)
+                                                  (and (file-directory-p d) d))
+                                                brew-bins)))))
+    (dolist (dir brew-bins)
+      (add-to-list 'exec-path dir)
+      (unless (string-match-p (concat "\\(?:\\`\\|:\\)"
+                                     (regexp-quote dir)
+                                     "\\(?:\\'\\|:\\)")
+                             (or (getenv "PATH") ""))
+        (setenv "PATH" (concat dir path-separator (getenv "PATH"))))))
 
   ;; Configure macOS modifier keys
   (setq mac-command-modifier 'super
