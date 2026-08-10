@@ -143,44 +143,11 @@ return {
 		end,
 	},
 
-	--[[ Mason Core ]]
-	{
-		"williamboman/mason.nvim",
-		lazy = false,
-		opts = {
-			ui = {
-				icons = {
-					package_installed = "✓",
-					package_pending = "➜",
-					package_uninstalled = "✗",
-				},
-			},
-		},
-		config = true, -- Calls require("mason").setup(opts)
-	},
-	--[[ Mason Tool Installer (formatters/linters/debuggers) ]]
-	{
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		-- no event/lazy: its plugin/ registers VimEnter autocmd for run_on_start + ensure_installed
-		dependencies = { "williamboman/mason.nvim" },
-		opts = {
-			ensure_installed = {},
-			run_on_start = true,
-			start_delay = 3000,
-			debounce_hours = 12,
-		},
-		config = function(_, opts)
-			require("mason-tool-installer").setup(opts)
-		end,
-	},
-
 	--[[ LSP Configuration ]]
 	{
 		"neovim/nvim-lspconfig",
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
-			"williamboman/mason.nvim",
-			"williamboman/mason-lspconfig.nvim",
 			"saghen/blink.cmp",
 		},
 		opts = {
@@ -188,8 +155,6 @@ return {
 			servers = {},
 		},
 		config = function(_, opts)
-			local mason_lspconfig = require("mason-lspconfig")
-
 			-- Severity filter toggle: All <-> Errors only (on-the-fly, great for Rust/clippy noise)
 			-- We keep our own source of truth in vim.g because vim.diagnostic.config() getter
 			-- does not reliably return nil after you explicitly set severity = nil.
@@ -345,13 +310,7 @@ return {
 				end,
 			})
 
-			-- Mason auto-installation
-			mason_lspconfig.setup({
-				ensure_installed = vim.tbl_keys(opts.servers),
-				automatic_installation = true,
-			})
-
-			-- Configure and enable each server from opts.servers
+			-- Configure and enable each server from opts.servers (binaries from make dev-tools / PATH)
 			for server_name, server_config in pairs(opts.servers) do
 				vim.lsp.config(server_name, server_config)
 				vim.lsp.enable(server_name)
@@ -362,9 +321,6 @@ return {
 	--[[ Debug Adapter Protocol (DAP) Setup ]]
 	{
 		"mfussenegger/nvim-dap",
-		dependencies = {
-			"jay-babu/mason-nvim-dap.nvim", -- Integrates DAP with Mason
-		},
 		keys = {
         --stylua: ignore start
 			{ "<F5>", function() require("dap").continue() end, desc = "Start/Continue", },
@@ -385,13 +341,6 @@ return {
 			vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "Error", linehl = "", numhl = "" })
 			vim.fn.sign_define("DapStopped", { text = "▶", texthl = "DiagnosticInfo", linehl = "", numhl = "" })
 		end,
-	},
-	-- Mason helper for DAP
-	{
-		"jay-babu/mason-nvim-dap.nvim",
-		-- removed VeryLazy so ensure_installed (debugpy, codelldb, ...) runs early via this path too
-		dependencies = { "williamboman/mason.nvim", "mfussenegger/nvim-dap" },
-		config = true, -- Calls require("mason-nvim-dap").setup({})
 	},
 	-- DAP UI
 	{

@@ -4,13 +4,17 @@ SHELL            := env PATH=$(PATH) /bin/bash
 CONFIG_DIR       := $(HOME)/.config
 EMACS_CONFIG_DIR := $(HOME)/.emacs.d
 BREWFILE         := $(CURDIR)/Brewfile
+NVIM_BREWFILE    := $(CURDIR)/nvim/Brewfile
+NVIM_TOOLS       := $(HOME)/.local/share/nvim/tools
+# Formulae owned by nvim/Brewfile (explicit uninstall list — keep in sync)
+NVIM_BREW_FORMULAE := neovim tree-sitter-cli rustup python deno lua-language-server stylua basedpyright ruff taplo
 STOW_OPTS        := --ignore=.DS_Store --override=.*
 
 # Message helper
 msg = @echo ">>> $(1) <<<"
 
 # Phony targets
-.PHONY: all shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox nvim clean-nvim tmux clean-tmux zed clean-zed helix clean-helix lazygit clean-lazygit macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
+.PHONY: all update shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox dev-tools update-dev-tools clean-dev-tools verify-dev-tools nvim clean-nvim tmux clean-tmux zed clean-zed helix clean-helix lazygit clean-lazygit macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
 
 # Default target
 all: shell brew ghostty tmux
@@ -20,6 +24,7 @@ all: shell brew ghostty tmux
 help:
 	@echo "Available targets:"
 	@echo "  all                : Install all components (shell, brew, ghostty, tmux)"
+	@echo "  update             : Upgrade installed Homebrew packages + dev-tools if present"
 	@echo "  shell              : Install and configure shell (starship + plugins)"
 	@echo "  clean-shell        : Remove shell configuration"
 	@echo "  brew               : Install or update Homebrew and bundle dependencies"
@@ -33,8 +38,11 @@ help:
 	@echo "  firefox            : Install Firefox, initialize profile, and stow application settings"
 	@echo "  firefox-config     : Configure Firefox profile with custom CSS"
 	@echo "  clean-firefox      : Uninstall Firefox and remove stowed settings"
-	@echo "  nvim               : Install and configure Neovim"
-	@echo "  clean-nvim         : Uninstall Neovim and remove configuration"
+	@echo "  dev-tools          : Install nvim/dev toolchain (Brewfile + rustup + DAP)"
+	@echo "  update-dev-tools   : Upgrade nvim/dev toolchain (always-latest DAP)"
+	@echo "  clean-dev-tools    : Uninstall nvim/dev toolchain (incl. ~/.rustup ~/.cargo)"
+	@echo "  nvim               : Install Neovim config (depends on dev-tools)"
+	@echo "  clean-nvim         : Uninstall Neovim config + dev-tools"
 	@echo "  tmux               : Configure Tmux"
 	@echo "  clean-tmux         : Remove Tmux configuration"
 	@echo "  zed                : Install and configure Zed"
@@ -63,6 +71,23 @@ brew:
 		/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || { echo "Homebrew install failed"; exit 1; }; \
 	fi
 	@brew bundle --file=$(BREWFILE) || { echo "Brew bundle failed"; exit 1; }
+
+# Upgrade whatever is already installed. Non-Homebrew dev extras only if dev-tools present.
+update:
+	$(call msg,"Updating installed packages")
+	@if ! command -v brew >/dev/null 2>&1; then \
+		echo "Homebrew not installed; nothing to update."; \
+		exit 0; \
+	fi
+	@brew update
+	@brew upgrade
+	@brew upgrade --cask
+	@brew cleanup --prune=all
+	@if brew list --formula neovim >/dev/null 2>&1 || [ -d "$(NVIM_TOOLS)" ]; then \
+		$(MAKE) update-dev-tools; \
+	else \
+		echo ">>> dev-tools not installed; skipping toolchain extras <<<"; \
+	fi
 
 clean-brew:
 	$(call msg,"Cleaning Brew configuration")
@@ -161,16 +186,81 @@ clean-firefox:
 	@stow -D $(STOW_OPTS) -d firefox --target=/Applications/Firefox.app/Contents/Resources/ settings || true
 	@brew uninstall --cask --zap firefox 2>/dev/null || true
 
-# Neovim
-nvim: shell
-	$(call msg,"Installing Neovim")
-	@brew install neovim tree-sitter-cli
+# Dev toolchain (Homebrew formulae + rustup components + always-latest DAP)
+# One Brewfile owns editor packages and language tools (no split with make nvim).
+dev-tools: brew
+	$(call msg,"Installing dev tools")
+	@brew bundle --file=$(NVIM_BREWFILE) || { echo "nvim Brewfile bundle failed"; exit 1; }
+	@export PATH="$$(brew --prefix rustup)/bin:$$PATH"; \
+		rustup default stable 2>/dev/null || rustup toolchain install stable; \
+		rustup component add rust-analyzer rustfmt clippy
+	@$(CURDIR)/nvim/scripts/install-debugpy.sh
+	@$(CURDIR)/nvim/scripts/install-codelldb.sh
+	@$(MAKE) verify-dev-tools
+
+update-dev-tools:
+	$(call msg,"Updating dev tools")
+	@if ! command -v brew >/dev/null 2>&1; then \
+		echo "Homebrew not installed"; exit 1; \
+	fi
+	@brew bundle --file=$(NVIM_BREWFILE) || { echo "nvim Brewfile bundle failed"; exit 1; }
+	@# Upgrade only formulae from nvim/Brewfile that are installed
+	@for f in $(NVIM_BREW_FORMULAE); do \
+		if brew list --formula "$$f" >/dev/null 2>&1; then \
+			brew upgrade "$$f" 2>/dev/null || true; \
+		fi; \
+	done
+	@if brew list --formula rustup >/dev/null 2>&1; then \
+		export PATH="$$(brew --prefix rustup)/bin:$$PATH"; \
+		rustup self update 2>/dev/null || true; \
+		rustup update stable; \
+		rustup component add rust-analyzer rustfmt clippy; \
+	fi
+	@$(CURDIR)/nvim/scripts/install-debugpy.sh
+	@$(CURDIR)/nvim/scripts/install-codelldb.sh
+	@$(MAKE) verify-dev-tools
+
+clean-dev-tools:
+	$(call msg,"Cleaning dev tools")
+	@# Uninstall each owned formula only if present (no --ignore-dependencies)
+	@for f in $(NVIM_BREW_FORMULAE); do \
+		if brew list --formula "$$f" >/dev/null 2>&1; then \
+			echo "uninstalling $$f"; \
+			brew uninstall "$$f" || exit 1; \
+		fi; \
+	done
+	@brew autoremove -v 2>/dev/null || true
+	@rm -rf $(NVIM_TOOLS)
+	@rm -rf $(HOME)/.rustup $(HOME)/.cargo
+
+verify-dev-tools:
+	$(call msg,"Verifying dev tools")
+	@export PATH="$$(brew --prefix rustup 2>/dev/null)/bin:$$PATH:$(NVIM_TOOLS)/bin"; \
+		command -v nvim >/dev/null || { echo "missing nvim"; exit 1; }; \
+		command -v deno >/dev/null || { echo "missing deno"; exit 1; }; \
+		command -v stylua >/dev/null || { echo "missing stylua"; exit 1; }; \
+		command -v lua-language-server >/dev/null || { echo "missing lua-language-server"; exit 1; }; \
+		command -v basedpyright >/dev/null || { echo "missing basedpyright"; exit 1; }; \
+		command -v ruff >/dev/null || { echo "missing ruff"; exit 1; }; \
+		command -v taplo >/dev/null || { echo "missing taplo"; exit 1; }; \
+		command -v rust-analyzer >/dev/null || { echo "missing rust-analyzer"; exit 1; }; \
+		command -v rustfmt >/dev/null || { echo "missing rustfmt"; exit 1; }; \
+		test -x $(NVIM_TOOLS)/debugpy/bin/python || { echo "missing debugpy venv"; exit 1; }; \
+		$(NVIM_TOOLS)/debugpy/bin/python -c "import debugpy" || { echo "debugpy import failed"; exit 1; }; \
+		test -x $(NVIM_TOOLS)/codelldb/extension/adapter/codelldb || { echo "missing codelldb adapter"; exit 1; }; \
+		test -e $(NVIM_TOOLS)/codelldb/extension/lldb/lib/liblldb.dylib \
+			-o -e $(NVIM_TOOLS)/codelldb/extension/lldb/lib/liblldb.so \
+			|| { echo "missing liblldb"; exit 1; }; \
+		echo ">>> all dev tools OK <<<"
+
+# Neovim config (toolchain via dev-tools)
+nvim: shell dev-tools
+	$(call msg,"Configuring Neovim")
 	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) nvim
 
-clean-nvim:
+clean-nvim: clean-dev-tools
 	$(call msg,"Cleaning Neovim")
-	@brew uninstall neovim tree-sitter-cli 2>/dev/null || true
-	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) nvim
+	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) nvim 2>/dev/null || true
 	@rm -rf $(HOME)/.local/share/nvim $(HOME)/.local/state/nvim 2>/dev/null || true
 
 # Zed

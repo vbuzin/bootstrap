@@ -1,0 +1,22 @@
+# Dev / nvim toolchain — installed only via `make dev-tools` / `make nvim`.
+# Keep the root Brewfile free of language servers and runtimes.
+
+# Editor
+brew "neovim"
+brew "tree-sitter-cli"
+
+# Runtimes / toolchain managers
+brew "rustup" # keg-only; PATH via dot-zshrc
+brew "python" # projects + debugpy venv host
+brew "deno"   # runtime + denols + deno fmt/lint
+
+# Lua
+brew "lua-language-server"
+brew "stylua"
+
+# Python analysis
+brew "basedpyright"
+brew "ruff"
+
+# TOML
+brew "taplo"

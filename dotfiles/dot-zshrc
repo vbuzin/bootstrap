@@ -12,52 +12,7 @@ if command -v rustup >/dev/null 2>&1; then
   PATH="${PATH:+${PATH}:}${HOME}/.cargo/bin:$(brew --prefix rustup)/bin"
 fi
 
-# 2. Bun (Homebrew) + smart 'node' and 'npm' wrappers
-if command -v bun >/dev/null 2>&1; then
-  BUN_BIN="$(command -v bun)"
-  BUN_SHIM_DIR="${HOME}/.cache/.bun/bin"
-  mkdir -p "$BUN_SHIM_DIR"
-
-  # node shim (existing, unchanged)
-  cat > "$BUN_SHIM_DIR/node" << EOF
-#!/bin/sh
-if [ \$# -eq 0 ]; then
-  echo "Bun does not support the Node.js interactive REPL via 'node'." >&2
-  echo "Use 'bun repl' instead, or install Node.js with 'brew install node'." >&2
-  exit 1
-fi
-exec "$BUN_BIN" "\$@"
-EOF
-
-  # npm shim — translate npm commands to bun equivalents
-  cat > "$BUN_SHIM_DIR/npm" << EOF
-#!/bin/sh
-case "\$1" in
-  ci)
-    # npm ci = install from lockfile, no modifications allowed
-    shift
-    exec "$BUN_BIN" install --frozen-lockfile "\$@"
-    ;;
-  publish|login|logout|whoami|adduser|pack)
-    echo "npm '\$1' is not supported via the bun shim." >&2
-    echo "Install Node.js with 'brew install node' for registry operations." >&2
-    exit 1
-    ;;
-  *)
-    exec "$BUN_BIN" "\$@"
-    ;;
-esac
-EOF
-
-  chmod +x "$BUN_SHIM_DIR/node" "$BUN_SHIM_DIR/npm"
-
-  PATH="$BUN_SHIM_DIR:$PATH"
-  export PATH
-else
-  rm -f "${HOME}/.cache/.bun/bin/node" "${HOME}/.cache/.bun/bin/npm"
-fi
-
-# 3. Secrets
+# 2. Secrets
 if [[ -x "$HOME/.grok/bin/grok" ]]; then
   # grok is installed and manages its own auth (browser login, auth.json, etc.).
   # XAI_API_KEY has highest precedence in grok's chain, so we must not let a
@@ -68,10 +23,7 @@ else
 fi
 export SSH_PRIVATE_KEY="$(security find-generic-password -s "ssh-ed25519-private" -w 2>/dev/null | base64 -d || echo '')"
 
-# 4. Other
-export DOTNET_CLI_TELEMETRY_OPTOUT=true
-export GOPATH=$HOME/.go
-
+# 3. Other
 export GROK_LSP_TOOLS=1
 export GROK_MEMORY=1
 

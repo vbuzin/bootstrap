@@ -1,26 +1,4 @@
 return {
-	-- LSP: marksman (solid for Markdown diagnostics, links, headings)
-	{
-		"neovim/nvim-lspconfig",
-		ft = { "markdown" },
-		init = function()
-			vim.api.nvim_create_autocmd("FileType", {
-				pattern = "markdown",
-				callback = function()
-					-- sensible defaults for Markdown editing
-					vim.opt_local.wrap = true
-					vim.opt_local.linebreak = true
-					vim.opt_local.spell = false
-				end,
-			})
-		end,
-		opts = {
-			servers = {
-				marksman = {},
-			},
-		},
-	},
-
 	-- Treesitter (markdown + inline for proper parsing)
 	{
 		"nvim-treesitter/nvim-treesitter",
@@ -31,24 +9,26 @@ return {
 		end,
 	},
 
-	-- Conform: formatting (same as JS/TS/etc.)
+	-- Buffer defaults + deno fmt when available
 	{
 		"stevearc/conform.nvim",
+		ft = { "markdown" },
+		init = function()
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = "markdown",
+				callback = function()
+					vim.opt_local.wrap = true
+					vim.opt_local.linebreak = true
+					vim.opt_local.spell = false
+				end,
+			})
+		end,
 		opts = function(_, opts)
 			opts.formatters_by_ft = opts.formatters_by_ft or {}
-			opts.formatters_by_ft.markdown = { "prettierd" }
+			if vim.fn.executable("deno") == 1 then
+				opts.formatters_by_ft.markdown = { "deno_fmt" }
+			end
 			return opts
 		end,
-	},
-	-- render-markdown.nvim with a few useful tweaks
-	{
-		"MeanderingProgrammer/render-markdown.nvim",
-		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
-		ft = { "markdown" },
-		opts = {
-			-- completions work nicely with marksman
-			completions = { lsp = { enabled = true } },
-			-- tweak render modes or styles here if you want
-		},
 	},
 }

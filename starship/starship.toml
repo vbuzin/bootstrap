@@ -16,9 +16,7 @@ $git_metrics\
 $git_state\
 $c\
 $rust\
-$golang\
-$nodejs\
-$dotnet\
+$deno\
 $php\
 $java\
 $kotlin\
@@ -91,22 +89,10 @@ symbol = "RS"
 style = "fg:dim"
 format = '[[ $symbol( $version) ](fg:dim)]($style)'
 
-[golang]
-symbol = "GO"
+[deno]
+symbol = "DENO"
 style = "fg:dim"
 format = '[[ $symbol( $version) ](fg:dim)]($style)'
-
-[nodejs]
-symbol = "JS"
-style = "fg:dim"
-format = '[[ $symbol( $version) ](fg:dim)]($style)'
-
-# $tfm shows the target framework moniker (e.g. net9.0) when detectable.
-# Activates on .fsproj, .csproj, .sln, global.json, and *.fs files.
-[dotnet]
-symbol = ".NET"
-style = "fg:dim"
-format = '[[ $symbol( $version)( $tfm) ](fg:dim)]($style)'
 
 [php]
 symbol = "PHP"

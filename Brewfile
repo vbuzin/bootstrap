@@ -13,9 +13,6 @@ brew "zsh-autosuggestions"
 brew "zsh-history-substring-search"
 brew "zsh-syntax-highlighting"
 
-brew "node"
-brew "rustup"
-
 cask "1password"
 cask "brave-origin"
 cask "docker-desktop"

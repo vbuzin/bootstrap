@@ -53,36 +53,22 @@ return {
 		end,
 	},
 
-	-- Ensure external tools via Mason
-	{
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		opts = function(_, opts)
-			opts.ensure_installed = opts.ensure_installed or {}
-			vim.list_extend(opts.ensure_installed, { "basedpyright", "ruff", "debugpy" })
-			return opts
-		end,
-	},
-
-	-- DAP adapter
-	{
-		"jay-babu/mason-nvim-dap.nvim",
-		opts = function(_, opts)
-			opts.ensure_installed = opts.ensure_installed or {}
-			vim.list_extend(opts.ensure_installed, { "debugpy" })
-			return opts
-		end,
-	},
-
-	-- nvim-dap-python: ergonomic debugpy registration + test-method debugging
+	-- nvim-dap-python: dedicated debugpy venv from make dev-tools
 	{
 		"mfussenegger/nvim-dap-python",
 		ft = { "python" },
 		dependencies = { "mfussenegger/nvim-dap" },
 		config = function()
-			-- Point at the Mason-managed debugpy virtualenv
-			require("dap-python").setup(
-				vim.fn.stdpath("data") .. "/mason/packages/debugpy/venv/bin/python"
-			)
+			local python = vim.fn.stdpath("data") .. "/tools/debugpy/bin/python"
+			if vim.fn.executable(python) == 1 then
+				require("dap-python").setup(python)
+			else
+				vim.notify(
+					"debugpy venv missing; run `make dev-tools`",
+					vim.log.levels.WARN,
+					{ title = "dap-python" }
+				)
+			end
 		end,
 		keys = {
 			{
@@ -103,5 +89,4 @@ return {
 			},
 		},
 	},
-
 }

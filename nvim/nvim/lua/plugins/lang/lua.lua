@@ -1,5 +1,5 @@
 return {
-	-- Lua LSP (lua-language-server)
+	-- Lua LSP (lua-language-server from brew / make dev-tools)
 	{
 		"neovim/nvim-lspconfig",
 		ft = { "lua" },
@@ -44,30 +44,6 @@ return {
 		opts = function(_, opts)
 			opts.formatters_by_ft = opts.formatters_by_ft or {}
 			opts.formatters_by_ft.lua = { "stylua" }
-			return opts
-		end,
-	},
-
-	-- Ensure external tools via Mason
-	{
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		opts = function(_, opts)
-			opts.ensure_installed = opts.ensure_installed or {}
-			vim.list_extend(opts.ensure_installed, {
-				"stylua",
-				"lua-language-server",
-				"local-lua-debugger-vscode",
-			})
-			return opts
-		end,
-	},
-
-	-- DAP
-	{
-		"jay-babu/mason-nvim-dap.nvim",
-		opts = function(_, opts)
-			opts.ensure_installed = opts.ensure_installed or {}
-			vim.list_extend(opts.ensure_installed, { "local-lua-debugger-vscode" })
 			return opts
 		end,
 	},
