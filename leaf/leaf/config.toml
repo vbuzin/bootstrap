@@ -1,0 +1,13 @@
+# Color theme
+# One Dark Pro Max custom theme (see one-dark-pro-max.toml)
+theme = "one-dark-pro-max.toml"
+
+# Default editor for Ctrl+E
+editor = "vi"
+
+# Maximum content width (number of columns)
+width = 120
+
+# Watch mode: automatically reload when the file changes
+watch = true
+

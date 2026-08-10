@@ -1,0 +1,114 @@
+# One Dark Pro Max — custom leaf theme
+# Colours adapted from https://github.com/bukitoka/one-dark-pro-max
+# Inherits the ocean dark preset; every key is overridden for a full ODPM look.
+
+base = "ocean"
+# Closest built-in syntect theme (leaf ships default-themes only)
+syntax = "base16-ocean.dark"
+
+[ui]
+# Surfaces — near-black panel/editor chrome from ODPM
+toc_bg = "#080909"
+toc_border = "#212121"
+content_bg = "#080909"
+scrollbar_hover = "#5a6375"
+status_bg = "#080909"
+status_separator = "#4f5666"
+
+# Status bar chips
+status_brand_fg = "#080909"
+status_brand_bg = "#61afef"
+status_filename_fg = "#abb2bf"
+status_filename_bg = "#2c313a"
+status_watch_fg = "#98c379"
+status_watch_bg = "#141c14"
+status_reloaded_fg = "#080909"
+status_reloaded_bg = "#98c379"
+status_search_fg = "#e5c07b"
+status_search_bg = "#2a2418"
+status_success_fg = "#98c379"
+status_success_bg = "#141c14"
+status_warning_fg = "#d19a66"
+status_error_fg = "#e05561"
+status_error_bg = "#2a1214"
+status_shortcut_fg = "#4f5666"
+status_percent_fg = "#61afef"
+
+# TOC sidebar — fully themed to match ODPM panels
+toc_hover_fg = "#e6e6e6"
+toc_header_fg = "#7f838c"
+toc_active_bg = "#2c313a"
+toc_inactive_bg = "#080909"
+toc_accent = "#61afef"
+toc_index_inactive = "#495162"
+toc_primary_active = "#e6e6e6"
+toc_primary_inactive = "#7f838c"
+toc_secondary_inactive = "#495162"
+toc_secondary_text_active = "#abb2bf"
+toc_secondary_text_inactive = "#5c6370"
+
+[markdown]
+# Search
+search_highlight_bg = "#3a3f4b"
+search_match_bg = "#d19a66"
+
+# Structure
+code_gutter = "#495162"
+blockquote_marker = "#4f5666"
+list_level_1 = "#98c379"
+list_level_2 = "#61afef"
+list_level_3 = "#c678dd"
+ordered_list = "#d19a66"
+table_border = "#2c313a"
+table_separator = "#212121"
+table_header = "#61afef"
+table_cell = "#abb2bf"
+
+# Headings — ODPM title pink → blue → type yellow → keyword purple → cyan
+heading_1 = "#e15687"
+heading_2 = "#61afef"
+heading_3 = "#e5c07b"
+heading_4 = "#c678dd"
+heading_other = "#56b6c2"
+heading_underline = "#212121"
+
+# Code & rules
+code_frame = "#2c313a"
+code_label = "#7f838c"
+inline_code_fg = "#e5c07b"
+inline_code_bg = "#14161a"
+rule = "#212121"
+
+# Links & quotes
+link_icon = "#61afef"
+link_text = "#61afef"
+link_hover = "#4dc4ff"
+blockquote_text = "#7f838c"
+
+# Body text
+text = "#abb2bf"
+strong_text = "#e6e6e6"
+
+# LaTeX
+latex_inline_fg = "#c678dd"
+latex_inline_bg = "#2c313a"
+latex_block_fg = "#c678dd"
+
+# Mermaid
+mermaid_keyword = "#c678dd"
+mermaid_arrow = "#61afef"
+mermaid_label = "#98c379"
+mermaid_block_fg = "#abb2bf"
+
+# Marks, tasks, alerts, footnotes
+mark_fg = "#abb2bf"
+mark_bg = "#3d3520"
+task_checked = "#98c379"
+task_unchecked = "#5c6370"
+alert_note = "#61afef"
+alert_tip = "#98c379"
+alert_important = "#c678dd"
+alert_warning = "#d19a66"
+alert_caution = "#e05561"
+footnote_ref = "#61afef"
+footnote_text = "#abb2bf"

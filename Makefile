@@ -14,7 +14,7 @@ STOW_OPTS        := --ignore=.DS_Store --override=.*
 msg = @echo ">>> $(1) <<<"
 
 # Phony targets
-.PHONY: all update shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox dev-tools update-dev-tools clean-dev-tools verify-dev-tools nvim clean-nvim tmux clean-tmux zed clean-zed helix clean-helix lazygit clean-lazygit macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
+.PHONY: all update shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox dev-tools update-dev-tools clean-dev-tools verify-dev-tools nvim clean-nvim tmux clean-tmux zed clean-zed helix clean-helix lazygit clean-lazygit leaf clean-leaf macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
 
 # Default target
 all: shell brew ghostty tmux
@@ -51,6 +51,8 @@ help:
 	@echo "  clean-helix        : Uninstall Helix and remove configuration"
 	@echo "  lazygit            : Install and configure Lazygit"
 	@echo "  clean-lazygit      : Uninstall Lazygit and remove configuration"
+	@echo "  leaf               : Install and configure Leaf (markdown viewer)"
+	@echo "  clean-leaf         : Uninstall Leaf and remove configuration"
 	@echo "  macos              : Apply macOS system preferences (requires sudo)"
 	@echo "  clean              : Remove all installed configurations (use with caution)"
 	@echo "  help               : Show this help message"
@@ -296,6 +298,17 @@ clean-lazygit:
 	@brew uninstall lazygit 2>/dev/null || true
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) lazygit
 
+# Leaf (markdown viewer)
+leaf: brew
+	$(call msg,"Installing Leaf")
+	@brew install leaf-markdown-viewer
+	@stow $(STOW_OPTS) --target=$(CONFIG_DIR) leaf
+
+clean-leaf:
+	$(call msg,"Cleaning Leaf")
+	@brew uninstall leaf-markdown-viewer 2>/dev/null || true
+	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) leaf
+
 # Tmux
 tmux:
 	$(call msg,"Installing and configuring Tmux")
@@ -352,5 +365,5 @@ macos:
 
 # Full cleanup
 # WARNING: This will remove all installed configurations and may delete user data.
-clean: clean-ghostty clean-opencode clean-emacs clean-firefox clean-nvim clean-tmux clean-helix clean-lazygit clean-shell clean-brew
+clean: clean-ghostty clean-opencode clean-emacs clean-firefox clean-nvim clean-tmux clean-helix clean-lazygit clean-leaf clean-shell clean-brew
 	$(call msg,"Full cleanup complete")
