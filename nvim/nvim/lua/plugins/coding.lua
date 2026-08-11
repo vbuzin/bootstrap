@@ -23,13 +23,16 @@ return {
 					map("n", "[c", function() if vim.wo.diff then vim.cmd.normal({ "[c", bang = true }) else gitsigns.nav_hunk("prev") end end, "Prev hunk")
 
 					-- Actions
-					map("n", "<leader>hs", gitsigns.stage_hunk, "Git: Stage Hunk")
+					-- stage_hunk toggles: stages unstaged hunks, unstages staged ones.
+					-- reset_buffer_index unstages the file (git reset -- <file>) but keeps working-tree edits.
+					map("n", "<leader>hs", gitsigns.stage_hunk, "Git: Stage/Unstage Hunk")
 					map("n", "<leader>hr", gitsigns.reset_hunk, "Git: Reset Hunk")
 
-					map("v", "<leader>hs", function() gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Git: Stage Hunk")
+					map("v", "<leader>hs", function() gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Git: Stage/Unstage Hunk")
 					map("v", "<leader>hr", function() gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Git: Reset Hunk")
 
 					map("n", "<leader>hS", gitsigns.stage_buffer, "Git: Stage Buffer")
+					map("n", "<leader>hU", gitsigns.reset_buffer_index, "Git: Unstage Buffer")
 					map("n", "<leader>hR", gitsigns.reset_buffer, "Git: Reset Buffer")
 					map("n", "<leader>hp", gitsigns.preview_hunk, "Git: Preview Hunk")
 					map("n", "<leader>hi", gitsigns.preview_hunk_inline, "Git: Preview Hunk Inline")
