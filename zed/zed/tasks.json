@@ -1,0 +1,50 @@
+[
+  {
+    "label": "deno check",
+    "command": "deno",
+    "args": ["check", "$ZED_FILE"],
+    "tags": ["deno"]
+  },
+  {
+    "label": "deno lint",
+    "command": "deno",
+    "args": ["lint", "$ZED_FILE"],
+    "tags": ["deno"]
+  },
+  {
+    "label": "deno fmt (check)",
+    "command": "deno",
+    "args": ["fmt", "--check", "$ZED_FILE"],
+    "tags": ["deno"]
+  },
+  {
+    "label": "deno test (file)",
+    "command": "deno",
+    "args": ["test", "-A", "$ZED_FILE"],
+    "tags": ["js-test", "deno"]
+  },
+  {
+    "label": "deno test (workspace)",
+    "command": "deno",
+    "args": ["test", "-A"],
+    "tags": ["deno"]
+  },
+  {
+    "label": "deno run (file)",
+    "command": "deno",
+    "args": ["run", "-A", "$ZED_FILE"],
+    "tags": ["deno"]
+  },
+  {
+    "label": "deno task",
+    "command": "deno",
+    "args": ["task"],
+    "tags": ["deno"]
+  },
+  {
+    "label": "deno cache (file)",
+    "command": "deno",
+    "args": ["cache", "$ZED_FILE"],
+    "tags": ["deno"]
+  }
+]

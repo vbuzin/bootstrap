@@ -53,13 +53,76 @@
     "modal_max_width": "medium",
   },
   "icon_theme": "Zed (Default)",
+  // No Node/Prettier toolchain — Deno owns JS/TS/JSON/Markdown formatting.
+  "prettier": {
+    "allowed": false,
+  },
+  "auto_install_extensions": {
+    "deno": true,
+  },
   "languages": {
     "Rust": {
       "line_ending": "enforce_lf",
       "inlay_hints": {},
     },
+    // Deno-only JS/TS — disable Node LSPs (vtsls / tsserver / eslint)
+    "JavaScript": {
+      "language_servers": [
+        "deno",
+        "!typescript-language-server",
+        "!vtsls",
+        "!eslint",
+      ],
+      "formatter": "language_server",
+      "format_on_save": "on",
+    },
+    "TypeScript": {
+      "language_servers": [
+        "deno",
+        "!typescript-language-server",
+        "!vtsls",
+        "!eslint",
+      ],
+      "formatter": "language_server",
+      "format_on_save": "on",
+    },
+    "TSX": {
+      "language_servers": [
+        "deno",
+        "!typescript-language-server",
+        "!vtsls",
+        "!eslint",
+      ],
+      "formatter": "language_server",
+      "format_on_save": "on",
+    },
+    // Deno LSP is not registered for JSON/Markdown in the extension; use deno fmt.
+    "JSON": {
+      "formatter": {
+        "external": {
+          "command": "deno",
+          "arguments": ["fmt", "--ext", "json", "-"],
+        },
+      },
+      "format_on_save": "on",
+    },
+    "JSONC": {
+      "formatter": {
+        "external": {
+          "command": "deno",
+          "arguments": ["fmt", "--ext", "jsonc", "-"],
+        },
+      },
+      "format_on_save": "on",
+    },
     "Markdown": {
       "remove_trailing_whitespace_on_save": true,
+      "formatter": {
+        "external": {
+          "command": "deno",
+          "arguments": ["fmt", "--ext", "md", "-"],
+        },
+      },
       "format_on_save": "on",
     },
   },
@@ -158,6 +221,43 @@
             "useParameterNames": true,
           },
           "closureReturnTypeHints": { "enable": "always" },
+        },
+      },
+    },
+    // Deno language server (brew/PATH deno; extension falls back to download)
+    "deno": {
+      "settings": {
+        "deno": {
+          "enable": true,
+          "lint": true,
+          "unstable": false,
+          "codeLens": {
+            "implementations": true,
+            "references": true,
+            "referencesAllFunctions": false,
+            "test": true,
+          },
+          "suggest": {
+            "imports": {
+              "hosts": {
+                "https://deno.land": true,
+                "https://jsr.io": true,
+              },
+            },
+          },
+        },
+      },
+    },
+    // Schema completions for deno.json(c)
+    "json-language-server": {
+      "settings": {
+        "json": {
+          "schemas": [
+            {
+              "fileMatch": ["deno.json", "deno.jsonc"],
+              "url": "https://raw.githubusercontent.com/denoland/deno/refs/heads/main/cli/schemas/config-file.v1.json",
+            },
+          ],
         },
       },
     },
