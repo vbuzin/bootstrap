@@ -11,59 +11,59 @@
   "format_on_save": "on",
   "agent_servers": {
     "grok-build": {
-      "type": "registry",
-    },
+      "type": "registry"
+    }
   },
   "proxy": "",
   "sticky_scroll": {
-    "enabled": true,
+    "enabled": true
   },
   "diff_view_style": "split",
   "semantic_tokens": "off",
   "completion_menu_item_kind": "symbol",
   "vim": {
     "use_smartcase_find": true,
-    "toggle_relative_line_numbers": true,
+    "toggle_relative_line_numbers": true
   },
   "vim_mode": true,
   "code_lens": "on",
   "cli_default_open_behavior": "new_window",
   "collaboration_panel": {
     "dock": "right",
-    "button": false,
+    "button": false
   },
   "outline_panel": {
     "dock": "right",
-    "default_width": 340.0,
+    "default_width": 340.0
   },
   "inlay_hints": {
-    "enabled": true,
+    "enabled": true
   },
   "base_keymap": "VSCode",
   "buffer_line_height": "comfortable",
   "status_bar": {
     "cursor_position_button": true,
-    "show_active_file": false,
+    "show_active_file": false
   },
   "edit_predictions": {
     "allow_data_collection": "no",
-    "mode": "subtle",
+    "mode": "subtle"
   },
   "file_finder": {
-    "modal_max_width": "medium",
+    "modal_max_width": "medium"
   },
   "icon_theme": "Zed (Default)",
   // No Node/Prettier toolchain — Deno owns JS/TS/JSON/Markdown formatting.
   "prettier": {
-    "allowed": false,
+    "allowed": false
   },
   "auto_install_extensions": {
-    "deno": true,
+    "deno": true
   },
   "languages": {
     "Rust": {
       "line_ending": "enforce_lf",
-      "inlay_hints": {},
+      "inlay_hints": {}
     },
     // Deno-only JS/TS — disable Node LSPs (vtsls / tsserver / eslint)
     "JavaScript": {
@@ -71,60 +71,60 @@
         "deno",
         "!typescript-language-server",
         "!vtsls",
-        "!eslint",
+        "!eslint"
       ],
       "formatter": "language_server",
-      "format_on_save": "on",
+      "format_on_save": "on"
     },
     "TypeScript": {
       "language_servers": [
         "deno",
         "!typescript-language-server",
         "!vtsls",
-        "!eslint",
+        "!eslint"
       ],
       "formatter": "language_server",
-      "format_on_save": "on",
+      "format_on_save": "on"
     },
     "TSX": {
       "language_servers": [
         "deno",
         "!typescript-language-server",
         "!vtsls",
-        "!eslint",
+        "!eslint"
       ],
       "formatter": "language_server",
-      "format_on_save": "on",
+      "format_on_save": "on"
     },
     // Deno LSP is not registered for JSON/Markdown in the extension; use deno fmt.
     "JSON": {
       "formatter": {
         "external": {
           "command": "deno",
-          "arguments": ["fmt", "--ext", "json", "-"],
-        },
+          "arguments": ["fmt", "--ext", "json", "-"]
+        }
       },
-      "format_on_save": "on",
+      "format_on_save": "on"
     },
     "JSONC": {
       "formatter": {
         "external": {
           "command": "deno",
-          "arguments": ["fmt", "--ext", "jsonc", "-"],
-        },
+          "arguments": ["fmt", "--ext", "jsonc", "-"]
+        }
       },
-      "format_on_save": "on",
+      "format_on_save": "on"
     },
     "Markdown": {
       "remove_trailing_whitespace_on_save": true,
       "formatter": {
         "external": {
           "command": "deno",
-          "arguments": ["fmt", "--ext", "md", "-"],
-        },
+          "arguments": ["fmt", "--ext", "md", "-"]
+        }
       },
-      "format_on_save": "on",
-    },
+      "format_on_save": "on"
+    }
   },
   "text_rendering_mode": "platform_default",
   "agent": {
@@ -135,47 +135,47 @@
     "default_model": {
       "provider": "x_ai",
       "model": "grok-4.3",
-      "enable_thinking": false,
+      "enable_thinking": false
     },
     "favorite_models": [],
-    "model_parameters": [],
+    "model_parameters": []
   },
   "git_panel": {
     "dock": "right",
     "tree_view": true,
-    "default_width": 340.0,
+    "default_width": 340.0
   },
   "ui_font_weight": 300.0,
   "buffer_font_weight": 300.0,
   "project_panel": {
     "dock": "right",
-    "default_width": 340.0,
+    "default_width": 340.0
   },
   "tabs": {
     "file_icons": true,
-    "git_status": true,
+    "git_status": true
   },
   "title_bar": {
     "show_branch_status_icon": true,
     "show_menus": false,
-    "show_user_picture": false,
+    "show_user_picture": false
   },
   "use_smartcase_search": true,
   "indent_guides": {
-    "coloring": "fixed",
+    "coloring": "fixed"
   },
   "gutter": {
     "runnables": true,
-    "folds": true,
+    "folds": true
   },
   "auto_signature_help": false,
   "which_key": {
-    "enabled": true,
+    "enabled": true
   },
   "autosave": {
     "after_delay": {
-      "milliseconds": 1000,
-    },
+      "milliseconds": 1000
+    }
   },
   "cursor_shape": "underline",
   "agent_ui_font_size": 14.0,
@@ -184,17 +184,17 @@
   "buffer_font_family": "JetBrainsMono Nerd Font",
   "telemetry": {
     "diagnostics": false,
-    "metrics": false,
+    "metrics": false
   },
   "restore_on_startup": "launchpad",
   "session": {
-    "restore_unsaved_buffers": true,
+    "restore_unsaved_buffers": true
   },
   "terminal": {
     "option_as_meta": true,
     "copy_on_select": true,
     "cursor_shape": "underline",
-    "font_weight": 300,
+    "font_weight": 300
   },
   "use_system_prompts": false,
   "use_system_path_prompts": false,
@@ -207,22 +207,22 @@
         "workspace": {
           "symbol": {
             "search": {
-              "kind": "all_symbols",
-            },
-          },
+              "kind": "all_symbols"
+            }
+          }
         },
         "check": {
           "command": "clippy",
-          "arguments": "--all-targets",
+          "arguments": "--all-targets"
         },
         "inlayHints": {
           "lifetimeElisionHints": {
             "enable": "skip_trivial",
-            "useParameterNames": true,
+            "useParameterNames": true
           },
-          "closureReturnTypeHints": { "enable": "always" },
-        },
-      },
+          "closureReturnTypeHints": { "enable": "always" }
+        }
+      }
     },
     // Deno language server (brew/PATH deno; extension falls back to download)
     "deno": {
@@ -235,18 +235,18 @@
             "implementations": true,
             "references": true,
             "referencesAllFunctions": false,
-            "test": true,
+            "test": true
           },
           "suggest": {
             "imports": {
               "hosts": {
                 "https://deno.land": true,
-                "https://jsr.io": true,
-              },
-            },
-          },
-        },
-      },
+                "https://jsr.io": true
+              }
+            }
+          }
+        }
+      }
     },
     // Schema completions for deno.json(c)
     "json-language-server": {
@@ -255,11 +255,11 @@
           "schemas": [
             {
               "fileMatch": ["deno.json", "deno.jsonc"],
-              "url": "https://raw.githubusercontent.com/denoland/deno/refs/heads/main/cli/schemas/config-file.v1.json",
-            },
-          ],
-        },
-      },
-    },
-  },
+              "url": "https://raw.githubusercontent.com/denoland/deno/refs/heads/main/cli/schemas/config-file.v1.json"
+            }
+          ]
+        }
+      }
+    }
+  }
 }

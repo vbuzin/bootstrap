@@ -313,58 +313,10 @@ return {
 				end,
 			})
 
-			-- Configure and enable each server from opts.servers (binaries from make dev-tools / PATH)
+			-- Configure and enable each server from opts.servers (binaries from PATH / make dev-tools)
 			for server_name, server_config in pairs(opts.servers) do
 				vim.lsp.config(server_name, server_config)
 				vim.lsp.enable(server_name)
-			end
-		end,
-	},
-
-	--[[ Debug Adapter Protocol (DAP) Setup ]]
-	{
-		"mfussenegger/nvim-dap",
-		keys = {
-        --stylua: ignore start
-			{ "<F5>", function() require("dap").continue() end, desc = "Start/Continue", },
-			{ "<leader>dc", function() require("dap").continue() end, desc = "Start/Continue", },
-			{ "<F10>", function() require("dap").step_over() end, desc = "Step Over", },
-			{ "<leader>do", function() require("dap").step_over() end, desc = "Step Over", },
-			{ "<F11>", function() require("dap").step_into() end, desc = "Step Into", },
-			{ "<leader>di", function() require("dap").step_into() end, desc = "Step Into", },
-			{ "<F12>", function() require("dap").step_out() end, desc = "Step Out", },
-			{ "<leader>du", function() require("dap").step_out() end, desc = "Step Out", },
-			{ "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint", },
-			{ "<leader>dB", function() require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: ")) end, desc = "Set Conditional Breakpoint", },
-			{ "<leader>dr", function() require("dap").repl.open() end, desc = "Open REPL", },
-			{ "<leader>dl", function() require("dap").run_last() end, desc = "Run Last", },
-			-- stylua: ignore end
-		},
-		config = function()
-			vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "Error", linehl = "", numhl = "" })
-			vim.fn.sign_define("DapStopped", { text = "▶", texthl = "DiagnosticInfo", linehl = "", numhl = "" })
-		end,
-	},
-	-- DAP UI
-	{
-		"rcarriga/nvim-dap-ui",
-		event = "VeryLazy", -- Load when DAP starts
-		dependencies = {
-			"mfussenegger/nvim-dap",
-			"nvim-neotest/nvim-nio", -- Required dependency for nvim-dap-ui
-		},
-		config = function()
-			local dap, dapui = require("dap"), require("dapui")
-			dapui.setup() -- Use default dapui configuration
-			-- Automatically open/close DAP UI when debugging session starts/ends
-			dap.listeners.after.event_initialized["dapui_config"] = function()
-				dapui.open()
-			end
-			dap.listeners.before.event_terminated["dapui_config"] = function()
-				dapui.close()
-			end
-			dap.listeners.before.event_exited["dapui_config"] = function()
-				dapui.close()
 			end
 		end,
 	},

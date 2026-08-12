@@ -1,0 +1,18 @@
+# Shared language / CLI toolchain — editor-agnostic (nvim, Zed, terminal).
+# Installed via `make dev-tools`. Not for apps/fonts/shell (see root Brewfile).
+
+# Runtimes / toolchain managers
+brew "rustup" # keg-only; PATH via dot-zshrc
+brew "python"
+brew "deno"
+
+# Lua
+brew "lua-language-server"
+brew "stylua"
+
+# Python analysis
+brew "basedpyright"
+brew "ruff"
+
+# TOML
+brew "taplo"
