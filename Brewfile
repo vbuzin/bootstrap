@@ -16,7 +16,7 @@ brew "zsh-syntax-highlighting"
 cask "1password"
 cask "brave-origin"
 cask "docker-desktop"
-cask "font-monaspace-nf"
+cask "font-jetbrains-mono-nerd-font"
 cask "mullvad-vpn"
 
 mas "1Blocker", id: 1365531024
