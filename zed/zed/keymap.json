@@ -50,16 +50,6 @@
     "bindings": {
       "j": ["vim::Down", { "display_lines": true }],
       "k": ["vim::Up", { "display_lines": true }],
-      "f": ["vim::PushFindForward", { "before": false, "multiline": true }],
-      "t": ["vim::PushFindForward", { "before": true, "multiline": true }],
-      "shift-f": [
-        "vim::PushFindBackward",
-        { "after": false, "multiline": true },
-      ],
-      "shift-t": [
-        "vim::PushFindBackward",
-        { "after": true, "multiline": true },
-      ],
 
       // nvim-style gr (Zed default is grr; gd/gD/gy/gI already match)
       "g r": "editor::FindAllReferences",
@@ -70,6 +60,23 @@
       "ctrl-j": "workspace::ActivatePaneDown",
       "ctrl-k": "workspace::ActivatePaneUp",
       "ctrl-l": "workspace::ActivatePaneRight",
+    },
+  },
+  {
+    // Multiline f/t. Must not use bare VimControl — that shadows default
+    // af/if (function) and at/it (tag) while a text-object operator is pending.
+    "context": "VimControl && !menu && !(vim_operator == a || vim_operator == i || vim_operator == cs)",
+    "bindings": {
+      "f": ["vim::PushFindForward", { "before": false, "multiline": true }],
+      "t": ["vim::PushFindForward", { "before": true, "multiline": true }],
+      "shift-f": [
+        "vim::PushFindBackward",
+        { "after": false, "multiline": true },
+      ],
+      "shift-t": [
+        "vim::PushFindBackward",
+        { "after": true, "multiline": true },
+      ],
     },
   },
   {

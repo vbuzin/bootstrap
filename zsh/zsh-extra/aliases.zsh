@@ -15,3 +15,5 @@ alias vi="_editor"
 alias ga="git add"
 alias gs="git status -s"
 alias gd="git diff --patience  --indent-heuristic --color-moved=dimmed-zebra"
+alias gl="git ls-files --modified --others --exclude-standard | eza --stdin -l --git --icons"
+
