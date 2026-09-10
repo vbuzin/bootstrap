@@ -13,14 +13,11 @@ brew "zsh-autosuggestions"
 brew "zsh-history-substring-search"
 brew "zsh-syntax-highlighting"
 
-cask "1password"
 cask "brave-origin"
-cask "docker-desktop"
 cask "font-jetbrains-mono-nerd-font"
 cask "mullvad-vpn"
 
 mas "1Blocker", id: 1365531024
-mas "1Password for Safari", id: 1569813296
 mas "Keynote", id: 361285480
 mas "Numbers", id: 361304891
 mas "Obsidian Web Clipper", id: 6720708363
