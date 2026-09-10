@@ -49,12 +49,27 @@
 (set-frame-parameter nil 'internal-border-width 10)
 
 ;; Font Configuration
-(set-face-attribute 'default nil :family "JetbrainsMono Nerd Font" :height 130)
+;; Ghostty uses the NFM (Mono) cut; Zed uses weight 300. GNU NS Emacs still
+;; rasterises via AppKit, so this cannot match GPU sharpness — it only
+;; picks the same face. AppleFontSmoothing for org.gnu.Emacs is set in
+;; `make emacs` (glyph dilation is what makes NS text look gummy).
+(set-face-attribute 'default nil
+                    :family "JetBrainsMono Nerd Font Mono"
+                    :weight 'light
+                    :height 130)
 (copy-face 'default 'fixed-pitch)
 (copy-face 'default 'fixed-pitch-serif)
 (copy-face 'default 'variable-pitch)
 
 ;; Default Fill Column
 (setq-default fill-column 100)
+
+;; Don't warn about missing lexical-binding cookies
+(setq warning-suppress-log-types '((files missing-lexbind-cookie)))
+
+;; Native-comp of third-party packages (rustic, avy, …) always warns about
+;; optional functions they call without requiring (lsp-mode, flycheck,
+;; inheritenv, polymode, linum-mode, …). Log them, don't pop *Warnings*.
+(setq native-comp-async-report-warnings-errors 'silent)
 
 ;;; end of early-init.el

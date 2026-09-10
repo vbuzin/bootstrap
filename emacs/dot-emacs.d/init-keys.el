@@ -3,11 +3,16 @@
 ;;; Helper Functions
 ;; =============================================================================
 (defun my/close-and-kill-this-pane ()
-  "Close the current window and kill its buffer if other windows exist."
+  "Kill the current buffer, and delete its window if it is not the last.
+
+`kill-this-buffer' is menu/tool-bar only (Emacs 31); use
+`kill-current-buffer' from a key binding."
   (interactive)
-  (kill-this-buffer)
-  (when (> (count-windows) 1) ; Only delete window if it's not the last one
-    (delete-window)))
+  (let ((window (selected-window)))
+    (kill-current-buffer)
+    (when (and (window-live-p window)
+               (not (one-window-p)))
+      (delete-window window))))
 
 (defun my/fill-or-unfill ()
   "Toggle paragraph filling.

@@ -141,7 +141,7 @@
   (setq ibuffer-saved-filter-groups
         '(("default"
            ("Org"   (mode . org-mode))
-           ("Rust"  (mode . rust-ts-mode))
+           ("Rust"  (mode . rustic-mode))
            ("Dired" (mode . dired-mode))
            ("Magit" (derived-mode . magit-mode))
            ("Help"  (or (mode . help-mode) (mode . Info-mode)))
@@ -229,7 +229,6 @@
 
 ;;; Development
 ;; =============================================================================
-;; -----------------------------------------------------------------------------
 (setq treesit-font-lock-level 4)
 
 ;; Eldoc (built-in) — richer ambient docs from eglot hover/signature
@@ -246,11 +245,11 @@
   ;; Room for a few lines of hover without dominating the frame.
   (setq max-mini-window-height 0.25))
 
-;; Eglot (built-in LSP client) — replaces lsp-mode
+;; Eglot (built-in LSP client). rustic starts it for Rust; this block is
+;; the shared client + rust-analyzer workspace settings rustic does not own.
 ;; -----------------------------------------------------------------------------
 (use-package eglot
   :ensure nil
-  :hook ((rust-ts-mode . eglot-ensure))
   :bind (:map eglot-mode-map
          ("C-c l a" . eglot-code-actions)
          ("C-c l r" . eglot-rename)
@@ -263,37 +262,18 @@
   :custom
   (eglot-autoshutdown t)
   (eglot-events-buffer-config '(:size 0 :format full))
-  (eglot-events-buffer-size 0)
-  (eglot-send-changes-idle-time 0.5)
   (eglot-extend-to-xref t)
   :config
-  ;; Performance: don't log jsonrpc events
-  (fset #'jsonrpc--log-event #'ignore)
-
-  ;; Format via eglot (LSP) on save for any eglot-managed buffer (works for Rust, etc.)
   (defun my/eglot-format-on-save ()
     "Format buffer via eglot before saving, if eglot is active."
     (when (bound-and-true-p eglot--managed-mode)
       (eglot-format-buffer)))
   (add-hook 'before-save-hook #'my/eglot-format-on-save)
 
-  (add-to-list 'eglot-server-programs
-    '((rust-ts-mode rust-mode rustic-mode) .
-      ("rust-analyzer"
-       :initializationOptions
-       (:cargo (:allFeatures t)
-        :check (:command "clippy"
-                :features "all"
-                :extraArgs ["--no-deps"])
-        :procMacro (:enable t)
-        :inlayHints
-        (:closureReturnTypeHints (:enable t)
-         :lifetimeElisionHints (:enable "skip_trivial"
-                                 :useParameterNames :json-false)
-         :parameterHints (:enable t)
-         :typeHints (:enable t))))))
-
-  ;; Also send as workspace config (live updates without full restart).
+  ;; rustic's eglot-rust-analyzer only sends check.command at initialize
+  ;; (see rustic-lsp-check-command). Everything else lives here so it can
+  ;; update without a server restart. Defaults (procMacro, parameter/type
+  ;; hints) are omitted.
   (setq-default eglot-workspace-configuration
                 '(:rust-analyzer
                   (:cargo (:allFeatures t)
@@ -305,20 +285,16 @@
                     :lifetimeElisionHints (:enable "skip_trivial"
                                             :useParameterNames :json-false)))))
 
-  ;; Inlay hints (Emacs 29+ built-in eglot support)
   (add-hook 'eglot-managed-mode-hook #'eglot-inlay-hints-mode)
 
-  ;; Prefer tree-sitter over RA semantic tokens for Rust (avoids flicker; matches
-  ;; the rationale in the user's nvim rustaceanvim config).
+  ;; Prefer tree-sitter over RA semantic tokens (avoids flicker; same
+  ;; rationale as the nvim rustaceanvim config).
   (defun my/eglot-prefer-treesitter-for-rust ()
-    (when (derived-mode-p 'rust-ts-mode 'rust-mode 'rustic-mode)
+    (when (derived-mode-p 'rustic-mode 'rust-ts-mode 'rust-mode)
       (setq-local eglot-ignored-server-capabilities
                   (cons :semanticTokensProvider
                         (or eglot-ignored-server-capabilities '())))))
-  (add-hook 'eglot-managed-mode-hook #'my/eglot-prefer-treesitter-for-rust)
-
-  ;; Subword navigation (helpful for snake_case and mixed-case identifiers)
-  (add-hook 'rust-ts-mode-hook #'subword-mode))
+  (add-hook 'eglot-managed-mode-hook #'my/eglot-prefer-treesitter-for-rust))
 
 ;; Flymake (built-in) — eglot feeds LSP diagnostics into it when managing a buffer
 ;; -----------------------------------------------------------------------------
@@ -326,12 +302,18 @@
   :ensure nil
   :init
   (defun my/eglot-will-manage-p ()
-    "Non-nil if `eglot-ensure' is on this major mode's hook."
-    (let ((hook (intern (format "%s-hook" major-mode))))
-      (and (boundp hook)
-           (seq-some (lambda (fn)
-                       (eq (if (consp fn) (car fn) fn) #'eglot-ensure))
-                     (symbol-value hook)))))
+    "Non-nil if Eglot will take over Flymake in this buffer.
+
+Rustic puts `rustic-setup-lsp' (not `eglot-ensure') on
+`rustic-mode-hook', so the hook walk alone would miss it."
+    (or (and (boundp 'rustic-lsp-client)
+             (eq rustic-lsp-client 'eglot)
+             (derived-mode-p 'rustic-mode))
+        (let ((hook (intern (format "%s-hook" major-mode))))
+          (and (boundp hook)
+               (seq-some (lambda (fn)
+                           (eq (if (consp fn) (car fn) fn) #'eglot-ensure))
+                         (symbol-value hook))))))
 
   (defun my/maybe-enable-flymake ()
     "Enable Flymake in programming buffers where Eglot won't own it.
@@ -376,7 +358,29 @@ async work that races with that handoff (\"Can't find state for …\")."
   :config
   (add-to-list 'project-vc-extra-root-markers ".project-root"))
 
-;;; Tree-sitter — automatic major modes (rust-ts-mode, toml-ts-mode, etc.)
+;; Rust — rustic-mode (cargo/compile/popup) on top of rust-mode → rust-ts-mode
+;; -----------------------------------------------------------------------------
+;; rust-mode-treesitter-derive must be set before rust-mode.el loads, so
+;; rustic-mode (which derives from rust-mode) gets tree-sitter highlighting.
+(use-package rust-mode
+  :init
+  (setq rust-mode-treesitter-derive t))
+
+(use-package rustic
+  :after rust-mode
+  :mode ("\\.rs\\'" . rustic-mode)
+  :hook (rustic-mode . subword-mode)
+  :init
+  ;; Default is lsp-mode; rustic-setup-lsp reads this on rustic-mode-hook.
+  (setq rustic-lsp-client 'eglot)
+  :custom
+  (rustic-lsp-check-command "clippy")
+  ;; Eglot/LSP rustfmt owns on-save formatting; rustic's rustfmt trigger
+  ;; would double-format.
+  (rustic-format-trigger nil)
+  (rustic-cargo-use-last-stored-arguments t))
+
+;;; Tree-sitter — automatic major modes (toml-ts-mode, etc.)
 ;; -----------------------------------------------------------------------------
 ;; Deferred via after-init (not :demand): still early enough to register
 ;; auto-mode remaps before interactive file visits, and so missing-grammar
@@ -388,6 +392,8 @@ async work that races with that handoff (\"Can't find state for …\")."
   ;; Grammars land in ~/.emacs.d/tree-sitter/ as libtree-sitter-*.dylib.
   (treesit-auto-install 'prompt)
   :config
-  (treesit-auto-add-to-auto-mode-alist 'all))
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  ;; treesit-auto remaps .rs → rust-ts-mode; rustic must stay in front.
+  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode)))
 
 ;;; end of init-pkgs.el
