@@ -13,7 +13,7 @@ It uses [GNU Stow](https://www.gnu.org/software/stow/) to symlink configs into t
 ## What's inside
 
 - **Shell** — Zsh with a modular config (no framework), [Starship](https://starship.rs) prompt, fzf, bat, eza, direnv
-- **Terminal** — [Ghostty](https://ghostty.org) with [Zellij](https://zellij.dev) (tmux remains in the repo; swap one line in the Ghostty config to go back)
+- **Terminal** — [Ghostty](https://ghostty.org) with Tmux for multiplexing (Zellij config remains in the repo; swap one line in the Ghostty config to try it)
 - **Editors** — Neovim (Lua config, lazy.nvim, LSP for Go, Python, Rust, TypeScript, F#), Helix, Emacs, Vim
 - **AI Coding** — Custom Grok Build (xAI CLI) skills, hooks, and config managed via `make grok` + `GROK_HOME`
 - **Packages** — Homebrew + Brewfile (CLI tools, casks, App Store apps via mas)
@@ -23,7 +23,7 @@ It uses [GNU Stow](https://www.gnu.org/software/stow/) to symlink configs into t
 ## Usage
 
 ```sh
-# Full setup (shell + brew + ghostty + tmux + zellij)
+# Full setup (shell + brew + ghostty + tmux)
 make
 
 # Individual components
@@ -31,7 +31,7 @@ make nvim
 make helix
 make lazygit
 make leaf          # terminal markdown viewer
-make zellij        # default multiplexer (Ghostty launches this)
+make zellij        # optional multiplexer (swap Ghostty's command to use it)
 make emacs
 make firefox
 make grok          # custom Grok Build skills + config under ~/.config/grok

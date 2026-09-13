@@ -18,13 +18,13 @@ msg = @echo ">>> $(1) <<<"
 .PHONY: all update shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox dev-tools update-dev-tools clean-dev-tools clean-dev-tools-hard verify-dev-tools nvim clean-nvim tmux clean-tmux zellij clean-zellij zed clean-zed helix clean-helix lazygit clean-lazygit leaf clean-leaf macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
 
 # Default target
-all: shell brew ghostty tmux zellij
+all: shell brew ghostty tmux
 	$(call msg,"Setup complete! Run 'make firefox-config' after Firefox initializes.")
 
 # Help target
 help:
 	@echo "Available targets:"
-	@echo "  all                : Install all components (shell, brew, ghostty, tmux, zellij)"
+	@echo "  all                : Install all components (shell, brew, ghostty, tmux)"
 	@echo "  update             : Upgrade installed Homebrew packages + dev-tools if present"
 	@echo "  shell              : Install and configure shell (starship + plugins)"
 	@echo "  clean-shell        : Remove shell configuration"
@@ -47,8 +47,8 @@ help:
 	@echo "  clean-nvim         : Uninstall Neovim config only (does not remove dev-tools)"
 	@echo "  tmux               : Configure Tmux"
 	@echo "  clean-tmux         : Remove Tmux configuration"
-	@echo "  zellij             : Install and configure Zellij (Ghostty launches this)"
-	@echo "  clean-zellij       : Remove Zellij (does not revert Ghostty's command)"
+	@echo "  zellij             : Install and configure Zellij (optional; swap Ghostty's command to use it)"
+	@echo "  clean-zellij       : Remove Zellij"
 	@echo "  zed                : Install and configure Zed (soft: run make dev-tools for PATH LSPs)"
 	@echo "  clean-zed          : Uninstall Zed and remove configuration"
 	@echo "  helix              : Install and configure Helix"
@@ -321,7 +321,7 @@ clean-tmux:
 	@brew uninstall tmux
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) tmux
 
-# Zellij (default multiplexer; tmux stays installed)
+# Zellij (optional multiplexer; Ghostty launches tmux)
 zellij: $(CONFIG_DIR)
 	$(call msg,"Installing and configuring Zellij")
 	@brew install zellij
