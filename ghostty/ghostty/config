@@ -23,6 +23,10 @@ quick-terminal-size = 1280px,860px
 quick-terminal-autohide = false
 
 keybind = global:cmd+backquote=toggle_quick_terminal
+# Don't rewrite Option+arrows to Esc f/b (readline words) — that makes
+# Alt-Right toggle Zellij floats. Let Alt-Left/Right reach the mux.
+keybind = alt+left=unbind
+keybind = alt+right=unbind
 initial-window = false
 macos-hidden = always
 
