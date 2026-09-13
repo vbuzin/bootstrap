@@ -1,0 +1,129 @@
+// One Dark Pro Max — matches Ghostty, tmux status, starship, lazygit, leaf.
+themes {
+    one-dark-pro-max {
+        text_unselected {
+            base "#abb2bf"
+            background "#080909"
+            emphasis_0 "#f0a45d"
+            emphasis_1 "#42b3c2"
+            emphasis_2 "#8cc265"
+            emphasis_3 "#c162de"
+        }
+        text_selected {
+            base "#d7dae0"
+            background "#2c313a"
+            emphasis_0 "#f0a45d"
+            emphasis_1 "#4cd1e0"
+            emphasis_2 "#a5e075"
+            emphasis_3 "#de73ff"
+        }
+        ribbon_unselected {
+            base "#abb2bf"
+            background "#0f1419"
+            emphasis_0 "#e05561"
+            emphasis_1 "#d7dae0"
+            emphasis_2 "#4aa5f0"
+            emphasis_3 "#c162de"
+        }
+        ribbon_selected {
+            base "#080909"
+            background "#4aa5f0"
+            emphasis_0 "#e05561"
+            emphasis_1 "#f0a45d"
+            emphasis_2 "#c162de"
+            emphasis_3 "#8cc265"
+        }
+        table_title {
+            base "#4aa5f0"
+            background "#080909"
+            emphasis_0 "#f0a45d"
+            emphasis_1 "#42b3c2"
+            emphasis_2 "#8cc265"
+            emphasis_3 "#c162de"
+        }
+        table_cell_unselected {
+            base "#abb2bf"
+            background "#080909"
+            emphasis_0 "#f0a45d"
+            emphasis_1 "#42b3c2"
+            emphasis_2 "#8cc265"
+            emphasis_3 "#c162de"
+        }
+        table_cell_selected {
+            base "#d7dae0"
+            background "#2c313a"
+            emphasis_0 "#f0a45d"
+            emphasis_1 "#42b3c2"
+            emphasis_2 "#8cc265"
+            emphasis_3 "#c162de"
+        }
+        list_unselected {
+            base "#abb2bf"
+            background "#080909"
+            emphasis_0 "#f0a45d"
+            emphasis_1 "#42b3c2"
+            emphasis_2 "#8cc265"
+            emphasis_3 "#c162de"
+        }
+        list_selected {
+            base "#d7dae0"
+            background "#2c313a"
+            emphasis_0 "#f0a45d"
+            emphasis_1 "#42b3c2"
+            emphasis_2 "#8cc265"
+            emphasis_3 "#c162de"
+        }
+        frame_unselected {
+            base "#4f5666"
+            background "#080909"
+            emphasis_0 "#f0a45d"
+            emphasis_1 "#42b3c2"
+            emphasis_2 "#c162de"
+            emphasis_3 "#8cc265"
+        }
+        frame_selected {
+            base "#5a7d9a"
+            background "#080909"
+            emphasis_0 "#f0a45d"
+            emphasis_1 "#42b3c2"
+            emphasis_2 "#c162de"
+            emphasis_3 "#8cc265"
+        }
+        frame_highlight {
+            base "#f0a45d"
+            background "#080909"
+            emphasis_0 "#c162de"
+            emphasis_1 "#f0a45d"
+            emphasis_2 "#f0a45d"
+            emphasis_3 "#f0a45d"
+        }
+        exit_code_success {
+            base "#8cc265"
+            background "#080909"
+            emphasis_0 "#42b3c2"
+            emphasis_1 "#080909"
+            emphasis_2 "#c162de"
+            emphasis_3 "#4aa5f0"
+        }
+        exit_code_error {
+            base "#e05561"
+            background "#080909"
+            emphasis_0 "#f0a45d"
+            emphasis_1 "#080909"
+            emphasis_2 "#080909"
+            emphasis_3 "#080909"
+        }
+        multiplayer_user_colors {
+            player_1 "#c162de"
+            player_2 "#4aa5f0"
+            player_3 0
+            player_4 "#f0a45d"
+            player_5 "#42b3c2"
+            player_6 0
+            player_7 "#e05561"
+            player_8 0
+            player_9 0
+            player_10 0
+        }
+    }
+}

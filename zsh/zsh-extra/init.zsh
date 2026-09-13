@@ -4,8 +4,13 @@
 # aliases → functions → fzf → autosuggestions → starship → direnv →
 # syntax-highlighting (must be last).
 
-# Homebrew environment — sets PATH, MANPATH, INFOPATH for non-login shells
-[[ -x $(brew --prefix)/bin/brew ]] && eval "$($(brew --prefix)/bin/brew shellenv)"
+# Homebrew environment — PATH, MANPATH, INFOPATH. Use an absolute brew path so
+# this still works when the parent process (GUI terminal, Zellij) has a bare PATH.
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
 
 ZSH_EXTRA_DIR="$HOME/.config/zsh-extra"
 

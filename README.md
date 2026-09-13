@@ -13,17 +13,17 @@ It uses [GNU Stow](https://www.gnu.org/software/stow/) to symlink configs into t
 ## What's inside
 
 - **Shell** — Zsh with a modular config (no framework), [Starship](https://starship.rs) prompt, fzf, bat, eza, direnv
-- **Terminal** — [Ghostty](https://ghostty.org) with Tmux for multiplexing
+- **Terminal** — [Ghostty](https://ghostty.org) with [Zellij](https://zellij.dev) (tmux remains in the repo; swap one line in the Ghostty config to go back)
 - **Editors** — Neovim (Lua config, lazy.nvim, LSP for Go, Python, Rust, TypeScript, F#), Helix, Emacs, Vim
 - **AI Coding** — Custom Grok Build (xAI CLI) skills, hooks, and config managed via `make grok` + `GROK_HOME`
 - **Packages** — Homebrew + Brewfile (CLI tools, casks, App Store apps via mas)
 - **Browsers** — Firefox with custom CSS, Brave
-- **Theme** — One Dark Pro Max, consistently applied across terminal, prompt, editor, tmux, lazygit, and leaf
+- **Theme** — One Dark Pro Max, consistently applied across terminal, prompt, editor, tmux, zellij, lazygit, and leaf
 
 ## Usage
 
 ```sh
-# Full setup (shell + brew + ghostty + tmux)
+# Full setup (shell + brew + ghostty + tmux + zellij)
 make
 
 # Individual components
@@ -31,6 +31,7 @@ make nvim
 make helix
 make lazygit
 make leaf          # terminal markdown viewer
+make zellij        # default multiplexer (Ghostty launches this)
 make emacs
 make firefox
 make grok          # custom Grok Build skills + config under ~/.config/grok
@@ -39,6 +40,7 @@ make grok          # custom Grok Build skills + config under ~/.config/grok
 make clean-helix
 make clean-lazygit
 make clean-leaf
+make clean-zellij
 make clean-firefox
 make clean-grok
 ```

@@ -1,0 +1,21 @@
+// Tab bar on top, status bar on the bottom.
+// new_tab_template cwd is shellexpanded (~ → $HOME).
+layout {
+    pane size=1 borderless=true {
+        plugin location="tab-bar"
+    }
+    pane
+    pane size=1 borderless=true {
+        plugin location="status-bar"
+    }
+
+    new_tab_template cwd="~" {
+        pane size=1 borderless=true {
+            plugin location="tab-bar"
+        }
+        pane
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+}

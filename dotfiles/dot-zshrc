@@ -1,3 +1,12 @@
+# Login shells already sourced /etc/zprofile + ~/.zprofile (path_helper puts
+# Homebrew on PATH, then EDITOR/LANG). Non-login interactive shells — Zellij
+# panes, some IDE terminals — skip those files, so `brew` is missing and
+# init.zsh's Homebrew block is a no-op (no Starship, no plugins).
+if [[ -o interactive && ! -o login ]]; then
+  [[ -r /etc/zprofile ]] && source /etc/zprofile
+  [[ -r "${ZDOTDIR:-$HOME}/.zprofile" ]] && source "${ZDOTDIR:-$HOME}/.zprofile"
+fi
+
 # ==============================================================================
 # SECTION 1: GLOBAL ENVIRONMENT (Runs for IDEs and Terminal)
 # ==============================================================================

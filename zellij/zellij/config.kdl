@@ -1,0 +1,38 @@
+theme "one-dark-pro-max"
+default_layout "default"
+copy_command "pbcopy"
+stacked_pane_list false // expand in place (accordion), not a title list above the stack
+pane_frame_style "full" // classic ┌ frames; 0.45 default is title-line only
+show_startup_tips false
+
+// No floating terminals. Session-manager etc. still open as floating plugins.
+keybinds {
+    shared_except "locked" {
+        // Explorer: browse from the focused pane's cwd, open in $EDITOR, then close.
+        bind "Alt e" {
+            LaunchOrFocusPlugin "filepicker" {
+                close_on_selection true
+                move_to_focused_tab true
+            }
+        }
+        bind "Alt t" {
+            NewTab {
+                layout "home"
+            }
+        }
+    }
+    tab {
+        bind "n" {
+            NewTab {
+                layout "home"
+            }
+            SwitchToMode "Normal"
+        }
+    }
+}
+
+ui {
+    pane_frames {
+        rounded_corners true
+    }
+}
