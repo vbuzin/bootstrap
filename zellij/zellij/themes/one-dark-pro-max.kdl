@@ -74,7 +74,7 @@ themes {
             emphasis_3 "#c162de"
         }
         frame_unselected {
-            base "#4f5666"
+            base "#1e1e1e"
             background "#080909"
             emphasis_0 "#f0a45d"
             emphasis_1 "#42b3c2"
@@ -82,7 +82,7 @@ themes {
             emphasis_3 "#8cc265"
         }
         frame_selected {
-            base "#5a7d9a"
+            base "#383838"
             background "#080909"
             emphasis_0 "#f0a45d"
             emphasis_1 "#42b3c2"
@@ -90,12 +90,12 @@ themes {
             emphasis_3 "#8cc265"
         }
         frame_highlight {
-            base "#f0a45d"
+            base "#454545"
             background "#080909"
-            emphasis_0 "#c162de"
-            emphasis_1 "#f0a45d"
-            emphasis_2 "#f0a45d"
-            emphasis_3 "#f0a45d"
+            emphasis_0 "#4f5666"
+            emphasis_1 "#454545"
+            emphasis_2 "#454545"
+            emphasis_3 "#454545"
         }
         exit_code_success {
             base "#8cc265"
