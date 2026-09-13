@@ -104,7 +104,7 @@
     Snacks\,Ivy\enspace\textbullet\enspace
     Flash\enspace\textbullet\enspace
     LSP\,+\,DAP\enspace\textbullet\enspace
-    mini.ai\enspace\textbullet\enspace
+    TS\,textobjects\enspace\textbullet\enspace
     One\,Dark\enspace\textbullet\enspace
     Rust\,/\,Go\,/\,Python\,/\,TS\,/\,F\#\,/\,Lua}}}}
 \vspace{1pt}
@@ -405,33 +405,28 @@
 {\footnotesize\kbd{c}} & {\scriptsize change} & {\footnotesize\kbd{d}} & {\scriptsize delete} \\[\kdsep]
 {\footnotesize\kbd{y}} & {\scriptsize yank} & {\footnotesize\kbd{>}} & {\scriptsize indent\,\textrightarrow} \\[\kdsep]
 {\footnotesize\kbd{<}} & {\scriptsize indent\,\textleftarrow} & {\footnotesize\kbd{=}} & {\scriptsize auto-indent} \\[\kdsep]
-{\footnotesize\kbd{gc}} & {\scriptsize line comment} & {\footnotesize\kbd{gb}} & {\scriptsize block comment} \\[\kdsep]
-{\footnotesize\kbd{ys}} & {\scriptsize surround add} & & \\
+{\footnotesize\kbd{gc}} & {\scriptsize line comment} & {\footnotesize\kbd{ys}} & {\scriptsize surround add} \\
 \end{tabular}\par\vspace{1.5pt}
 \snote{Examples: \kbd{yaf} yank outer fn \textbullet{} \kbd{cit} change in tag \textbullet{} \kbd{dap} delete paragraph}
 
 % ═══════════════════════════════════════
-\sect{TEXT OBJECTS\enspace{\scriptsize mini.ai — prefix a / i}}
+\sect{TEXT OBJECTS\enspace{\scriptsize prefix a / i}}
 \begin{kt}
 \kd{f}{function (treesitter)}
 \kd{c}{class (treesitter)}
 \kd{o}{block / conditional / loop (TS)}
+\kd{a}{argument / parameter (TS)}
 \kd{t}{HTML/XML tag}
-\kd{b}{bracket pair ( ) [ ] \{ \}}
-\kd{q}{quote " ' `}
 \kd{w\,/\,W}{word / WORD}
 \kd{p}{paragraph}
-\kd{g}{entire file (mini.ai bonus)}
+\kd{h}{git hunk (\kbd{ih} only)}
 \end{kt}
 
 % ═══════════════════════════════════════
 \sect{COMMENTS \& SURROUND}
 \begin{kt}
-\kd{gcc}{toggle line comment}
-\kd{gbc}{toggle block comment}
+\kd{gcc}{toggle line comment (builtin)}
 \kd{gc\{m\}}{comment by motion (e.g.\ \kbd{gcip})}
-\kd{gco\,/\,gcO}{comment line below / above}
-\kd{gcA}{append comment at end of line}
 \kd{ys\{m\}\{c\}}{add surround (e.g.\ \kbd{ysiw"})}
 \kd{yss\{c\}}{surround entire current line}
 \kd{ds\{c\}}{delete surrounding char}

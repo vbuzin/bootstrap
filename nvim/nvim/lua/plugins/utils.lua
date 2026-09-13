@@ -158,8 +158,6 @@ return {
 				{ "gx", desc = "Open URI / file" },
 				{ "g~", desc = "Toggle case" },
 				{ "g%", desc = "Cycle results" },
-				-- Comment blockwise (gc is grouped below)
-				{ "gb", desc = "Comment blockwise" },
 				-- sub-groups (appear as headers when prefix typed)
 				{ "gc", group = "comment" },
 				{ "gs", group = "swap" },
@@ -264,13 +262,5 @@ return {
 				rust = { "string_content", "comment" },
 			},
 		},
-	},
-	-- Comments
-	{
-		"numToStr/Comment.nvim",
-		event = "VeryLazy",
-		config = function()
-			require("Comment").setup()
-		end,
 	},
 }
