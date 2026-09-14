@@ -21,17 +21,7 @@ if command -v rustup >/dev/null 2>&1; then
   PATH="${PATH:+${PATH}:}${HOME}/.cargo/bin:$(brew --prefix rustup)/bin"
 fi
 
-# 2. Secrets
-if [[ -x "$HOME/.grok/bin/grok" ]]; then
-  # grok is installed and manages its own auth (browser login, auth.json, etc.).
-  # XAI_API_KEY has highest precedence in grok's chain, so we must not let a
-  # stale keychain value leak in. Also cleans up the var on re-source after install.
-  unset XAI_API_KEY
-else
-  export XAI_API_KEY="$(security find-generic-password -s "XAI_API_KEY" -w 2>/dev/null || echo '')"
-fi
-
-# 3. Other
+# 2. Other
 export GROK_LSP_TOOLS=1
 
 # ==============================================================================
@@ -56,22 +46,5 @@ if [[ $- == *i* ]]; then
   #    functions, fzf bindings, plugins, starship, direnv.
   #    See ~/.config/zsh-extra/init.zsh for the full load order.
   source "$HOME/.config/zsh-extra/init.zsh"
-
-  # SSH agent: load the Keychain-backed ed25519 key once per login session.
-  # Recreate the item with -A (not -T / -U) so Ghostty can read it silently:
-  #   security delete-generic-password -s "ssh-ed25519-private" -a "$USER"
-  #   security add-generic-password -a "$USER" -s "ssh-ed25519-private" \
-  #     -l "SSH ed25519 private key" -A \
-  #     -w "$(base64 < ~/.ssh/id_ed25519 | tr -d '\n')"
-  if [[ -z "${SSH_AUTH_SOCK:-}" || ! -S "$SSH_AUTH_SOCK" ]]; then
-    eval "$(ssh-agent -s)" >/dev/null
-  fi
-  if ! ssh-add -l 2>/dev/null | grep -qi ed25519; then
-    _ssh_key="$(security find-generic-password -s "ssh-ed25519-private" -w 2>/dev/null | base64 -d 2>/dev/null)" || true
-    if [[ -n "${_ssh_key:-}" ]]; then
-      printf '%s\n' "$_ssh_key" | ssh-add - 2>/dev/null || true
-    fi
-    unset _ssh_key
-  fi
 fi
 

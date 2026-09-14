@@ -1,0 +1,6 @@
+# macOS Keychain holds the key passphrase; ssh-agent holds the unlocked key.
+Host *
+  IdentitiesOnly yes
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519
