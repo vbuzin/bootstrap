@@ -1,0 +1,49 @@
+cpu: 6
+memory: 12
+disk: 100
+rootDisk: 20
+
+arch: aarch64
+runtime: docker
+hostname: colima
+autoActivate: true
+
+kubernetes:
+  enabled: false
+
+network:
+  # Reachable VM IP needs root and slows startup. Compose uses localhost
+  # port forwards; not required.
+  address: false
+  mode: shared
+  dnsHosts:
+    host.docker.internal: host.lima.internal
+
+# BuildKit is Colima's default when this map is empty.
+docker: {}
+
+# Apple Virtualization.framework — native on a Mac, faster than qemu,
+# unlocks virtiofs. Do not use qemu here.
+vmType: vz
+# qemu-user in the VM covers the odd linux/amd64 image. Native aarch64
+# is the default; no host Rosetta.
+rosetta: false
+binfmt: true
+# M4 can nest VMs; not needed for compose.
+nestedVirtualization: false
+
+# Fastest mounts; only valid with vmType vz.
+mountType: virtiofs
+# Bind-mount file watching (vite, cargo-watch, etc.) inside compose services.
+mountInotify: true
+
+# ssh is TCP-only and the stable option. grpc adds UDP but is experimental.
+portForwarder: ssh
+
+sshConfig: false
+forwardAgent: false
+sshPort: 0
+
+mounts: []
+provision: []
+env: {}

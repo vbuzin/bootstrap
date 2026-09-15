@@ -19,6 +19,10 @@ export SAVEHIST=50000
 
 # -- Tool configs --
 
+# Colima VM state + config. Must match Makefile COLIMA_HOME so `colima`
+# from make and from the shell use ~/.config/colima (stowed template).
+export COLIMA_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/colima"
+
 export BAT_THEME="ansi"
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 

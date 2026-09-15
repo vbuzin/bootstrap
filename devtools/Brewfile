@@ -16,3 +16,10 @@ brew "ruff"
 
 # TOML
 brew "taplo"
+
+# Containers — CLI only (not the Docker Desktop cask). Daemon is Colima.
+brew "colima"
+brew "docker"
+brew "docker-compose"
+brew "docker-buildx"
+brew "docker-credential-helper"

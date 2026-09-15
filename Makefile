@@ -6,10 +6,13 @@ EMACS_CONFIG_DIR := $(HOME)/.emacs.d
 BREWFILE         := $(CURDIR)/Brewfile
 DEVTOOLS_BREWFILE := $(CURDIR)/devtools/Brewfile
 # Shared language toolchain (editor-agnostic). Keep in sync with devtools/Brewfile.
-DEVTOOLS_FORMULAE := rustup python deno lua-language-server stylua basedpyright ruff taplo
+DEVTOOLS_FORMULAE := rustup python deno lua-language-server stylua basedpyright ruff taplo colima docker docker-compose docker-buildx docker-credential-helper
 # Stamp so `make update` can refresh toolchains only when installed.
 DEVTOOLS_STAMP   := $(HOME)/.local/state/bootstrap/dev-tools
 STOW_OPTS        := --ignore=.DS_Store --override=.*
+# Keep in sync with zsh-extra/exports.zsh. Forces XDG even when make's
+# non-interactive bash does not inherit XDG_CONFIG_HOME.
+export COLIMA_HOME := $(CONFIG_DIR)/colima
 
 # Message helper
 msg = @echo ">>> $(1) <<<"
@@ -39,10 +42,10 @@ help:
 	@echo "  firefox            : Install Firefox, initialize profile, and stow application settings"
 	@echo "  firefox-config     : Configure Firefox profile with custom CSS"
 	@echo "  clean-firefox      : Uninstall Firefox and remove stowed settings"
-	@echo "  dev-tools          : Install shared language toolchain (devtools/Brewfile + rustup)"
+	@echo "  dev-tools          : Install shared language toolchain (devtools/Brewfile + rustup + colima)"
 	@echo "  update-dev-tools   : Upgrade shared language toolchain"
-	@echo "  clean-dev-tools    : Uninstall toolchain formulae (keeps ~/.rustup ~/.cargo)"
-	@echo "  clean-dev-tools-hard : clean-dev-tools + wipe ~/.rustup ~/.cargo"
+	@echo "  clean-dev-tools    : Uninstall toolchain formulae (keeps ~/.rustup ~/.cargo; deletes Colima VM)"
+	@echo "  clean-dev-tools-hard : clean-dev-tools + wipe ~/.rustup ~/.cargo + Colima home"
 	@echo "  nvim               : Install Neovim + config (soft: run make dev-tools for LSPs)"
 	@echo "  clean-nvim         : Uninstall Neovim config only (does not remove dev-tools)"
 	@echo "  tmux               : Configure Tmux"
@@ -193,12 +196,13 @@ clean-firefox:
 	@brew uninstall --cask --zap firefox 2>/dev/null || true
 
 # Shared language toolchain (editor-agnostic: nvim, Zed, shell)
-dev-tools: brew
+dev-tools: brew $(CONFIG_DIR)
 	$(call msg,"Installing dev tools")
 	@brew bundle --file=$(DEVTOOLS_BREWFILE) || { echo "devtools Brewfile bundle failed"; exit 1; }
 	@export PATH="$$(brew --prefix rustup)/bin:$$PATH"; \
 		rustup default stable 2>/dev/null || rustup toolchain install stable; \
 		rustup component add rust-analyzer rustfmt clippy
+	@stow --no-folding $(STOW_OPTS) --target=$(CONFIG_DIR) colima
 	@mkdir -p "$$(dirname $(DEVTOOLS_STAMP))"
 	@date -u +%Y-%m-%dT%H:%M:%SZ > "$(DEVTOOLS_STAMP)"
 	@$(MAKE) verify-dev-tools
@@ -220,12 +224,20 @@ update-dev-tools:
 		rustup update stable; \
 		rustup component add rust-analyzer rustfmt clippy; \
 	fi
+	@if brew list --formula colima >/dev/null 2>&1; then \
+		stow --no-folding $(STOW_OPTS) --target=$(CONFIG_DIR) colima; \
+	fi
 	@mkdir -p "$$(dirname $(DEVTOOLS_STAMP))"
 	@date -u +%Y-%m-%dT%H:%M:%SZ > "$(DEVTOOLS_STAMP)"
 	@$(MAKE) verify-dev-tools
 
 clean-dev-tools:
 	$(call msg,"Cleaning dev tools")
+	@if command -v colima >/dev/null 2>&1; then \
+		colima stop -f 2>/dev/null || true; \
+		colima delete -f 2>/dev/null || true; \
+	fi
+	@stow -D --no-folding $(STOW_OPTS) --target=$(CONFIG_DIR) colima 2>/dev/null || true
 	@for f in $(DEVTOOLS_FORMULAE); do \
 		if brew list --formula "$$f" >/dev/null 2>&1; then \
 			echo "uninstalling $$f"; \
@@ -238,8 +250,8 @@ clean-dev-tools:
 	@rm -rf $(HOME)/.local/share/nvim/tools
 
 clean-dev-tools-hard: clean-dev-tools
-	$(call msg,"Wiping Rust toolchain homes")
-	@rm -rf $(HOME)/.rustup $(HOME)/.cargo
+	$(call msg,"Wiping Rust toolchain homes and Colima state")
+	@rm -rf $(HOME)/.rustup $(HOME)/.cargo $(COLIMA_HOME) $(HOME)/.colima
 
 verify-dev-tools:
 	$(call msg,"Verifying dev tools")
@@ -252,6 +264,15 @@ verify-dev-tools:
 		command -v taplo >/dev/null || { echo "missing taplo"; exit 1; }; \
 		command -v rust-analyzer >/dev/null || { echo "missing rust-analyzer"; exit 1; }; \
 		command -v rustfmt >/dev/null || { echo "missing rustfmt"; exit 1; }; \
+		command -v docker >/dev/null || { echo "missing docker"; exit 1; }; \
+		command -v colima >/dev/null || { echo "missing colima"; exit 1; }; \
+		command -v docker-compose >/dev/null || { echo "missing docker-compose"; exit 1; }; \
+		command -v docker-buildx >/dev/null || { echo "missing docker-buildx"; exit 1; }; \
+		if colima status >/dev/null 2>&1; then \
+			docker info >/dev/null || { echo "docker daemon not reachable"; exit 1; }; \
+		else \
+			echo ">>> colima not running; skipped docker info <<<"; \
+		fi; \
 		echo ">>> all dev tools OK <<<"
 
 # Neovim — editor only (language tools: make dev-tools)
