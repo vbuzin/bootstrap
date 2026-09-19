@@ -3,16 +3,11 @@
 
 # Runtimes / toolchain managers
 brew "rustup" # keg-only; PATH via dot-zshrc
-brew "python"
 brew "deno"
 
 # Lua
 brew "lua-language-server"
 brew "stylua"
-
-# Python analysis
-brew "basedpyright"
-brew "ruff"
 
 # TOML
 brew "taplo"

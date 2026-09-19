@@ -6,7 +6,7 @@ EMACS_CONFIG_DIR := $(HOME)/.emacs.d
 BREWFILE         := $(CURDIR)/Brewfile
 DEVTOOLS_BREWFILE := $(CURDIR)/devtools/Brewfile
 # Shared language toolchain (editor-agnostic). Keep in sync with devtools/Brewfile.
-DEVTOOLS_FORMULAE := rustup python deno lua-language-server stylua basedpyright ruff taplo colima docker docker-compose docker-buildx docker-credential-helper
+DEVTOOLS_FORMULAE := rustup deno lua-language-server stylua taplo colima docker docker-compose docker-buildx docker-credential-helper
 # Stamp so `make update` can refresh toolchains only when installed.
 DEVTOOLS_STAMP   := $(HOME)/.local/state/bootstrap/dev-tools
 STOW_OPTS        := --ignore=.DS_Store --override=.*
@@ -259,8 +259,6 @@ verify-dev-tools:
 		command -v deno >/dev/null || { echo "missing deno"; exit 1; }; \
 		command -v stylua >/dev/null || { echo "missing stylua"; exit 1; }; \
 		command -v lua-language-server >/dev/null || { echo "missing lua-language-server"; exit 1; }; \
-		command -v basedpyright >/dev/null || { echo "missing basedpyright"; exit 1; }; \
-		command -v ruff >/dev/null || { echo "missing ruff"; exit 1; }; \
 		command -v taplo >/dev/null || { echo "missing taplo"; exit 1; }; \
 		command -v rust-analyzer >/dev/null || { echo "missing rust-analyzer"; exit 1; }; \
 		command -v rustfmt >/dev/null || { echo "missing rustfmt"; exit 1; }; \
