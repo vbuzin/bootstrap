@@ -21,9 +21,6 @@ if command -v rustup >/dev/null 2>&1; then
   PATH="${PATH:+${PATH}:}${HOME}/.cargo/bin:$(brew --prefix rustup)/bin"
 fi
 
-# 2. Other
-export GROK_LSP_TOOLS=1
-
 # ==============================================================================
 # SECTION 2: INTERACTIVE SHELL (Human use only)
 # Everything below is skipped by JetBrains/Automation to prevent timeouts.

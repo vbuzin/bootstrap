@@ -3,6 +3,7 @@ PATH             := $(PATH):/opt/homebrew/bin
 SHELL            := env PATH=$(PATH) /bin/bash
 CONFIG_DIR       := $(HOME)/.config
 EMACS_CONFIG_DIR := $(HOME)/.emacs.d
+GROK_DIR         := $(HOME)/.grok
 BREWFILE         := $(CURDIR)/Brewfile
 DEVTOOLS_BREWFILE := $(CURDIR)/devtools/Brewfile
 # Shared language toolchain (editor-agnostic). Keep in sync with devtools/Brewfile.
@@ -18,7 +19,7 @@ export COLIMA_HOME := $(CONFIG_DIR)/colima
 msg = @echo ">>> $(1) <<<"
 
 # Phony targets
-.PHONY: all update shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode emacs clean-emacs firefox firefox-config clean-firefox dev-tools update-dev-tools clean-dev-tools clean-dev-tools-hard verify-dev-tools nvim clean-nvim tmux clean-tmux zellij clean-zellij zed clean-zed helix clean-helix lazygit clean-lazygit leaf clean-leaf macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
+.PHONY: all update shell clean-shell brew clean-brew ghostty clean-ghostty opencode clean-opencode grok clean-grok emacs clean-emacs firefox firefox-config clean-firefox dev-tools update-dev-tools clean-dev-tools clean-dev-tools-hard verify-dev-tools nvim clean-nvim tmux clean-tmux zellij clean-zellij zed clean-zed helix clean-helix lazygit clean-lazygit leaf clean-leaf macos clean help nvim-cheatsheet nvim-cheatsheet-screen nvim-cheatsheet-print
 
 # Default target
 all: shell brew ghostty tmux
@@ -37,6 +38,8 @@ help:
 	@echo "  clean-ghostty      : Uninstall Ghostty and remove configuration"
 	@echo "  opencode           : Install and configure Opencode"
 	@echo "  clean-opencode     : Uninstall Opencode and remove configuration"
+	@echo "  grok               : Install Grok Build and stow config into ~/.grok"
+	@echo "  clean-grok         : Unstow Grok config and zap the grok-build cask (keeps ~/.grok state)"
 	@echo "  emacs              : Install and configure Emacs"
 	@echo "  clean-emacs        : Uninstall Emacs and remove configuration"
 	@echo "  firefox            : Install Firefox, initialize profile, and stow application settings"
@@ -145,6 +148,36 @@ clean-opencode:
 	@bun rm -g opencode-ai
 	@brew rm oven-sh/bun/bun
 	@stow -D $(STOW_OPTS) --target=$(CONFIG_DIR) opencode
+
+# Grok Build. Package is grok/grok/ like nvim/nvim/, but Grok's home is
+# ~/.grok not ~/.config/grok, so -d grok --target=~/.grok. --no-folding keeps
+# ~/.grok a real directory (sandbox refuses a symlinked GROK_HOME; sessions,
+# auth, and memory stay unstowed).
+# Files this package owns as stow links. A prior `grok` launch writes regular
+# files here; stow will not replace those, so drop them (repo is the source of
+# truth). config.toml is copied, not linked: Grok rewrites it in place and
+# that would replace a symlink with a regular file.
+GROK_OWNED := AGENTS.md hooks/notify.json bin/notify-macos.py bin/notify-macos.sh skills/idiomatic-rust/SKILL.md skills/grill-me/SKILL.md
+GROK_STOW_OPTS := $(STOW_OPTS) --ignore=config.toml
+
+grok: brew
+	$(call msg,"Installing Grok Build")
+	@brew install --cask grok-build
+	@mkdir -p $(GROK_DIR)
+	@for f in $(GROK_OWNED); do \
+		dest="$(GROK_DIR)/$$f"; \
+		if [ -f "$$dest" ] && [ ! -L "$$dest" ]; then \
+			rm -f "$$dest"; \
+		fi; \
+	done
+	@stow --no-folding $(GROK_STOW_OPTS) -d grok --target=$(GROK_DIR) grok
+	@cp grok/grok/config.toml $(GROK_DIR)/config.toml
+
+clean-grok:
+	$(call msg,"Cleaning Grok")
+	@stow -D --no-folding $(GROK_STOW_OPTS) -d grok --target=$(GROK_DIR) grok 2>/dev/null || true
+	@rm -f $(GROK_DIR)/config.toml
+	@brew uninstall --cask --zap grok-build 2>/dev/null || true
 
 # Emacs
 emacs: $(EMACS_CONFIG_DIR) shell
@@ -396,5 +429,5 @@ macos:
 
 # Full cleanup
 # WARNING: This will remove all installed configurations and may delete user data.
-clean: clean-ghostty clean-opencode clean-emacs clean-firefox clean-nvim clean-zed clean-tmux clean-zellij clean-helix clean-lazygit clean-leaf clean-dev-tools clean-shell clean-brew
+clean: clean-ghostty clean-opencode clean-grok clean-emacs clean-firefox clean-nvim clean-zed clean-tmux clean-zellij clean-helix clean-lazygit clean-leaf clean-dev-tools clean-shell clean-brew
 	$(call msg,"Full cleanup complete")

@@ -15,7 +15,7 @@ It uses [GNU Stow](https://www.gnu.org/software/stow/) to symlink configs into t
 - **Shell** — Zsh with a modular config (no framework), [Starship](https://starship.rs) prompt, fzf, bat, eza, direnv
 - **Terminal** — [Ghostty](https://ghostty.org) with Tmux for multiplexing (Zellij config remains in the repo; swap one line in the Ghostty config to try it)
 - **Editors** — Neovim (Lua config, lazy.nvim, LSP for Go, Python, Rust, TypeScript, F#), Helix, Emacs, Vim
-- **AI Coding** — Custom Grok Build (xAI CLI) skills, hooks, and config managed via `make grok` + `GROK_HOME`
+- **AI Coding** — Grok Build (xAI CLI) config, global `AGENTS.md`, skills, and hooks via `make grok` into `~/.grok`
 - **Packages** — Homebrew + Brewfile (CLI tools, casks, App Store apps via mas)
 - **Browsers** — Firefox with custom CSS, Brave
 - **Theme** — One Dark Pro Max, consistently applied across terminal, prompt, editor, tmux, zellij, lazygit, and leaf
@@ -34,7 +34,7 @@ make leaf          # terminal markdown viewer
 make zellij        # optional multiplexer (swap Ghostty's command to use it)
 make emacs
 make firefox
-make grok          # custom Grok Build skills + config under ~/.config/grok
+make grok          # Grok Build cask + config under ~/.grok (then grok login)
 
 # Tear down a component
 make clean-helix

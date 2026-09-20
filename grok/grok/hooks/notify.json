@@ -1,0 +1,38 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "../bin/notify-macos.py",
+            "timeout": 8
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "../bin/notify-macos.py",
+            "timeout": 8
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt|task_complete",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "../bin/notify-macos.py",
+            "timeout": 8
+          }
+        ]
+      }
+    ]
+  }
+}

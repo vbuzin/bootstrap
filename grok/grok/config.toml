@@ -1,0 +1,23 @@
+[cli]
+# Homebrew owns the binary (`cask grok-build`). Leave Grok's own updater off.
+auto_update = false
+
+[features]
+# Native theme is still rolling out; without this, theme = "terminal" is ignored.
+terminal_theme = true
+lsp_tools = true
+
+[ui]
+theme = "terminal"
+permission_mode = "always-approve"
+
+# OSC banners off. Desktop banners are hooks/notify.json, not
+# [ui.notifications.hooks] (Ghostty quick-terminal focus is wrong).
+[ui.notifications]
+method = "none"
+
+[models]
+default_reasoning_effort = "xhigh"
+
+[memory_v2]
+enabled = true
