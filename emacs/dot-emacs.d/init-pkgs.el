@@ -270,20 +270,20 @@
       (eglot-format-buffer)))
   (add-hook 'before-save-hook #'my/eglot-format-on-save)
 
-  ;; rustic's eglot-rust-analyzer only sends check.command at initialize
-  ;; (see rustic-lsp-check-command). Everything else lives here so it can
-  ;; update without a server restart. Defaults (procMacro, parameter/type
-  ;; hints) are omitted.
+  ;; rustic's eglot-rust-analyzer only sends check.command at initialize;
+  ;; the rest must also go in initializationOptions (same as nvim/Zed).
+  (defvar my/eglot-rust-analyzer-config
+    '(:cargo (:allFeatures t)
+      :check (:command "clippy"
+              :features "all"
+              :extraArgs ["--no-deps"])
+      :inlayHints
+      (:closureReturnTypeHints (:enable t)
+       :lifetimeElisionHints (:enable "skip_trivial"
+                               :useParameterNames :json-false))))
+
   (setq-default eglot-workspace-configuration
-                '(:rust-analyzer
-                  (:cargo (:allFeatures t)
-                   :check (:command "clippy"
-                           :features "all"
-                           :extraArgs ["--no-deps"])
-                   :inlayHints
-                   (:closureReturnTypeHints (:enable t)
-                    :lifetimeElisionHints (:enable "skip_trivial"
-                                            :useParameterNames :json-false)))))
+                `(:rust-analyzer ,my/eglot-rust-analyzer-config))
 
   (add-hook 'eglot-managed-mode-hook #'eglot-inlay-hints-mode)
 
@@ -304,11 +304,9 @@
   (defun my/eglot-will-manage-p ()
     "Non-nil if Eglot will take over Flymake in this buffer.
 
-Rustic puts `rustic-setup-lsp' (not `eglot-ensure') on
-`rustic-mode-hook', so the hook walk alone would miss it."
-    (or (and (boundp 'rustic-lsp-client)
-             (eq rustic-lsp-client 'eglot)
-             (derived-mode-p 'rustic-mode))
+Skip rust so `rust-ts-flymake' does not run before Eglot connects.
+rustic uses `rustic-setup-lsp', not `eglot-ensure', on its mode hook."
+    (or (derived-mode-p 'rustic-mode 'rust-ts-mode 'rust-mode)
         (let ((hook (intern (format "%s-hook" major-mode))))
           (and (boundp hook)
                (seq-some (lambda (fn)
@@ -360,25 +358,33 @@ async work that races with that handoff (\"Can't find state for …\")."
 
 ;; Rust — rustic-mode (cargo/compile/popup) on top of rust-mode → rust-ts-mode
 ;; -----------------------------------------------------------------------------
-;; rust-mode-treesitter-derive must be set before rust-mode.el loads, so
-;; rustic-mode (which derives from rust-mode) gets tree-sitter highlighting.
+;; rust-mode-treesitter-derive must be set before rust-mode.el loads.
+;; :demand so always-defer cannot leave .rs on rust-ts-mode with no eglot.
 (use-package rust-mode
+  :demand t
   :init
   (setq rust-mode-treesitter-derive t))
 
 (use-package rustic
-  :after rust-mode
+  :demand t
   :mode ("\\.rs\\'" . rustic-mode)
   :hook (rustic-mode . subword-mode)
   :init
-  ;; Default is lsp-mode; rustic-setup-lsp reads this on rustic-mode-hook.
   (setq rustic-lsp-client 'eglot)
   :custom
   (rustic-lsp-check-command "clippy")
   ;; Eglot/LSP rustfmt owns on-save formatting; rustic's rustfmt trigger
   ;; would double-format.
   (rustic-format-trigger nil)
-  (rustic-cargo-use-last-stored-arguments t))
+  (rustic-cargo-use-last-stored-arguments t)
+  :config
+  ;; Parent rust-ts-mode registers `clippy-driver -` as a crate-root checker.
+  (defun my/disable-rust-ts-flymake ()
+    (remove-hook 'flymake-diagnostic-functions #'rust-ts-flymake t))
+  (add-hook 'rust-ts-mode-hook #'my/disable-rust-ts-flymake)
+  (with-eval-after-load 'eglot
+    (cl-defmethod eglot-initialization-options ((_server eglot-rust-analyzer))
+      my/eglot-rust-analyzer-config)))
 
 ;;; Tree-sitter — automatic major modes (toml-ts-mode, etc.)
 ;; -----------------------------------------------------------------------------
@@ -392,8 +398,9 @@ async work that races with that handoff (\"Can't find state for …\")."
   ;; Grammars land in ~/.emacs.d/tree-sitter/ as libtree-sitter-*.dylib.
   (treesit-auto-install 'prompt)
   :config
+  ;; rustic owns .rs; rust-mode-treesitter-derive still uses the grammar.
+  (setq treesit-auto-langs (remove 'rust treesit-auto-langs))
   (treesit-auto-add-to-auto-mode-alist 'all)
-  ;; treesit-auto remaps .rs → rust-ts-mode; rustic must stay in front.
   (add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode)))
 
 ;;; end of init-pkgs.el

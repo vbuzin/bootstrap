@@ -182,13 +182,13 @@ clean-grok:
 # Emacs
 emacs: $(EMACS_CONFIG_DIR) shell
 	$(call msg,"Installing Emacs")
-	@brew install --cask emacs
+	@brew install --cask emacs-app
 	@brew install gnupg
 	@stow --no-folding --dotfiles $(STOW_OPTS) --target=$(HOME) emacs
 
 clean-emacs:
 	$(call msg,"Cleaning Emacs")
-	@brew uninstall --cask --zap emacs 2>/dev/null || true
+	@brew uninstall --cask --zap emacs-app 2>/dev/null || true
 	@brew uninstall gnupg 2>/dev/null || true
 	@stow -D --no-folding --dotfiles $(STOW_OPTS) --target=$(HOME) emacs
 	@rm -rf $(EMACS_CONFIG_DIR) 2>/dev/null || true

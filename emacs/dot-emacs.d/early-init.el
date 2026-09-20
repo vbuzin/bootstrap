@@ -72,4 +72,15 @@
 ;; inheritenv, polymode, linum-mode, …). Log them, don't pop *Warnings*.
 (setq native-comp-async-report-warnings-errors 'silent)
 
+;; emacsformacosx libgccjit still emits Darwin-9 macOS versions (27 -> 18.0);
+;; clang on year-based macOS rejects that and native-comp fails.
+(when (eq system-type 'darwin)
+  (unless (getenv "MACOSX_DEPLOYMENT_TARGET")
+    (let ((ver (string-trim
+                (with-output-to-string
+                  (with-current-buffer standard-output
+                    (call-process "sw_vers" nil t nil "-productVersion"))))))
+      (when (string-match-p "\\`[0-9]" ver)
+        (setenv "MACOSX_DEPLOYMENT_TARGET" ver)))))
+
 ;;; end of early-init.el
