@@ -21,6 +21,8 @@ title = " "
 quick-terminal-position = center
 quick-terminal-size = 1280px,860px
 quick-terminal-autohide = false
+quick-terminal-screen = mouse
+quick-terminal-space-behavior = remain
 
 keybind = global:cmd+backquote=toggle_quick_terminal
 initial-window = false
