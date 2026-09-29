@@ -157,7 +157,7 @@ clean-opencode:
 # files here; stow will not replace those, so drop them (repo is the source of
 # truth). config.toml is copied, not linked: Grok rewrites it in place and
 # that would replace a symlink with a regular file.
-GROK_OWNED := AGENTS.md hooks/notify.json bin/notify-macos.py bin/notify-macos.sh skills/idiomatic-rust/SKILL.md skills/grill-me/SKILL.md
+GROK_OWNED := AGENTS.md hooks/notify.json bin/notify-macos.py bin/notify-macos.sh skills/idiomatic-rust/SKILL.md skills/grill-me/SKILL.md skills/humanizer/SKILL.md skills/humanizer/LICENSE skills/humanizer/NOTICE.md
 GROK_STOW_OPTS := $(STOW_OPTS) --ignore=config.toml
 
 grok: brew
