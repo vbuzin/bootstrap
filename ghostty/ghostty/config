@@ -25,6 +25,9 @@ quick-terminal-screen = mouse
 quick-terminal-space-behavior = remain
 
 keybind = global:cmd+backquote=toggle_quick_terminal
+keybind = ctrl+tab=unbind
+keybind = ctrl+shift+tab=unbind
+
 initial-window = false
 macos-hidden = always
 
