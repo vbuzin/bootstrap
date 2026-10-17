@@ -9,7 +9,7 @@ return {
 		end,
 	},
 
-	-- Buffer defaults + deno fmt when available
+	-- Buffer defaults. No markdown formatter in the toolchain.
 	{
 		"stevearc/conform.nvim",
 		ft = { "markdown" },
@@ -22,13 +22,6 @@ return {
 					vim.opt_local.spell = false
 				end,
 			})
-		end,
-		opts = function(_, opts)
-			opts.formatters_by_ft = opts.formatters_by_ft or {}
-			if vim.fn.executable("deno") == 1 then
-				opts.formatters_by_ft.markdown = { "deno_fmt" }
-			end
-			return opts
 		end,
 	},
 }

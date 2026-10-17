@@ -16,7 +16,7 @@ $git_metrics\
 $git_state\
 $c\
 $rust\
-$deno\
+$nodejs\
 $php\
 $java\
 $kotlin\
@@ -89,8 +89,8 @@ symbol = "RS"
 style = "fg:dim"
 format = '[[ $symbol( $version) ](fg:dim)]($style)'
 
-[deno]
-symbol = "DENO"
+[nodejs]
+symbol = "NODE"
 style = "fg:dim"
 format = '[[ $symbol( $version) ](fg:dim)]($style)'
 

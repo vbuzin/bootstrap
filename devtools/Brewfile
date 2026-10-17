@@ -3,7 +3,7 @@
 
 # Runtimes / toolchain managers
 brew "rustup" # keg-only; PATH via dot-zshrc
-brew "deno"
+brew "node"
 
 # Lua
 brew "lua-language-server"

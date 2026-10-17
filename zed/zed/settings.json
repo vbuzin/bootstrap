@@ -8,63 +8,59 @@
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
   "markdown_preview": {
-    "font_size": 13.0
+    "font_size": 13.0,
   },
   "disable_ai": true,
   "format_on_save": "on",
   "agent_servers": {
     "grok-build": {
-      "type": "registry"
-    }
+      "type": "registry",
+    },
   },
   "proxy": "",
   "sticky_scroll": {
-    "enabled": true
+    "enabled": true,
   },
   "diff_view_style": "split",
   "semantic_tokens": "off",
   "completion_menu_item_kind": "symbol",
   "vim": {
     "use_smartcase_find": true,
-    "toggle_relative_line_numbers": true
+    "toggle_relative_line_numbers": true,
   },
   "vim_mode": true,
   "code_lens": "on",
   "cli_default_open_behavior": "new_window",
   "collaboration_panel": {
     "dock": "right",
-    "button": false
+    "button": false,
   },
   "outline_panel": {
     "dock": "right",
-    "default_width": 340.0
+    "default_width": 340.0,
   },
   "inlay_hints": {
-    "enabled": true
+    "enabled": true,
   },
   "base_keymap": "VSCode",
   "buffer_line_height": "comfortable",
   "status_bar": {
     "cursor_position_button": true,
-    "show_active_file": false
+    "show_active_file": false,
   },
   "edit_predictions": {
     "allow_data_collection": "no",
-    "mode": "subtle"
+    "mode": "subtle",
   },
   "file_finder": {
-    "modal_max_width": "medium"
+    "modal_max_width": "medium",
   },
   "icon_theme": "Zed (Default)",
-  // Installed so a project can select it. Not the JS/TS server until that project says so.
-  "auto_install_extensions": {
-    "deno": true
-  },
   "languages": {
     "Rust": {
       "line_ending": "enforce_lf",
-      "inlay_hints": {}
-    }
+      "inlay_hints": {},
+    },
   },
   "text_rendering_mode": "platform_default",
   "agent": {
@@ -75,47 +71,47 @@
     "default_model": {
       "provider": "x_ai",
       "model": "grok-4.3",
-      "enable_thinking": false
+      "enable_thinking": false,
     },
     "favorite_models": [],
-    "model_parameters": []
+    "model_parameters": [],
   },
   "git_panel": {
     "dock": "right",
     "tree_view": true,
-    "default_width": 340.0
+    "default_width": 340.0,
   },
   "ui_font_weight": 300.0,
   "buffer_font_weight": 300.0,
   "project_panel": {
     "dock": "right",
-    "default_width": 340.0
+    "default_width": 340.0,
   },
   "tabs": {
     "file_icons": true,
-    "git_status": true
+    "git_status": true,
   },
   "title_bar": {
     "show_branch_status_icon": true,
     "show_menus": false,
-    "show_user_picture": false
+    "show_user_picture": false,
   },
   "use_smartcase_search": true,
   "indent_guides": {
-    "coloring": "fixed"
+    "coloring": "fixed",
   },
   "gutter": {
     "runnables": true,
-    "folds": true
+    "folds": true,
   },
   "auto_signature_help": false,
   "which_key": {
-    "enabled": true
+    "enabled": true,
   },
   "autosave": {
     "after_delay": {
-      "milliseconds": 1000
-    }
+      "milliseconds": 1000,
+    },
   },
   "cursor_shape": "underline",
   "agent_ui_font_size": 14.0,
@@ -124,17 +120,17 @@
   "buffer_font_family": "JetBrainsMono Nerd Font",
   "telemetry": {
     "diagnostics": false,
-    "metrics": false
+    "metrics": false,
   },
   "restore_on_startup": "launchpad",
   "session": {
-    "restore_unsaved_buffers": true
+    "restore_unsaved_buffers": true,
   },
   "terminal": {
     "option_as_meta": true,
     "copy_on_select": true,
     "cursor_shape": "underline",
-    "font_weight": 300
+    "font_weight": 300,
   },
   "use_system_prompts": false,
   "use_system_path_prompts": false,
@@ -147,31 +143,22 @@
         "workspace": {
           "symbol": {
             "search": {
-              "kind": "all_symbols"
-            }
-          }
+              "kind": "all_symbols",
+            },
+          },
         },
         "check": {
           "command": "clippy",
-          "arguments": "--all-targets"
+          "extraArgs": ["--", "-W", "clippy::pedantic"],
         },
         "inlayHints": {
           "lifetimeElisionHints": {
             "enable": "skip_trivial",
-            "useParameterNames": true
+            "useParameterNames": true,
           },
-          "closureReturnTypeHints": { "enable": "always" }
-        }
-      }
+          "closureReturnTypeHints": { "enable": "always" },
+        },
+      },
     },
-    // Explicit false, not omitted. Omitted is inferred from a root deno.json,
-    // which would turn Deno on in every such repo. Projects opt in.
-    "deno": {
-      "settings": {
-        "deno": {
-          "enable": false
-        }
-      }
-    }
-  }
+  },
 }

@@ -7,7 +7,7 @@ GROK_DIR         := $(HOME)/.grok
 BREWFILE         := $(CURDIR)/Brewfile
 DEVTOOLS_BREWFILE := $(CURDIR)/devtools/Brewfile
 # Shared language toolchain (editor-agnostic). Keep in sync with devtools/Brewfile.
-DEVTOOLS_FORMULAE := rustup deno lua-language-server stylua taplo colima docker docker-compose docker-buildx docker-credential-helper
+DEVTOOLS_FORMULAE := rustup node lua-language-server stylua taplo colima docker docker-compose docker-buildx docker-credential-helper
 # Stamp so `make update` can refresh toolchains only when installed.
 DEVTOOLS_STAMP   := $(HOME)/.local/state/bootstrap/dev-tools
 STOW_OPTS        := --ignore=.DS_Store --override=.*
@@ -95,7 +95,7 @@ update:
 	@brew upgrade
 	@brew upgrade --cask
 	@brew cleanup --prune=all
-	@if [ -f "$(DEVTOOLS_STAMP)" ] || brew list --formula deno >/dev/null 2>&1; then \
+	@if [ -f "$(DEVTOOLS_STAMP)" ] || brew list --formula node >/dev/null 2>&1; then \
 		$(MAKE) update-dev-tools; \
 	else \
 		echo ">>> dev-tools not installed; skipping toolchain extras <<<"; \
@@ -289,7 +289,7 @@ clean-dev-tools-hard: clean-dev-tools
 verify-dev-tools:
 	$(call msg,"Verifying dev tools")
 	@export PATH="$$(brew --prefix rustup 2>/dev/null)/bin:$$HOME/.cargo/bin:$$PATH"; \
-		command -v deno >/dev/null || { echo "missing deno"; exit 1; }; \
+		command -v node >/dev/null || { echo "missing node"; exit 1; }; \
 		command -v stylua >/dev/null || { echo "missing stylua"; exit 1; }; \
 		command -v lua-language-server >/dev/null || { echo "missing lua-language-server"; exit 1; }; \
 		command -v taplo >/dev/null || { echo "missing taplo"; exit 1; }; \
