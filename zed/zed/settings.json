@@ -7,6 +7,7 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "use_display_p3": true,
   "markdown_preview": {
     "font_size": 13.0,
   },
