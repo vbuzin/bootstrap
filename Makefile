@@ -14,6 +14,8 @@ STOW_OPTS        := --ignore=.DS_Store --override=.*
 # Keep in sync with zsh-extra/exports.zsh. Forces XDG even when make's
 # non-interactive bash does not inherit XDG_CONFIG_HOME.
 export COLIMA_HOME := $(CONFIG_DIR)/colima
+# Same reason as in zsh-extra/exports.zsh: bypass mutable docker contexts.
+export DOCKER_HOST := unix://$(COLIMA_HOME)/default/docker.sock
 
 # Message helper
 msg = @echo ">>> $(1) <<<"

@@ -22,6 +22,10 @@ export SAVEHIST=50000
 # Colima VM state + config. Must match Makefile COLIMA_HOME so `colima`
 # from make and from the shell use ~/.config/colima (stowed template).
 export COLIMA_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/colima"
+# Point the docker CLI straight at that VM's socket. Docker contexts are
+# mutable (any `colima stop/start` rewrites them) and /var/run/docker.sock
+# does not exist without Docker Desktop.
+export DOCKER_HOST="unix://$COLIMA_HOME/default/docker.sock"
 
 export BAT_THEME="ansi"
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
