@@ -1,0 +1,8 @@
+# .zshenv — read by every zsh (interactive or not: IDEs, scripts, tool shells).
+# Keep it minimal: only variables that must exist outside interactive shells.
+
+# Colima: without COLIMA_HOME, colima falls back to ~/.colima and starts a
+# second VM there (and rewrites ~/.ssh/config). Keep in sync with Makefile.
+export COLIMA_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/colima"
+# Point the docker CLI straight at that VM; contexts are mutable.
+export DOCKER_HOST="unix://$COLIMA_HOME/default/docker.sock"
