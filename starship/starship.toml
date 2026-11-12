@@ -2,13 +2,17 @@
 
 palette = 'one_dark_pro_max'
 add_newline = true
+command_timeout = 1000   # git_metrics runs `git diff`; 500ms default drops it in big repos
 
 # -- Layout Configuration -----------------------------------------------------
 # No background fills — foreground colour only. Each segment uses a semantic
 # accent from the One Dark Pro Max palette. This reads as terminal-native
 # rather than a GUI statusbar transplanted into a text environment.
+# Colour lives in each module's `style`; formats reference `($style)` only.
 
 format = """
+$username\
+$hostname\
 $directory\
 $git_branch\
 $git_status\
@@ -17,6 +21,8 @@ $git_state\
 $c\
 $rust\
 $nodejs\
+$lua\
+$dotnet\
 $php\
 $java\
 $kotlin\
@@ -25,12 +31,16 @@ $python\
 $docker_context\
 $conda\
 $fill\
+$sudo\
+$shlvl\
+$jobs\
+$status\
 $cmd_duration\
 $time\
 $line_break\
 $character"""
 
-continuation_prompt = '▶▶ '
+continuation_prompt = '[▶▶ ](fg:dim)'
 
 # -- Module Settings ----------------------------------------------------------
 
@@ -46,34 +56,60 @@ success_symbol = '[❯](fg:text)'
 error_symbol = '[❯](fg:red)'
 vimcmd_symbol = '[❮](fg:green)'
 
+# Only shown over SSH (or as root) — tells you which machine you are on.
+[username]
+style_user = "fg:text"
+style_root = "fg:red"
+format = '[$user@]($style)'
+
+[hostname]
+ssh_only = true
+style = "fg:text"
+format = '[$hostname ]($style)'
+
 # Directory in blue — the most prominent element, so it earns a real colour.
 [directory]
 style = "fg:blue"
-format = "[$path](fg:blue)"
+read_only = " "   # nf-fa-lock
+read_only_style = "fg:red"
+format = '[$path]($style)[$read_only]($read_only_style)'
 truncation_length = 1
 fish_style_pwd_dir_length = 2
 use_logical_path = true
 
 # -- Git Section --
 [git_branch]
-symbol = " "
+symbol = " "
 style = "fg:green"
-format = '[ [$symbol$branch ](fg:green)]($style)'
+format = '[ $symbol$branch ]($style)'
 
+# Plain characters with counts, one space-separated token each (`!3 +2 ?1 ⇡1`).
+# Text over glyphs here: a row of icons reads as a blob next to the branch.
 [git_status]
 style = "fg:yellow"
-format = '[[($all_status$ahead_behind) ](fg:yellow)]($style)'
+format = '([$all_status$ahead_behind]($style))'
+conflicted = '=${count} '
+modified   = '!${count} '
+untracked  = '?${count} '
+staged     = '+${count} '
+deleted    = '✘${count} '
+renamed    = '»${count} '
+stashed    = '\$${count} '
+ahead      = '⇡${count} '
+behind     = '⇣${count} '
+diverged   = '⇕⇡${ahead_count}⇣${behind_count} '
 
 [git_metrics]
 disabled = false
 only_nonzero_diffs = true
-format = '([+$added]($added_style) [-$deleted]($deleted_style))'
+format = '([+$added]($added_style) )([-$deleted]($deleted_style) )'
 added_style = "fg:dim"
 deleted_style = "fg:dim"
 
 [git_state]
 disabled = false
 style = "fg:yellow"
+format = "[ $state( $progress_current/$progress_total) ]($style)"   # nf-dev-git_merge (double quotes so \u is an escape)
 
 # -- Languages --
 # All in dim — these are contextual annotations, not primary information.
@@ -82,77 +118,114 @@ style = "fg:yellow"
 [c]
 symbol = "C"
 style = "fg:dim"
-format = '[[ $symbol( $version) ](fg:dim)]($style)'
+format = '[ $symbol( $version) ]($style)'
 
 [rust]
 symbol = "RS"
 style = "fg:dim"
-format = '[[ $symbol( $version) ](fg:dim)]($style)'
+format = '[ $symbol( $version) ]($style)'
 
 [nodejs]
 symbol = "NODE"
 style = "fg:dim"
-format = '[[ $symbol( $version) ](fg:dim)]($style)'
+format = '[ $symbol( $version) ]($style)'
+
+[lua]
+symbol = "LUA"
+style = "fg:dim"
+format = '[ $symbol( $version) ]($style)'
+
+[dotnet]
+symbol = ".NET"
+style = "fg:dim"
+format = '[ $symbol( $version)( $tfm) ]($style)'
 
 [php]
 symbol = "PHP"
 style = "fg:dim"
-format = '[[ $symbol( $version) ](fg:dim)]($style)'
+format = '[ $symbol( $version) ]($style)'
 
 [java]
 symbol = "JV"
 style = "fg:dim"
-format = '[[ $symbol( $version) ](fg:dim)]($style)'
+format = '[ $symbol( $version) ]($style)'
 
 [kotlin]
 symbol = "KT"
 style = "fg:dim"
-format = '[[ $symbol( $version) ](fg:dim)]($style)'
+format = '[ $symbol( $version) ]($style)'
 
 [haskell]
 symbol = "HS"
 style = "fg:dim"
-format = '[[ $symbol( $version) ](fg:dim)]($style)'
+format = '[ $symbol( $version) ]($style)'
 
 [python]
 symbol = "PY"
 style = "fg:dim"
-format = '[[ $symbol( $version)(\(#$virtualenv\)) ](fg:dim)]($style)'
+format = '[ $symbol( $version)( \($virtualenv\)) ]($style)'
 
 [docker_context]
 symbol = "Docker"
 style = "fg:dim"
-format = '[[ $symbol( $context) ](fg:dim)]($style)'
+format = '[ $symbol( $context) ]($style)'
 
 [conda]
 symbol = "conda"
 style = "fg:dim"
-format = '[[ $symbol $environment ](fg:dim)]($style)'
+format = '[ $symbol $environment ]($style)'
 
 # -- Right Side Info --
-# Both in dim — peripheral information that should not compete with the left side.
+# All in dim — peripheral information that should not compete with the left side.
+
+# Only while sudo credentials are cached — the next `sudo` won't ask.
+[sudo]
+disabled = false
+symbol = "sudo"
+style = "fg:red"
+format = '[ $symbol ]($style)'
+
+# Only in a nested shell (zsh inside zsh, editor terminals, exec'd subshells).
+[shlvl]
+disabled = false
+threshold = 2
+symbol = "lvl "
+style = "fg:dim"
+format = '[ $symbol$shlvl ]($style)'
+
+[jobs]
+symbol = " "   # nf-fa-gear
+number_threshold = 1
+style = "fg:dim"
+format = '[ $symbol$number ]($style)'
+
+[status]
+disabled = false
+style = "fg:dim"
+format = '[ $status ]($style)'
 
 [time]
 disabled = false
 time_format = "%R"
 style = "fg:dim"
-format = '[ $time ](fg:dim)'
+format = '[ $time ]($style)'
 
 [cmd_duration]
 show_milliseconds = false
-format = "[ $duration ](fg:dim)"
 style = "fg:dim"
+format = '[ $duration ]($style)'
 disabled = false
+min_time = 5000              # show duration for commands slower than 5s
+show_notifications = true    # macOS banner when a command takes 45s+
 min_time_to_notify = 45000
 
 # -- Palette Definition -------------------------------------------------------
 # Source: One Dark Pro Max (matches Ghostty terminal theme and dot-vimrc).
 
 [palettes.one_dark_pro_max]
-base   = "#080909"   # Terminal background
 text   = "#abb2bf"   # Foreground (Normal guifg)
 dim    = "#7F838C"   # Comment colour — secondary info (languages, time, duration)
 blue   = "#61afef"   # Function colour — directory path
 green  = "#8cc265"   # String colour — git branch
 yellow = "#e5c07b"   # WarningMsg — git dirty markers
-red    = "#ff616e"   # Bright red — error prompt symbol
+red    = "#ff616e"   # Bright red — error prompt symbol, read-only, root
