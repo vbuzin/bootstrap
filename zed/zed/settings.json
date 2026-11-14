@@ -9,7 +9,7 @@
 {
   "use_display_p3": true,
   "markdown_preview": {
-    "font_size": 13.0,
+    "font_size": 14.0,
   },
   "disable_ai": true,
   "format_on_save": "on",
@@ -115,10 +115,10 @@
     },
   },
   "cursor_shape": "underline",
-  "agent_ui_font_size": 14.0,
-  "agent_buffer_font_size": 14.0,
-  "ui_font_family": "JetBrainsMono Nerd Font",
-  "buffer_font_family": "JetBrainsMono Nerd Font",
+  "agent_ui_font_size": 15.0,
+  "agent_buffer_font_size": 15.0,
+  "ui_font_family": "IoskeleyMonoTerm Nerd Font Mono",
+  "buffer_font_family": "IoskeleyMonoTerm Nerd Font Mono",
   "telemetry": {
     "diagnostics": false,
     "metrics": false,
@@ -135,8 +135,8 @@
   },
   "use_system_prompts": false,
   "use_system_path_prompts": false,
-  "ui_font_size": 15.0,
-  "buffer_font_size": 13.0,
+  "ui_font_size": 16.0,
+  "buffer_font_size": 14.0,
   "theme": "One Dark Pro Max",
   "lsp": {
     "rust-analyzer": {

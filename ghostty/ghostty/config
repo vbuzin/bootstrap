@@ -1,6 +1,6 @@
 # -- Fonts & Text -------------------------------------------
-font-family = "JetBrainsMono NFM"
-font-size = 13
+font-family = "IoskeleyMonoTerm Nerd Font Mono"
+font-size = 14
 font-thicken = true
 font-thicken-strength = 60
 adjust-cell-height = 16%

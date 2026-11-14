@@ -14,7 +14,7 @@ brew "zsh-history-substring-search"
 brew "zsh-syntax-highlighting"
 
 cask "brave-origin"
-cask "font-jetbrains-mono-nerd-font"
+cask "font-ioskeley-mono-term-nerd-font"
 cask "mullvad-vpn"
 
 mas "1Blocker", id: 1365531024
