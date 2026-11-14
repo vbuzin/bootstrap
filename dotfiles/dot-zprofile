@@ -1,15 +1,23 @@
+# Ensure path arrays do not contain duplicates. Set first so every later
+# path/fpath change (here, brew shellenv, plugins) is de-duplicated.
+typeset -gU cdpath fpath mailpath path
+
 # Browser
 if [[ "$OSTYPE" == darwin* ]]; then
   export BROWSER='open'
 fi
 
-# Editors
-export EDITOR='vim'
+# Editors — match the `vi` alias (nvim when installed).
+if (( $+commands[nvim] )); then
+  export EDITOR='nvim'
+else
+  export EDITOR='vim'
+fi
 export VISUAL=$EDITOR
 
 # Language
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-# Ensure path arrays do not contain duplicates.
-typeset -gU cdpath fpath mailpath path
+# Rust (rustup is keg-only in Homebrew). (N/) drops dirs that don't exist.
+path+=("$HOME/.cargo/bin"(N/) /opt/homebrew/opt/rustup/bin(N/))

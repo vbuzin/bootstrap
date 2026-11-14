@@ -1,6 +1,6 @@
 # completion.zsh — completion system configuration and compinit.
-# Must be sourced after fpath is populated (done in .zshrc before init.zsh).
-# FZF completion widget is wired up in init.zsh after this file.
+# Must be sourced after fpath is populated (brew shellenv in init.zsh).
+# fzf-tab itself is loaded in init.zsh after this file.
 
 # -- Matching rules --
 # 1. Case-insensitive match (a-z matches A-Za-z)
@@ -14,6 +14,7 @@ zstyle ':completion:*' matcher-list \
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no   # Disable menu so fzf-tab can take over
+zstyle ':completion:*:git-checkout:*' sort false
 
 # -- Cache --
 zstyle ':completion:*' use-cache on
@@ -27,35 +28,9 @@ compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
 # recognise the alias
 compdef _editor=vi
 
-# AUTO_CD — type a directory name to cd into it without the cd command
-setopt AUTO_CD
-
-# fzf-tab configuration — smart preview inlined + continuous completion disabled
-# disable sort when completing `git checkout`
-zstyle ':completion:*:git-checkout:*' sort false
-
-# force zsh not to show completion menu
-zstyle ':completion:*' menu no
-
-# Smart preview (inlined — works reliably in fzf-tab's subshell)
-zstyle ':fzf-tab:complete:cd:*' fzf-preview '
-  if [[ -d $realpath ]]; then
-    eza -T "$realpath" | head -200
-  elif [[ -f $realpath ]]; then
-    bat --style="numbers,changes" --color=always "$realpath"
-  else
-    echo "$realpath"
-  fi
-'
-zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview '
-  if [[ -d $realpath ]]; then
-    eza -T "$realpath" | head -200
-  elif [[ -f $realpath ]]; then
-    bat --style="numbers,changes" --color=always "$realpath"
-  else
-    echo "$realpath"
-  fi
-'
+# -- fzf-tab --
+# Default preview for everything (cd, files…). Inlined — fzf-tab runs it in
+# a subshell without access to zsh functions.
 zstyle ':fzf-tab:complete:*' fzf-preview '
   if [[ -d $realpath ]]; then
     eza -T "$realpath" | head -200
@@ -65,14 +40,11 @@ zstyle ':fzf-tab:complete:*' fzf-preview '
     echo "$realpath"
   fi
 '
-
 zstyle ':fzf-tab:complete:export:*' fzf-preview 'echo ${(P)word}'
 zstyle ':fzf-tab:complete:unset:*'  fzf-preview 'echo ${(P)word}'
 zstyle ':fzf-tab:complete:ssh:*'    fzf-preview 'dig +short $word 2>/dev/null || echo "no DNS info"'
 
-# === CRITICAL FIXES ===
 zstyle ':fzf-tab:*' switch-group '<' '>'
-zstyle ':fzf-tab:*' continuous-trigger ''          # ← disables auto-drill into subfolders
-zstyle ':fzf-tab:*' fzf-flags --color=bg:#080909,fg:#abb2bf,hl:#4aa5f0 \
-                                 --color=bg+:#2c313a,fg+:#d7dae0,hl+:#4dc4ff \
-                                 --preview-window=right:65%
+zstyle ':fzf-tab:*' continuous-trigger ''   # disables auto-drill into subfolders
+zstyle ':fzf-tab:*' use-fzf-default-opts yes   # colours from FZF_DEFAULT_OPTS
+zstyle ':fzf-tab:*' fzf-flags --preview-window=right:65%

@@ -225,7 +225,7 @@ min_time_to_notify = 45000
 [palettes.one_dark_pro_max]
 text   = "#abb2bf"   # Foreground (Normal guifg)
 dim    = "#7F838C"   # Comment colour — secondary info (languages, time, duration)
-blue   = "#61afef"   # Function colour — directory path
+blue   = "#4aa5f0"   # Ghostty palette 4 — directory path
 green  = "#8cc265"   # String colour — git branch
-yellow = "#e5c07b"   # WarningMsg — git dirty markers
+yellow = "#f0a45d"   # Ghostty palette 11 — git dirty markers
 red    = "#ff616e"   # Bright red — error prompt symbol, read-only, root

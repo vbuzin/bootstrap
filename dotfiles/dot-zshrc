@@ -1,47 +1,14 @@
+# .zshrc — interactive shells only (zsh never reads it for scripts or
+# non-interactive IDE shells; env those need lives in .zshenv / .zprofile).
+
 # Login shells already sourced /etc/zprofile + ~/.zprofile (path_helper puts
-# Homebrew on PATH, then EDITOR/LANG). Non-login interactive shells — Zellij
-# panes, some IDE terminals — skip those files, so `brew` is missing and
-# init.zsh's Homebrew block is a no-op (no Starship, no plugins).
-if [[ -o interactive && ! -o login ]]; then
+# Homebrew on PATH, then EDITOR/LANG/PATH extras). Non-login interactive
+# shells — Zellij panes, some IDE terminals — skip those files, so pull them in.
+if [[ ! -o login ]]; then
   [[ -r /etc/zprofile ]] && source /etc/zprofile
   [[ -r "${ZDOTDIR:-$HOME}/.zprofile" ]] && source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
 
-# ==============================================================================
-# SECTION 1: GLOBAL ENVIRONMENT (Runs for IDEs and Terminal)
-# ==============================================================================
-
-# 1. Path Configuration
-# Ensure FZF is in the path so IDEs can see it.
-if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
-  PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
-fi
-
-if command -v rustup >/dev/null 2>&1; then
-  PATH="${PATH:+${PATH}:}${HOME}/.cargo/bin:$(brew --prefix rustup)/bin"
-fi
-
-# ==============================================================================
-# SECTION 2: INTERACTIVE SHELL (Human use only)
-# Everything below is skipped by JetBrains/Automation to prevent timeouts.
-# ==============================================================================
-
-if [[ $- == *i* ]]; then
-
-  # 1. Homebrew fpath — must be set before compinit runs in init.zsh
-  if command -v brew >/dev/null 2>&1; then
-    if [[ -d "/opt/homebrew/share/zsh/site-functions" ]]; then
-      fpath=("/opt/homebrew/share/zsh/site-functions" $fpath)
-    else
-      BREW_PREFIX=$(brew --prefix)
-      [[ -d "$BREW_PREFIX/share/zsh/site-functions" ]] && \
-        fpath=("$BREW_PREFIX/share/zsh/site-functions" $fpath)
-    fi
-  fi
-
-  # 2. Modular shell config — exports, options, completion, aliases,
-  #    functions, fzf bindings, plugins, starship, direnv.
-  #    See ~/.config/zsh-extra/init.zsh for the full load order.
-  source "$HOME/.config/zsh-extra/init.zsh"
-fi
-
+# Modular shell config — exports, options, completion, aliases, functions,
+# fzf, plugins, starship, direnv. See init.zsh for the load order.
+source "$HOME/.config/zsh-extra/init.zsh"

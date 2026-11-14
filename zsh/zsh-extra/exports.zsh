@@ -1,6 +1,6 @@
 # exports.zsh — environment variables for interactive shells.
-# Non-interactive / IDE env (1Password, PATH, DOTNET) lives in .zshrc Section 1.
-# EDITOR, VISUAL, BROWSER, LANG live in .zprofile (available to login shells too).
+# Env every zsh needs (COLIMA_HOME, DOCKER_HOST) lives in .zshenv.
+# EDITOR, VISUAL, BROWSER, LANG, PATH extras live in .zprofile (login shells too).
 
 # Word boundary characters — remove / so Alt+F/B navigates paths naturally
 export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
@@ -16,19 +16,14 @@ export HISTFILE="$XDG_STATE_HOME/zsh/history"
 mkdir -p "${HISTFILE:h}"
 export HISTSIZE=50000
 export SAVEHIST=50000
+# Trivial commands are not worth recalling
+HISTORY_IGNORE='(ls|ll|la|cd|pwd|exit|clear)'
 
 # -- Tool configs --
 
-# Colima VM state + config. Must match Makefile COLIMA_HOME so `colima`
-# from make and from the shell use ~/.config/colima (stowed template).
-export COLIMA_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/colima"
-# Point the docker CLI straight at that VM's socket. Docker contexts are
-# mutable (any `colima stop/start` rewrites them) and /var/run/docker.sock
-# does not exist without Docker Desktop.
-export DOCKER_HOST="unix://$COLIMA_HOME/default/docker.sock"
-
 export BAT_THEME="ansi"
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
+export FZF_ALT_C_COMMAND="fd --type d --hidden --follow --exclude .git"
 
 # Update packages without asking
 export HOMEBREW_NO_ASK=1
@@ -42,7 +37,7 @@ export FZF_DEFAULT_OPTS='
 --preview-window "up,60%"
 --color=bg:#080909,fg:#abb2bf,hl:#4aa5f0
 --color=bg+:#2c313a,fg+:#d7dae0,hl+:#4dc4ff
---color=info:#e5c07b,prompt:#61afef,pointer:#ff616e
+--color=info:#f0a45d,prompt:#4aa5f0,pointer:#ff616e
 --color=marker:#8cc265,spinner:#c162de,header:#7F838C
 --color=border:#212121
 '
