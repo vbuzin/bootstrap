@@ -79,7 +79,7 @@ use_logical_path = true
 
 # -- Git Section --
 [git_branch]
-symbol = " "
+symbol = " "   # Nerd Font codicon; escaped so editors can't drop it
 style = "fg:green"
 format = '[ $symbol$branch ]($style)'
 
