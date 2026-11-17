@@ -216,8 +216,7 @@ style = "fg:dim"
 format = '[ $duration ]($style)'
 disabled = false
 min_time = 5000              # show duration for commands slower than 5s
-show_notifications = true    # macOS banner when a command takes 45s+
-min_time_to_notify = 45000
+# show_notifications blocks the prompt ~2s (synchronous macOS banner), so it stays off.
 
 # -- Palette Definition -------------------------------------------------------
 # Source: One Dark Pro Max (matches Ghostty terminal theme and dot-vimrc).
