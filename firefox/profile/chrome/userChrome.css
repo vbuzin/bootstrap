@@ -1,0 +1,22 @@
+/* Bookmarks toolbar: text only, like Safari "Show Text Only" -------------- */
+/* Only direct toolbar items; folder dropdowns keep their favicons. */
+
+:is(#PlacesToolbarItems > .bookmark-item, #OtherBookmarks) {
+  padding-inline: 8px !important;
+
+  > .toolbarbutton-icon {
+    display: none !important;
+  }
+}
+
+/* Folders get a chevron after the label instead of a folder icon. */
+:is(#PlacesToolbarItems > .bookmark-item, #OtherBookmarks)[container]::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  margin-inline-start: 2px;
+  align-self: center;
+  background: url("chrome://global/skin/icons/arrow-down-12.svg") center / contain no-repeat;
+  -moz-context-properties: fill;
+  fill: currentColor;
+}

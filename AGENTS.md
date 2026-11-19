@@ -7,6 +7,7 @@ Personal macOS environment. Packages live at the repo root and are installed wit
 - Most packages are `foo/foo/` stowed into `~/.config/foo` (`stow --target=~/.config foo`).
 - `dotfiles/` stows into `$HOME` with `--dotfiles`.
 - `emacs/` stows into `$HOME` with `--dotfiles --no-folding`.
+- `firefox/profile/` (`user.js` + `chrome/`) stows into the install's default profile, resolved from `profiles.ini` `[Install*] Default=`. Never write into `Firefox.app` (updates wipe it); prefs are `user.js`, not autoconfig.
 - `grok/grok/` stows into `~/.grok` with `--no-folding`. Grok's home is `~/.grok`, not XDG. Never set `GROK_HOME` to a symlink or to `~/.config/grok` (sandbox refuses a symlinked Grok home).
 
 ## Coupling

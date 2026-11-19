@@ -25,7 +25,7 @@ msg = @echo ">>> $(1) <<<"
 
 # Default target
 all: shell brew ghostty tmux
-	$(call msg,"Setup complete! Run 'make firefox-config' after Firefox initializes.")
+	$(call msg,"Setup complete!")
 
 # Help target
 help:
@@ -44,9 +44,9 @@ help:
 	@echo "  clean-grok         : Unstow Grok config and zap the grok-build cask (keeps ~/.grok state)"
 	@echo "  emacs              : Install and configure Emacs"
 	@echo "  clean-emacs        : Uninstall Emacs and remove configuration"
-	@echo "  firefox            : Install Firefox, initialize profile, and stow application settings"
-	@echo "  firefox-config     : Configure Firefox profile with custom CSS"
-	@echo "  clean-firefox      : Uninstall Firefox and remove stowed settings"
+	@echo "  firefox            : Install Firefox and link user.js + chrome/ into its profile"
+	@echo "  firefox-config     : (Re)link user.js + chrome/ into the default profile"
+	@echo "  clean-firefox      : Unlink profile config and uninstall Firefox"
 	@echo "  dev-tools          : Install shared language toolchain (devtools/Brewfile + rustup + colima)"
 	@echo "  update-dev-tools   : Upgrade shared language toolchain"
 	@echo "  clean-dev-tools    : Uninstall toolchain formulae (keeps ~/.rustup ~/.cargo; deletes Colima VM)"
@@ -198,36 +198,44 @@ clean-emacs:
 $(EMACS_CONFIG_DIR):
 	@mkdir -p $@
 
-# Firefox Installation and Configuration
-firefox: shell
-	$(call msg,"Installing Firefox and initializing profile")
-	@brew install --cask firefox
-	@if [ "$$(uname)" = "Darwin" ]; then \
-		xattr -r -d com.apple.quarantine /Applications/Firefox.app; \
-	fi
-	@stow $(STOW_OPTS) -d firefox --target=/Applications/Firefox.app/Contents/Resources/ settings
-# Launch Firefox briefly to create a default profile
-	@/Applications/Firefox.app/Contents/MacOS/firefox --headless & \
-	FIREFOX_PID=$$!; \
-	sleep 5; \
-	kill $$FIREFOX_PID 2>/dev/null || true
-	@echo "Firefox installed and profile initialized. Run 'make firefox-config' to apply customizations."
+# Firefox: firefox/profile (user.js + chrome/) is stowed into this install's
+# default profile. Nothing goes into Firefox.app, so app updates keep it.
+FIREFOX_HOME    ?= $(HOME)/Library/Application Support/Firefox
+# Prints the [Install*] Default= profile dir from profiles.ini (absolute).
+FIREFOX_PROFILE  = awk -F= -v home="$(FIREFOX_HOME)" \
+	'/^\[/{s=/^\[Install/} s&&$$1=="Default"{p=$$2; if(p!~/^\//)p=home"/"p; print p; exit}' \
+	"$(FIREFOX_HOME)/profiles.ini" 2>/dev/null
 
+firefox: shell
+	$(call msg,"Installing Firefox")
+	@brew install --cask firefox
+	@$(MAKE) --no-print-directory firefox-config
+
+# Idempotent; re-run after creating a new default profile.
 firefox-config:
-	$(call msg,"Configuring Firefox")
-	@FIREFOX_PROFILE=$$(grep -A1 '^\[Install' "${HOME}/Library/Application Support/Firefox/profiles.ini" | grep 'Default=' | cut -d'/' -f2); \
-	if [ -z "$$FIREFOX_PROFILE" ]; then \
-		echo "No default profile found. Please ensure Firefox has initialized a profile."; \
+	$(call msg,"Linking Firefox profile config")
+	@if [ -d "$(FIREFOX_HOME)" ] && ! ls "$(FIREFOX_HOME)" >/dev/null 2>&1; then \
+		echo "Cannot read $(FIREFOX_HOME) (macOS app data protection)."; \
+		echo "Allow this terminal in System Settings > Privacy & Security, then re-run."; \
 		exit 1; \
-	fi; \
-	FIREFOX_PROFILE_PATH="${HOME}/Library/Application Support/Firefox/Profiles/$$FIREFOX_PROFILE"; \
-	mkdir -p "$$FIREFOX_PROFILE_PATH/chrome"; \
-	cp -R ./firefox/chrome/* "$$FIREFOX_PROFILE_PATH/chrome/"; \
-	echo "Firefox configuration applied to $$FIREFOX_PROFILE_PATH/chrome"
+	fi
+# First run via LaunchServices: a headless child of make can't create the
+# profile; --screenshot makes Firefox exit by itself once it's written.
+	@if [ -z "$$($(FIREFOX_PROFILE))" ]; then \
+		echo "Creating default profile (headless first run)"; \
+		tmp=$$(mktemp -d); \
+		open -W -n -g -a Firefox --args --headless --screenshot "$$tmp/s.png" about:blank; \
+		rm -rf "$$tmp"; \
+	fi
+	@dir=$$($(FIREFOX_PROFILE)); \
+	if [ ! -d "$$dir" ]; then echo "No default profile in $(FIREFOX_HOME)/profiles.ini"; exit 1; fi; \
+	stow $(STOW_OPTS) -d firefox --target="$$dir" profile && \
+	echo "Linked user.js and chrome/ into $$dir"
 
 clean-firefox:
 	$(call msg,"Cleaning Firefox")
-	@stow -D $(STOW_OPTS) -d firefox --target=/Applications/Firefox.app/Contents/Resources/ settings || true
+	@dir=$$($(FIREFOX_PROFILE)); \
+	[ -d "$$dir" ] && stow -D $(STOW_OPTS) -d firefox --target="$$dir" profile || true
 	@brew uninstall --cask --zap firefox 2>/dev/null || true
 
 # Shared language toolchain (editor-agnostic: nvim, Zed, shell)
